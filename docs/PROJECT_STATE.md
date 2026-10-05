@@ -1,6 +1,6 @@
 # Cognova — Estado del Proyecto
 
-**Estado:** diseño técnico cerrado / listo para iniciar desarrollo.
+**Estado:** fase inicial del frontend en curso. Repositorio documental convertido en base React + TypeScript + Vite. Backend fuera del alcance de este repositorio.
 
 ## Decisiones principales
 - Frontend: React + TypeScript + Vite.
@@ -33,12 +33,20 @@
 - Retos sugeridos por IA y aceptados/rechazados por el usuario.
 - Grafo de dependencias académicas.
 
+## Avance frontend — 2026-10-05
+- Leídos los diez documentos maestros; repositorio inicialmente limpio, último commit previo: `b2a5bdd`.
+- Creada base React + TypeScript estricto + Vite y configuración ESLint.
+- Agregados comandos de desarrollo, build y preview, y exclusiones para secretos, dependencias y artefactos.
+- No se implementaron funcionalidades académicas ni integración API.
+- Validación de la base: `npm.cmd run build` y `npm.cmd run lint` correctos; `git diff --check` sin errores. No existen tests todavía.
+
+## Pendientes de especificación
+- `API_CONTRACT.md` define rutas, Bearer JWT y formato de error, pero no los esquemas de peticiones/respuestas exitosas, paginación ni detalles de expiración del token. Acordarlos antes de implementar servicios y auth.
+- `QUESTIONNAIRE.md` contiene las diez preguntas, pero faltan las opciones y el tipo de selección de cada pregunta. `APP_CONTEXT.md` indica que allí están las opciones completas; documentar y completar esta diferencia antes de implementar el formulario.
+- No inferir DTOs públicos a partir del modelo de persistencia ni inventar opciones o endpoints.
+
 ## Próximo paso
-1. Crear repositorios.
-2. Copiar esta documentación.
-3. Crear skeleton de backend/frontend.
-4. Respetar API_CONTRACT.md.
-5. Desarrollar por commits progresivos.
+Completar la fase inicial con routing, shell responsive y base visual. Después, acordar los esquemas API de autenticación y avanzar al cliente HTTP y auth en una tarea independiente.
 
 ## Continuidad
 Antes de trabajar, leer:
