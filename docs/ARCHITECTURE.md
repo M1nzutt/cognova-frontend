@@ -27,7 +27,7 @@ Ya existe:
 - cliente Fetch/AuthService inicial;
 - tests iniciales de auth service.
 
-El trabajo de autenticación quedó interrumpido. `PROJECT_STATE.md` + Git mandan sobre cualquier supuesto.
+El trabajo de autenticación interrumpido se reconcilió. `PROJECT_STATE.md` registra alcance verificado y bloqueos de integración.
 
 ## Capas sugeridas
 
@@ -59,7 +59,11 @@ Evitar componentes gigantes y lógica de red duplicada.
 - sin loops;
 - logout real.
 
-`TokenStorage` basado en localStorage existente debe retirarse/migrarse cuidadosamente.
+`TokenStorage` fue retirado. La migración elimina únicamente la clave de credencial antigua, sin leerla. `AuthSession` conserva access token en memoria y expone un snapshot mediante `useSyncExternalStore`; `AuthProvider` administra esa instancia.
+
+`ApiClient` delega refresh a la misma sesión. Las peticiones concurrentes comparten una promesa; solo se reintenta una vez. Las mutaciones de cookies se serializan con una cola y Web Locks entre pestañas cuando está disponible. Un fallo de logout elimina memoria y se informa con opción de reintentar la revocación.
+
+Pendiente contractual: el Path actual de la cookie CSRF impide leerla desde las rutas SPA. Debe resolverse explícitamente en ambos repos antes de validar producción; no hay proxy que reescriba cookies ni fallback que omita CSRF.
 
 LocalStorage queda permitido para preferencias no sensibles, por ejemplo tema visual.
 

@@ -19,8 +19,11 @@ export interface RegisterRequest extends LoginRequest {
   academic_goal: string
 }
 
-export interface AuthResponse {
-  user: AuthUser
+export interface TokenResponse {
   access_token: string
   token_type: 'bearer'
+}
+
+export interface AuthResponse extends TokenResponse {
+  user: AuthUser
 }

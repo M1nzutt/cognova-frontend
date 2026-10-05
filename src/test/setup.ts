@@ -1,10 +1,16 @@
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
-import { afterEach, vi } from 'vitest'
+import { afterEach, beforeEach, vi } from 'vitest'
+
+beforeEach(() => {
+  vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: false }))
+})
 
 afterEach(() => {
   cleanup()
   localStorage.clear()
+  sessionStorage.clear()
+  document.cookie = 'cognova_csrf=; Max-Age=0; Path=/'
   vi.restoreAllMocks()
   vi.unstubAllGlobals()
   vi.useRealTimers()

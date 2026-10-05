@@ -1,6 +1,9 @@
 import styles from './WelcomePage.module.css'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
 
 export function WelcomePage() {
+  const { status } = useAuth()
   return (
     <div>
       <p className="eyebrow">BIENVENIDO A COGNOVA</p>
@@ -10,8 +13,13 @@ export function WelcomePage() {
       <section className={styles.notice} aria-labelledby="welcome-status">
         <span className={styles.dot} aria-hidden="true" />
         <div>
-          <h2 id="welcome-status">Estamos preparando tu espacio</h2>
-          <p>Pronto podrás crear tu cuenta y comenzar tu recorrido académico.</p>
+          <h2 id="welcome-status">Tu recorrido empieza aquí</h2>
+          <p>Crea tu cuenta para dar el primer paso en Cognova.</p>
+          <div className="actions">
+            {status === 'authenticated' ? <Link to="/dashboard">Ir a mi espacio</Link> : (
+              <><Link to="/register">Crear cuenta</Link><Link to="/login">Iniciar sesión</Link></>
+            )}
+          </div>
         </div>
       </section>
 

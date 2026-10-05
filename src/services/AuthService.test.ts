@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { ApiClient } from '../api/client'
 import { AuthService } from './AuthService'
-import { TokenStorage } from './TokenStorage'
+import { clearLegacyAuth } from '../auth/clearLegacyAuth'
 import { getTokenExpiry } from '../utils/jwt'
 import { jsonResponse, makeToken, user } from '../test/authFixtures'
 
@@ -46,7 +46,7 @@ describe('authentication contract', () => {
   it.each([409, 422, 500])('preserves API errors without expiring a session (%s)', async (status) => {
     const unauthorized = vi.fn()
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse({ error: { code: 'TEST_ERROR', message: 'Error del servidor.' } }, status)))
-    await expect(new ApiClient('/api/v1', () => 'token', unauthorized).request('/auth/me')).rejects.toMatchObject({ status, code: 'TEST_ERROR', message: 'Error del servidor.' })
+    await expect(new ApiClient('/api/v1', () => 'token', unauthorized).request('/auth/me')).rejects.toMatchObject({ status, code: 'TEST_ERROR' })
     expect(unauthorized).not.toHaveBeenCalled()
   })
 
@@ -59,14 +59,40 @@ describe('authentication contract', () => {
     await expect(service.login({ email: user.email, password: 'password' })).rejects.toMatchObject({ code: 'INVALID_RESPONSE' })
   })
 
-  it('stores only the token and clears it independently of theme', () => {
-    const storage = new TokenStorage()
+  it('deletes legacy credentials without touching preferences', () => {
     localStorage.setItem('cognova.theme', 'dark')
-    storage.save('token')
-    expect(storage.read()).toBe('token')
-    storage.clear()
-    expect(storage.read()).toBeNull()
+    localStorage.setItem('cognova.access_token', 'obsolete')
+    sessionStorage.setItem('cognova.access_token', 'obsolete')
+    clearLegacyAuth()
+    expect(localStorage.getItem('cognova.access_token')).toBeNull()
+    expect(sessionStorage.getItem('cognova.access_token')).toBeNull()
     expect(localStorage.getItem('cognova.theme')).toBe('dark')
+  })
+
+  it('sends cookies and rotated CSRF on refresh/logout without JSON or Bearer', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ access_token: makeToken(), token_type: 'bearer' }))
+    vi.stubGlobal('fetch', fetchMock)
+    const service = new AuthService(new ApiClient('/api/v1', () => 'token', vi.fn()))
+    document.cookie = 'cognova_csrf=first; Path=/'
+    await service.refresh()
+    expect(fetchMock.mock.calls[0][0]).toBe('/api/v1/auth/refresh')
+    expect(fetchMock.mock.calls[0][1].credentials).toBe('include')
+    expect(fetchMock.mock.calls[0][1].headers.get('X-CSRF-Token')).toBe('first')
+    expect(fetchMock.mock.calls[0][1].headers.has('Authorization')).toBe(false)
+    expect(fetchMock.mock.calls[0][1].body).toBeUndefined()
+    document.cookie = 'cognova_csrf=rotated; Path=/'
+    fetchMock.mockResolvedValue(new Response(null, { status: 204 }))
+    await service.logout()
+    expect(fetchMock.mock.calls[1][0]).toBe('/api/v1/auth/logout')
+    expect(fetchMock.mock.calls[1][1].headers.get('X-CSRF-Token')).toBe('rotated')
+  })
+
+  it('does not send a cookie mutation without readable CSRF', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    const service = new AuthService(new ApiClient('/api/v1', () => null, vi.fn()))
+    await expect(service.refresh()).rejects.toMatchObject({ status: 403, code: 'CSRF_VALIDATION_FAILED' })
+    expect(fetchMock).not.toHaveBeenCalled()
   })
 
   it('reads expiry and rejects malformed or missing claims', () => {

@@ -1,153 +1,42 @@
 # Cognova — Estado del Proyecto (Frontend)
 
-**Fecha de referencia:** 2026-10-05
+Fecha: 2026-10-05.
 
-**Estado general:** frontend base implementado; autenticación quedó a medias cuando el agente se quedó sin uso/contexto.
+## Estado real
+Proyecto incompleto. Fase 0 reconciliada; fase 1 implementada a nivel de cliente y pendiente de ampliar pruebas de UI/integración real. No se declara listo para producción.
 
-## Regla crítica al reanudar
+## Reconciliación de trabajo interrumpido
+- Punto de partida: `3442f0f`; primer cliente auth anterior: `e3794b1`.
+- Se conservaron formularios Login/Register, estilos, AuthProvider/context, hooks y rutas que estaban sin commit.
+- Se retiró TokenStorage. El access token vive únicamente en AuthSession (memoria).
+- La migración solo elimina `cognova.access_token` obsoleto de localStorage/sessionStorage; nunca lo lee ni reutiliza.
+- localStorage se mantiene para el tema, no para credenciales.
+- AuthService incorpora refresh/logout del contrato vigente, CSRF y cookies.
+- Restauración: cookie CSRF legible → refresh compartido → me.
+- Cliente Fetch: Bearer, credentials include, timeout, errores públicos controlados, 401 coordinado y un solo retry; 403 no dispara refresh.
+- Rotación y logout se serializan; Web Locks coordina pestañas cuando está disponible.
+- Logout borra memoria inmediatamente, revoca en backend y permite reintentar si falla. No presenta una revocación fallida como exitosa.
+- Cuestionario/dashboard siguen siendo destinos provisionales; no son funcionalidades terminadas.
 
-Antes de modificar nada:
+## Validación fase 0
+- 22 pruebas Vitest aprobadas: contrato, migración, CSRF, restore, 401 concurrentes, retry acotado, 403, logout fallido y carrera logout/refresh.
+- Build, TypeScript y lint correctos; editor sin errores; diff revisado.
+- Backend no modificado; no se probó todavía contra servidor real.
 
-```bash
-git status
-git diff
-git log --oneline -15
-```
+## Bloqueos de contrato
+1. AUTH_CONTRACT define cookie cognova_csrf con Path=/api/v1/auth. El navegador no la expone a document.cookie en /login, /dashboard ni /. Se propuso Path=/ para CSRF, manteniendo refresh HttpOnly en /api/v1/auth, y mismo origen mediante proxy. Pendiente de decisión/sincronización backend. No se cambió el contrato ni se implementó un bypass.
+2. QUESTIONNAIRE no contiene opciones ni cardinalidad. No se inventaron.
+3. API_CONTRACT no define DTOs públicos de recursos académicos, transiciones completas, filtros/paginación ni respuestas de IA. El modelo conceptual no sustituye DTOs. Fases 3–9 bloqueadas hasta contratos compartidos y backend correspondiente.
 
-Hay posibilidad real de cambios sin commit del segundo incremento de auth. Revisarlos antes de escribir encima.
+## Siguiente paso exacto
+1. Completar pruebas de formularios/rutas y carreras de autenticación; revisar errores y accesibilidad.
+2. Resolver y sincronizar alcance/origen de cookie CSRF con backend; validar cookies reales, refresh y logout desde navegador.
+3. Cerrar fase 1 con tests/build/lint/diff/docs/commit.
+4. Registrar matriz de contratos faltantes (fase 2), recuperar opciones aprobadas si existen; solo entonces comenzar módulos funcionales.
+5. No iniciar despliegue ni declarar cierre con placeholders.
 
-## Base confirmada
-
-Implementado:
-- React + TypeScript estricto + Vite;
-- React Router;
-- AppShell;
-- bienvenida;
-- 404;
-- CSS Modules;
-- tema claro/oscuro persistente;
-- responsive base;
-- accesibilidad básica.
-
-Commits confirmados:
-- `22cfc82 chore: initialize React TypeScript frontend`
-- `e1c575c` — routing/shell/themes
-
-La rama fue empujada a GitHub después de estos commits.
-
-## Autenticación — primer incremento confirmado
-
-Se implementó y se llegó a commit estable:
-- cliente Fetch centralizado;
-- `ApiError`;
-- `AuthService`;
-- DTOs/types;
-- almacenamiento JWT inicial;
-- lector de expiración;
-- Vitest/jsdom/Testing Library;
-- pruebas del servicio.
-
-Se reportaron 9 pruebas de auth service aprobadas.
-
-Commit descrito como:
-
-```text
-feat: add authentication API client and JWT storage
-```
-
-El hash exacto debe obtenerse con Git.
-
-## Trabajo interrumpido
-
-Antes del corte, el agente empezó el segundo incremento.
-
-Pueden existir cambios sin commit en archivos relacionados con:
-- `App.tsx`;
-- `AuthContext`;
-- `AuthProvider`;
-- `AuthSession`;
-- `AppShell`;
-- `AuthFormLayout`;
-- `SessionGate`;
-- `useAuth`;
-- `useAuthForm`;
-- `DashboardPendingPage`;
-- `LoginPage`;
-- `QuestionnairePendingPage`;
-- `RegisterPage`;
-- `WelcomePage`;
-- `AppRoutes`;
-- `GuestRoute`;
-- `ProtectedRoute`;
-- estilos;
-- validación de auth.
-
-NO asumir que todos existen ni que compilan. `git status`/`git diff` decide.
-
-## Cambio de arquitectura de autenticación
-
-El primer incremento usaba JWT en `localStorage`.
-
-Eso quedó obsoleto.
-
-Debe migrarse al nuevo `AUTH_CONTRACT.md`:
-- access token solo en memoria;
-- refresh token HttpOnly;
-- CSRF;
-- restauración de sesión;
-- refresh coordinado;
-- logout real.
-
-No borrar indiscriminadamente el trabajo existente:
-- reutilizar `AuthService`, tipos, UI y tests cuando sea válido;
-- retirar/migrar `TokenStorage`;
-- actualizar pruebas.
-
-## Gaps conocidos
-
-- `QUESTIONNAIRE.md` tiene las 10 preguntas, pero no las opciones completas.
-- Contratos de varias funcionalidades aún requieren DTOs exactos antes de crear servicios.
-- Dashboard/cuestionario pendientes no deben permanecer como placeholders al finalizar el proyecto.
-
-## Próximo paso exacto
-
-1. Inspeccionar Git.
-2. Revisar cambios no commiteados del segundo incremento.
-3. Resolverlos contra el contrato de producción.
-4. Terminar auth frontend segura.
-5. Ejecutar:
-   - tests;
-   - build;
-   - lint;
-   - diff check.
-6. Actualizar este documento.
-7. Commit.
-8. Continuar por fases del prompt definitivo.
-
-## Funcionalidades posteriores pendientes
-
-- cuestionario;
-- materias;
-- objetivos;
-- actividades;
-- calendario;
-- temporizador;
-- historial;
-- dashboard;
-- analytics;
-- racha;
-- IA;
-- observaciones;
-- retos;
-- integración final;
-- E2E;
-- despliegue.
+## Pendiente global
+Cuestionario, CRUD académico/dependencias, calendario/temporizador, historial, dashboard/analytics/racha, IA, feedback/retos, E2E real, seguridad de hosting, CI/CD, despliegue y smoke test.
 
 ## Continuidad
-
-Si se interrumpe:
-- guardar estado;
-- documentar archivos;
-- registrar pruebas;
-- indicar siguiente paso exacto;
-- nunca asumir que una tarea parcial está terminada.
+Leer los doce documentos maestros, inspeccionar Git y conservar trabajo útil. Cada fase debe pasar tests/build/lint, actualizar documentación y terminar con commit coherente.

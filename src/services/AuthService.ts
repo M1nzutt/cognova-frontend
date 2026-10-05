@@ -1,6 +1,6 @@
 import { ApiClient } from '../api/client'
 import { ApiError } from '../api/ApiError'
-import type { AuthResponse, AuthUser, LoginRequest, RegisterRequest } from '../types/auth'
+import type { AuthResponse, AuthUser, LoginRequest, RegisterRequest, TokenResponse } from '../types/auth'
 
 function isUser(value: unknown): value is AuthUser {
   if (!value || typeof value !== 'object') return false
@@ -39,5 +39,18 @@ export class AuthService {
     const user = await this.client.request<unknown>('/auth/me', { signal })
     if (!isUser(user)) throw new ApiError('No pudimos leer tu perfil. Inténtalo de nuevo.', 0, 'INVALID_RESPONSE')
     return user
+  }
+
+  async refresh(): Promise<TokenResponse> {
+    const value = await this.client.request<unknown>('/auth/refresh', { method: 'POST', authenticated: false, csrf: true })
+    if (!value || typeof value !== 'object' || !('access_token' in value) || typeof value.access_token !== 'string'
+      || !value.access_token || !('token_type' in value) || value.token_type !== 'bearer') {
+      throw new ApiError('El servidor devolvió una sesión no válida.', 0, 'INVALID_RESPONSE')
+    }
+    return { access_token: value.access_token, token_type: 'bearer' }
+  }
+
+  async logout(): Promise<void> {
+    await this.client.request('/auth/logout', { method: 'POST', authenticated: false, csrf: true })
   }
 }
