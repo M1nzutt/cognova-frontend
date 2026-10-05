@@ -121,4 +121,37 @@ describe('production session', () => {
     expect(session.getSnapshot()).toMatchObject({ status: 'anonymous', user: null, logoutFailed: false })
     expect(fetchMock.mock.calls.at(-1)?.[0]).toBe('/api/v1/auth/logout')
   })
+
+  it.each([200, 401])('discards a late response from a previous login (%s)', async (status) => {
+    let finish!: (response: Response) => void
+    const fetchMock = vi.fn().mockImplementation(async (url: string) => url.endsWith('/login')
+      ? jsonResponse({ user, access_token: makeToken(), token_type: 'bearer' })
+      : new Promise<Response>((resolve) => { finish = resolve }))
+    vi.stubGlobal('fetch', fetchMock)
+    const session = new AuthSession('/api/v1')
+    await session.login(credentials, signal())
+    const previous = session.api.request('/auth/me')
+    await session.login(credentials, signal())
+    finish(status === 200 ? jsonResponse(user) : unauthorized())
+    await expect(previous).rejects.toMatchObject({ name: 'AbortError' })
+    expect(fetchMock).toHaveBeenCalledTimes(3)
+    expect(session.getSnapshot().status).toBe('authenticated')
+  })
+
+  it('does not retry protected requests when the shared refresh fails', async () => {
+    csrf()
+    const fetchMock = vi.fn().mockImplementation(async (url: string) => {
+      if (url.endsWith('/login')) return jsonResponse({ user, access_token: makeToken(), token_type: 'bearer' })
+      if (url.endsWith('/refresh')) throw new TypeError('offline')
+      return unauthorized()
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    const session = new AuthSession('/api/v1')
+    await session.login(credentials, signal())
+    const results = await Promise.allSettled([session.api.request('/auth/me'), session.api.request('/auth/me')])
+    expect(results.every((result) => result.status === 'rejected')).toBe(true)
+    expect(fetchMock.mock.calls.filter((call) => call[0].endsWith('/refresh'))).toHaveLength(1)
+    expect(fetchMock.mock.calls.filter((call) => call[0].endsWith('/me'))).toHaveLength(2)
+    expect(session.getSnapshot().status).toBe('anonymous')
+  })
 })

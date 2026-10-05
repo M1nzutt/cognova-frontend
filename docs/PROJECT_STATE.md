@@ -3,7 +3,7 @@
 Fecha: 2026-10-05.
 
 ## Estado real
-Proyecto incompleto. Fase 0 reconciliada; fase 1 implementada a nivel de cliente y pendiente de ampliar pruebas de UI/integración real. No se declara listo para producción.
+Proyecto incompleto. Fase 0 reconciliada en `33d6961`; fase 1 implementada y probada a nivel de frontend, pero bloqueada para validación real por contrato CSRF. Fase 2: gaps inventariados, no resueltos. No se declara listo para producción.
 
 ## Reconciliación de trabajo interrumpido
 - Punto de partida: `3442f0f`; primer cliente auth anterior: `e3794b1`.
@@ -29,11 +29,17 @@ Proyecto incompleto. Fase 0 reconciliada; fase 1 implementada a nivel de cliente
 3. API_CONTRACT no define DTOs públicos de recursos académicos, transiciones completas, filtros/paginación ni respuestas de IA. El modelo conceptual no sustituye DTOs. Fases 3–9 bloqueadas hasta contratos compartidos y backend correspondiente.
 
 ## Siguiente paso exacto
-1. Completar pruebas de formularios/rutas y carreras de autenticación; revisar errores y accesibilidad.
-2. Resolver y sincronizar alcance/origen de cookie CSRF con backend; validar cookies reales, refresh y logout desde navegador.
-3. Cerrar fase 1 con tests/build/lint/diff/docs/commit.
-4. Registrar matriz de contratos faltantes (fase 2), recuperar opciones aprobadas si existen; solo entonces comenzar módulos funcionales.
-5. No iniciar despliegue ni declarar cierre con placeholders.
+1. Confirmar decisión sobre CSRF Path/origen y sincronizar AUTH_CONTRACT con backend. Ver `CONTRACT_GAPS.md`.
+2. Con backend configurado, probar registro/login → refresh → me → logout y recarga en navegador real, incluyendo CSRF/401/403/concurrencia y revocación.
+3. Obtener opciones/cardinalidad aprobadas del cuestionario y DTOs públicos de la matriz de gaps; no empezar módulos sin sincronizarlos.
+4. Continuar fase 3 cuando el cuestionario esté especificado; luego módulos académicos en orden. No desplegar ni declarar cierre con placeholders.
+
+## Verificación de auth e inventario de contratos
+- 39 pruebas Vitest aprobadas: servicios, restore bajo StrictMode, rutas protegidas/guest, registro→cuestionario, login→dashboard, logout, concurrencia 401, sesión anterior, validación y errores.
+- Build/lint/TypeScript correctos. Comprobación en navegador del bundle: login/registro a 320 px sin desbordamiento y /dashboard sin sesión redirige a /login.
+- Path de CSRF comprobado con cookie de prueba en navegador: no visible desde /login. No se rebajó la protección ni se cambió el contrato sin decisión compartida.
+- npm audit: 0 vulnerabilidades. Propuesta CSP/cabeceras documentada, no desplegada.
+- README actualizado al estado real; AUTH_CONTRACT no modificado, backend no modificado. No hay pruebas E2E contra backend ni despliegue real.
 
 ## Pendiente global
 Cuestionario, CRUD académico/dependencias, calendario/temporizador, historial, dashboard/analytics/racha, IA, feedback/retos, E2E real, seguridad de hosting, CI/CD, despliegue y smoke test.

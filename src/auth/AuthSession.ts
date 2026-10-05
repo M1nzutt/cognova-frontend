@@ -31,7 +31,7 @@ export class AuthSession {
   constructor(baseUrl: string) {
     this.api = new ApiClient(baseUrl, () => this.token, (token) => {
       if (token === this.token) this.invalidate(expiredMessage)
-    }, () => this.refresh())
+    }, () => this.refresh(), () => this.revision)
     this.service = new AuthService(this.api)
   }
   getSnapshot = (): AuthSnapshot => this.snapshot

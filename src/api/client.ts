@@ -16,9 +16,10 @@ export class ApiClient {
     private readonly getToken: () => string | null,
     private readonly onUnauthorized: (token: string) => void,
     private readonly refresh: () => Promise<void> = async () => { throw new ApiError('Tu sesión expiró. Inicia sesión nuevamente.', 401) },
+    private readonly getSessionVersion: () => number = () => 0,
   ) {}
 
-  async request<T>(path: string, options: RequestOptions = {}, retried = false): Promise<T> {
+  async request<T>(path: string, options: RequestOptions = {}, retried = false, version = this.getSessionVersion()): Promise<T> {
     if (!/^\/[a-zA-Z0-9/_-]+$/.test(path) || path.startsWith('//')) {
       throw new ApiError('La ruta de la API no es válida.', 0, 'INVALID_PATH')
     }
@@ -44,9 +45,11 @@ export class ApiClient {
       if (options.signal?.aborted) throw error
       throw new ApiError(timeout.aborted ? 'El servidor tardó demasiado en responder. Inténtalo de nuevo.' : 'No pudimos conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.')
     }
+    if (token && version !== this.getSessionVersion()) throw new DOMException('Session changed', 'AbortError')
     if (response.status === 401 && token) {
       if (retried) {
         this.onUnauthorized(token)
+        throw new ApiError('Tu sesión expiró. Inicia sesión nuevamente.', 401, 'INVALID_OR_EXPIRED_TOKEN')
       } else {
         try {
           if (this.getToken() === token) await this.refresh()
@@ -56,10 +59,12 @@ export class ApiClient {
           throw error
         }
         options.signal?.throwIfAborted()
-        return this.request<T>(path, options, true)
+        if (version !== this.getSessionVersion()) throw new DOMException('Session changed', 'AbortError')
+        return this.request<T>(path, options, true, version)
       }
     }
     const data: unknown = response.status === 204 ? undefined : await response.json().catch(() => undefined)
+    if (token && version !== this.getSessionVersion()) throw new DOMException('Session changed', 'AbortError')
     if (!response.ok) {
       const error = data && typeof data === 'object' && 'error' in data ? data.error : undefined
       const code = error && typeof error === 'object' && 'code' in error && typeof error.code === 'string' ? error.code : 'HTTP_ERROR'

@@ -195,3 +195,25 @@ No compartir:
 - [ ] E2E crítico
 - [ ] Health/readiness
 - [ ] Variables de producción documentadas
+
+## Evidencia frontend — 2026-10-05
+
+- Access token solo en memoria. Refresh no se lee desde JS. Se retiró TokenStorage; se elimina la clave heredada sin reutilizarla.
+- Fetch con credentials include, CSRF en refresh/logout, coordinación de 401 y un retry máximo. 403/429 no disparan refresh. Las respuestas tardías de otra sesión se descartan.
+- Los mensajes de servidor se transforman en mensajes públicos controlados; no se muestran stacks ni HTML del backend. No se usa dangerouslySetInnerHTML.
+- Tests de servicios, restore, formularios, rutas, concurrencia, logout/retry y fallos. Son pruebas con HTTP interceptado, no prueba de revocación/rotación real en backend.
+- Auditoría npm ejecutada: 0 vulnerabilidades reportadas. No sustituye revisión de secretos/CI ni seguridad del backend.
+- Bloqueo: path de cookie CSRF y topología de origen pendientes de sincronizar; consultar [CONTRACT_GAPS.md](CONTRACT_GAPS.md). Auth de producción aún no certificada.
+
+### Política propuesta de hosting (pendiente de aplicar y verificar)
+
+Para bundle estático servido en el mismo origen que `/api/v1`, configurar desde hosting/gateway:
+
+```text
+Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin
+Permissions-Policy: camera=(), microphone=(), geolocation=()
+```
+
+Aplicar HSTS únicamente en el dominio HTTPS confirmado, evaluando subdominios antes de includeSubDomains/preload. Si la API queda en otro origen, allowlist exacta en connect-src y CORS; primero resolver cómo se comparte CSRF. No agregar unsafe-inline/unsafe-eval para ocultar errores. Estas cabeceras son propuesta documentada: no están aplicadas a un hosting real y deben verificarse sobre el bundle desplegado, no sobre HMR.
