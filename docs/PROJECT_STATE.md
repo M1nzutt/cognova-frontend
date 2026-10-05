@@ -1,6 +1,6 @@
 # Cognova — Estado del Proyecto
 
-**Estado:** fase inicial del frontend en curso. Repositorio documental convertido en base React + TypeScript + Vite. Backend fuera del alcance de este repositorio.
+**Estado:** fase inicial del frontend completada. Base React + TypeScript + Vite, routing y shell responsive listos. Backend fuera del alcance de este repositorio.
 
 ## Decisiones principales
 - Frontend: React + TypeScript + Vite.
@@ -39,6 +39,17 @@
 - Agregados comandos de desarrollo, build y preview, y exclusiones para secretos, dependencias y artefactos.
 - No se implementaron funcionalidades académicas ni integración API.
 - Validación de la base: `npm.cmd run build` y `npm.cmd run lint` correctos; `git diff --check` sin errores. No existen tests todavía.
+- Primer commit: `22cfc82 chore: initialize React TypeScript frontend`.
+- Segundo incremento: React Router con bienvenida y 404, componentes separados, CSS Modules, tema claro/oscuro persistente y navegación accesible básica.
+- README ampliado con instalación, comandos, estructura, alcance y requisitos del futuro hosting; arquitectura frontend documentada.
+
+## Validación de cierre
+- Build de producción y TypeScript correctos; ESLint sin errores ni advertencias; diagnósticos del editor sin errores.
+- Comprobaciones de navegador sobre el bundle: inicio, ruta inexistente, retorno al inicio, ambos temas persistentes tras recarga y salto al contenido con teclado correctos.
+- Sin desbordamiento horizontal en anchos de 1440, 375 y 320 px; sin errores de ejecución capturados durante la comprobación de inicio/tema.
+- No existía ni se añadió suite automatizada de tests en esta fase de skeleton. Las verificaciones de navegador no sustituyen las futuras pruebas de negocio.
+- Diff revisado; instalación final reportó cero vulnerabilidades conocidas.
+- Sin despliegue ni cambios al backend. Auth, cliente HTTP con Fetch, cuestionario y demás funcionalidades continúan pendientes.
 
 ## Pendientes de especificación
 - `API_CONTRACT.md` define rutas, Bearer JWT y formato de error, pero no los esquemas de peticiones/respuestas exitosas, paginación ni detalles de expiración del token. Acordarlos antes de implementar servicios y auth.
@@ -46,7 +57,7 @@
 - No inferir DTOs públicos a partir del modelo de persistencia ni inventar opciones o endpoints.
 
 ## Próximo paso
-Completar la fase inicial con routing, shell responsive y base visual. Después, acordar los esquemas API de autenticación y avanzar al cliente HTTP y auth en una tarea independiente.
+Acordar los esquemas API de autenticación (registro/login, respuesta JWT, expiración y errores), luego implementar cliente HTTP centralizado con Fetch, estado de auth y rutas protegidas en una tarea independiente. Definir también las opciones del cuestionario antes de abordar onboarding.
 
 ## Continuidad
 Antes de trabajar, leer:
@@ -58,6 +69,7 @@ Antes de trabajar, leer:
 6. DATA_MODEL.md
 7. DATA_STRUCTURES.md
 8. AI_BEHAVIOR.md
-9. AGENT_RULES.md
+9. QUESTIONNAIRE.md
+10. AGENT_RULES.md
 
 Si código y documentación se contradicen, no asumir: registrar y resolver.

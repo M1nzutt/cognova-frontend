@@ -1,0 +1,14 @@
+.title { max-width: 18ch; margin: 1.2rem 0; font-size: clamp(2.25rem, 4vw, 3.7rem); letter-spacing: -.055em; line-height: 1.12; font-weight: 600; }
+.intro { max-width: 52ch; color: var(--muted); font-size: 1.05rem; line-height: 1.8; }
+.notice { display: flex; align-items: flex-start; gap: 1rem; margin: 2.5rem 0 3.5rem; padding: 1.35rem 1.5rem; background: var(--lavender); border: 1px solid var(--border); border-radius: .75rem; }
+.notice h2 { margin: 0 0 .3rem; font-size: .95rem; font-weight: 600; }
+.notice p { margin: 0; font-size: .9rem; color: var(--muted); }
+.dot { flex-shrink: 0; width: 8px; height: 8px; margin-top: .5rem; border-radius: 50%; background: var(--accent); }
+.journey > h2 { font-size: 1.15rem; font-weight: 600; letter-spacing: -.02em; }
+.journey > p { color: var(--muted); font-size: .9rem; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1.75rem; }
+.card { padding: 1.5rem; border: 1px solid var(--border); border-radius: .75rem; background: var(--surface); }
+.step { font-size: .65rem; letter-spacing: .09em; color: var(--accent); font-weight: 650; }
+.card h3 { margin: 1rem 0 .7rem; font-size: 1rem; font-weight: 600; line-height: 1.5; }
+.card p { margin: 0; color: var(--muted); font-size: .87rem; line-height: 1.8; }
+@media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }

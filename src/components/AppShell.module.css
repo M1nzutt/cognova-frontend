@@ -1,0 +1,22 @@
+.shell { display: grid; grid-template-columns: 245px minmax(0, 1fr); min-height: 100dvh; }
+.sidebar { display: flex; flex-direction: column; gap: 1.5rem; padding: 2rem 1.25rem; background: var(--surface); border-right: 1px solid var(--border); }
+.brand { display: flex; align-items: center; gap: .65rem; width: fit-content; color: var(--text); font-size: 1.4rem; font-weight: 700; text-decoration: none; letter-spacing: -.04em; }
+.mark { display: grid; place-content: center; position: relative; width: 36px; height: 36px; border: 1px solid var(--accent); border-radius: 50%; color: var(--accent); font-size: 1.6rem; font-weight: 500; }
+.mark span { position: absolute; top: -.5rem; right: -.2rem; background: var(--surface); }
+.caption { margin: 1.5rem 0 0; color: var(--muted); font-size: .65rem; font-weight: 650; letter-spacing: .14em; }
+.navLink { display: block; padding: .7rem 1rem; border-radius: .5rem; color: var(--muted); text-decoration: none; }
+.navLink[aria-current="page"] { color: var(--accent); background: var(--lavender); font-weight: 600; }
+.navLink:hover { color: var(--text); }
+.sidebarNote { margin: auto 0 0; max-width: 23ch; color: var(--muted); font-size: .8rem; line-height: 1.7; }
+.workspace { display: flex; min-width: 0; flex-direction: column; }
+.header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.2rem 2.5rem; border-bottom: 1px solid var(--border); color: var(--muted); font-size: .85rem; }
+.content { width: 100%; max-width: 1150px; margin: 0 auto; padding: 4.5rem 3rem; flex: 1; }
+.footer { padding: 1.5rem 2.5rem; color: var(--muted); font-size: .75rem; }
+@media (max-width: 760px) {
+  .shell { grid-template-columns: 1fr; }
+  .sidebar { flex-direction: row; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-right: 0; border-bottom: 1px solid var(--border); }
+  .caption, .sidebarNote { display: none; }
+  .header { padding: 1rem 1.25rem; flex-wrap: wrap; }
+  .content { padding: 2.5rem 1.25rem; }
+  .footer { padding: 1.25rem; }
+}

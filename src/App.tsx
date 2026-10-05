@@ -1,9 +1,6 @@
+import { BrowserRouter } from 'react-router-dom'
+import { AppRoutes } from './routes/AppRoutes'
+
 export function App() {
-  return (
-    <main>
-      <p>Cognova</p>
-      <h1>Tu espacio para comprender cómo estudias.</h1>
-      <p>Estamos preparando tu espacio académico.</p>
-    </main>
-  )
+  return <BrowserRouter><AppRoutes /></BrowserRouter>
 }
