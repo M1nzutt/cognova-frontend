@@ -19,10 +19,11 @@ En Windows, si PowerShell bloquea `npm.ps1`, utilizar `npm.cmd` en lugar de `npm
 ```sh
 npm run build   # TypeScript y bundle de producción en dist/
 npm run lint    # ESLint, sin advertencias permitidas
+npm test        # Vitest: contrato API, almacenamiento y comportamiento
 npm run preview
 ```
 
-Todavía no hay suite de tests. La base se valida con TypeScript, ESLint y el build. Se incorporarán pruebas de comportamiento al implementar funcionalidades.
+Las pruebas usan Vitest y Testing Library con HTTP interceptado exclusivamente en tests. La aplicación no simula respuestas de autenticación.
 
 ## Alcance inicial
 

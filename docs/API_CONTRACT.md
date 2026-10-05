@@ -5,6 +5,9 @@ Base: `/api/v1`
 ## Auth
 - POST `/auth/register`
 - POST `/auth/login`
+- GET `/auth/me`
+
+Los esquemas, códigos de error y flujos de autenticación se definen en [AUTH_CONTRACT.md](AUTH_CONTRACT.md).
 
 ## Questionnaire
 - GET `/questionnaire`

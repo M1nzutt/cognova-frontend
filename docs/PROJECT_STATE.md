@@ -1,6 +1,6 @@
 # Cognova — Estado del Proyecto
 
-**Estado:** fase inicial del frontend completada. Base React + TypeScript + Vite, routing y shell responsive listos. Backend fuera del alcance de este repositorio.
+**Estado:** autenticación frontend en desarrollo conforme a `AUTH_CONTRACT.md`. Base React + TypeScript + Vite, routing y shell responsive listos. Backend fuera del alcance de este repositorio.
 
 ## Decisiones principales
 - Frontend: React + TypeScript + Vite.
@@ -43,7 +43,7 @@
 - Segundo incremento: React Router con bienvenida y 404, componentes separados, CSS Modules, tema claro/oscuro persistente y navegación accesible básica.
 - README ampliado con instalación, comandos, estructura, alcance y requisitos del futuro hosting; arquitectura frontend documentada.
 
-## Validación de cierre
+## Validación de cierre de la fase inicial
 - Build de producción y TypeScript correctos; ESLint sin errores ni advertencias; diagnósticos del editor sin errores.
 - Comprobaciones de navegador sobre el bundle: inicio, ruta inexistente, retorno al inicio, ambos temas persistentes tras recarga y salto al contenido con teclado correctos.
 - Sin desbordamiento horizontal en anchos de 1440, 375 y 320 px; sin errores de ejecución capturados durante la comprobación de inicio/tema.
@@ -51,13 +51,21 @@
 - Diff revisado; instalación final reportó cero vulnerabilidades conocidas.
 - Sin despliegue ni cambios al backend. Auth, cliente HTTP con Fetch, cuestionario y demás funcionalidades continúan pendientes.
 
+## Autenticación — primer incremento
+- Contrato agregado en `301d85c`; leídos los esquemas de registro, login, `/auth/me`, JWT y logout local.
+- Cliente Fetch centralizado, errores tipados, DTOs públicos y `AuthService` con los tres endpoints exactos del contrato.
+- `TokenStorage` encapsula el JWT en `localStorage`; lector de `exp` para anticipar expiración (no verifica firmas).
+- `.env.example` documenta la base del backend; `API_CONTRACT.md` enlaza el contrato específico e incluye `/auth/me`.
+- Vitest + Testing Library incorporados; 9 pruebas de contrato/API/almacenamiento pasan. Build y lint correctos; diff revisado.
+- La interfaz y el estado de sesión aún no consumen estos servicios; corresponden al segundo incremento de esta tarea.
+
 ## Pendientes de especificación
-- `API_CONTRACT.md` define rutas, Bearer JWT y formato de error, pero no los esquemas de peticiones/respuestas exitosas, paginación ni detalles de expiración del token. Acordarlos antes de implementar servicios y auth.
+- Los esquemas de autenticación están resueltos por `AUTH_CONTRACT.md`. Los demás endpoints aún necesitan esquemas de peticiones/respuestas exitosas y paginación antes de implementar sus servicios.
 - `QUESTIONNAIRE.md` contiene las diez preguntas, pero faltan las opciones y el tipo de selección de cada pregunta. `APP_CONTEXT.md` indica que allí están las opciones completas; documentar y completar esta diferencia antes de implementar el formulario.
 - No inferir DTOs públicos a partir del modelo de persistencia ni inventar opciones o endpoints.
 
 ## Próximo paso
-Acordar los esquemas API de autenticación (registro/login, respuesta JWT, expiración y errores), luego implementar cliente HTTP centralizado con Fetch, estado de auth y rutas protegidas en una tarea independiente. Definir también las opciones del cuestionario antes de abordar onboarding.
+Completar formularios, estado de sesión, rutas protegidas y redirecciones de autenticación. Mantener cuestionario y dashboard como destinos provisionales sin funcionalidades.
 
 ## Continuidad
 Antes de trabajar, leer:
