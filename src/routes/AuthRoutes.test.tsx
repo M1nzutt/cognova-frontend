@@ -116,4 +116,23 @@ describe('authentication routes and forms', () => {
     expect(await screen.findByText('Has iniciado sesión correctamente.')).toBeVisible()
     expect(screen.getByTestId('location')).toHaveTextContent('/dashboard')
   })
+
+  it('shows real profile data and keeps it visible on a refresh error', async () => {
+    document.cookie = 'cognova_csrf=csrf; Path=/'
+    const fetchMock = vi.fn().mockImplementation(async (url: string) => url.endsWith('/refresh')
+      ? jsonResponse({ access_token: makeToken(), token_type: 'bearer' }) : jsonResponse(user))
+    vi.stubGlobal('fetch', fetchMock)
+    mount('/dashboard')
+    expect(await screen.findByText(user.email)).toBeVisible()
+    expect(screen.getByText(user.degree_program)).toBeVisible()
+    expect(screen.getByText(user.academic_goal)).toBeVisible()
+    fetchMock.mockResolvedValueOnce(jsonResponse({ error: { code: 'HTTP_ERROR' } }, 503))
+    await userEvent.click(screen.getByRole('button', { name: 'Actualizar perfil' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('El servidor no está disponible')
+    expect(screen.getByText(user.email)).toBeVisible()
+    fetchMock.mockResolvedValueOnce(jsonResponse({ ...user, academic_goal: 'Organizar mejor mi semana' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Actualizar perfil' }))
+    expect(await screen.findByText('Organizar mejor mi semana')).toBeVisible()
+    expect(screen.getByRole('status')).toHaveTextContent('Tu perfil está actualizado.')
+  })
 })

@@ -95,7 +95,7 @@ Name=cognova_csrf
 HttpOnly=false
 Secure=true          # producción
 SameSite=Lax
-Path=/api/v1/auth
+Path=/
 ```
 
 El frontend lee esta cookie y la refleja en:
@@ -111,6 +111,8 @@ El backend valida:
 4. hash asociado a la sesión cuando corresponda.
 
 El token CSRF no es una credencial de autenticación.
+
+Decisión confirmada para el avance desplegable: CSRF usa `Path=/` para que las rutas SPA puedan leerla; refresh conserva `HttpOnly; Path=/api/v1/auth`. Al eliminar cookies se deben usar sus respectivos paths. El backend debe retirar la cookie CSRF antigua con path `/api/v1/auth` durante la migración para evitar cookies duplicadas.
 
 ---
 
@@ -426,6 +428,10 @@ Los endpoints de IA también tendrán límites propios.
 ---
 
 ## 13. CORS y cookies
+
+Topología confirmada: frontend Netlify y backend Render con Render Postgres. El navegador llama únicamente a `/api/v1` del origen Netlify; un rewrite `/api/*` conserva ese prefijo hacia Render. Las cookies se establecen sin atributo `Domain` (host-only del origen público), nunca con dominio `onrender.com`. Se mantienen `Secure` y `SameSite=Lax`; no se requiere `SameSite=None` con este proxy de mismo origen.
+
+Todas las respuestas de auth, incluidas `/auth/me` y errores, deben incluir `Cache-Control: no-store` para impedir que el proxy/CDN almacene datos de sesión. El backend mantiene ownership, validación CSRF y una allowlist explícita del origen público. Esta copia del contrato debe sincronizarse en el repositorio backend antes del smoke real.
 
 Producción:
 - lista explícita de orígenes permitidos;

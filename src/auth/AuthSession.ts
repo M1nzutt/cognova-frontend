@@ -54,7 +54,9 @@ export class AuthSession {
     return this.restorePending
   }
   private async restoreSession(): Promise<void> {
-    const revision = this.revision
+    if (this.snapshot.loggingOut || this.snapshot.logoutFailed) return
+    const revision = ++this.revision
+    this.token = null
     this.update({ status: 'loading', user: null, message: null })
     try {
       clearLegacyAuth()
@@ -90,6 +92,12 @@ export class AuthSession {
   }
   register(details: RegisterRequest, signal: AbortSignal): Promise<void> {
     return this.authenticate(() => this.service.register(details), signal, '/questionnaire')
+  }
+  async reloadProfile(signal?: AbortSignal): Promise<void> {
+    if (this.snapshot.status !== 'authenticated') throw new ApiError(expiredMessage, 401)
+    const revision = this.revision
+    const user = await this.service.me(signal)
+    if (revision === this.revision) this.update({ user })
   }
   private async authenticate(request: () => Promise<AuthResponse>, signal: AbortSignal, destination: AuthSnapshot['destination']): Promise<void> {
     if (this.snapshot.loggingOut || this.snapshot.logoutFailed) throw new ApiError('Completa el cierre de sesión antes de volver a ingresar.')
