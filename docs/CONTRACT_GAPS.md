@@ -2,15 +2,11 @@
 
 Fecha: 2026-10-05. Este registro describe bloqueos; no define DTOs ni decisiones de producto nuevas. Solo se modifica cognova-frontend.
 
-## Auth: CSRF no visible en las rutas SPA
+## Auth: decisión resuelta, verificación pendiente
 
-El contrato vigente usa `cognova_csrf; Path=/api/v1/auth`. El navegador limita `document.cookie` al path del documento: `/login`, `/register`, `/dashboard` y `/` no pueden leerla, aunque una petición a `/api/v1/auth/refresh` sí transporte la cookie automáticamente. El frontend no puede construir el header obligatorio.
+El usuario confirmó CSRF Path=/ y refresh HttpOnly Path=/api/v1/auth. AUTH_CONTRACT ya refleja la decisión. Netlify sirve la SPA y reenvía /api/* a Render; cookies host-only, Secure/Lax. Backend debe sincronizar paths, eliminar la antigua cookie CSRF y enviar no-store en auth. No se reescriben cookies para ocultar diferencias.
 
-Verificado en navegador real desde `/login` con una cookie de prueba no sensible y ese path: no es visible; la cookie de prueba se eliminó después.
-
-Propuesta pendiente de decisión: CSRF legible con `Path=/`, refresh sigue `HttpOnly; Path=/api/v1/auth`, ambos Secure en producción, mismo origen público mediante gateway. No se ha cambiado AUTH_CONTRACT ni se reescriben cookies en un proxy para esconder una diferencia con backend. Eliminar la cookie CSRF debe usar el mismo path con el que se creó.
-
-También debe fijarse la topología de dominios: una cookie host-only de otro hostname no es legible por JavaScript del frontend. SameSite no equivale a mismo origen. Una vez acordado, sincronizar contrato/backend y ejecutar integración real.
+La integración real sigue pendiente de URLs y backend disponible. Consultar [DEPLOYMENT](DEPLOYMENT.md).
 
 ## Matriz de especificaciones pendientes
 
@@ -40,4 +36,4 @@ Se revisó el historial disponible de QUESTIONNAIRE: las versiones del repositor
 
 ## Integración y despliegue
 
-Faltan URL/entorno de integración, topología pública y proveedor de hosting. No se han creado recursos remotos, desplegado placeholders ni presentado pruebas interceptadas como E2E real. La aplicación sigue incompleta.
+Proveedores confirmados: Netlify, Render y Render Postgres. Faltan URLs/entorno y comprobación real. No se han creado recursos remotos ni presentado pruebas interceptadas como E2E. Los gaps académicos quedan fuera del avance temporal auth/dashboard.

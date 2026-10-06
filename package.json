@@ -12,7 +12,10 @@
     "lint": "eslint . --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "verify": "npm run lint && npm test && npm run build",
+    "build:netlify": "node --experimental-strip-types scripts/prepareNetlify.ts --check && npm run verify && node --experimental-strip-types scripts/prepareNetlify.ts",
+    "smoke:auth": "node --experimental-strip-types scripts/smokeAuth.ts"
   },
   "dependencies": {
     "react": "^19.3.0",

@@ -63,7 +63,7 @@ Evitar componentes gigantes y lógica de red duplicada.
 
 `ApiClient` delega refresh a la misma sesión. Las peticiones concurrentes comparten una promesa; solo se reintenta una vez. Las mutaciones de cookies se serializan con una cola y Web Locks entre pestañas cuando está disponible. Un fallo de logout elimina memoria y se informa con opción de reintentar la revocación.
 
-Pendiente contractual: el Path actual de la cookie CSRF impide leerla desde las rutas SPA. Debe resolverse explícitamente en ambos repos antes de validar producción; no hay proxy que reescriba cookies ni fallback que omita CSRF.
+Decisión confirmada: CSRF Path=/ y refresh HttpOnly Path=/api/v1/auth. Netlify publica la SPA y reenvía /api/* a Render, con cookies host-only. El backend debe sincronizar el contrato antes de validar integración real. No se reescriben cookies ni se omite CSRF.
 
 LocalStorage queda permitido para preferencias no sensibles, por ejemplo tema visual.
 
@@ -137,3 +137,5 @@ Producción debe:
 - configurar fallback de BrowserRouter;
 - inyectar URL de API por entorno;
 - aplicar CSP/security headers desde hosting/CDN cuando sea posible.
+
+El build Netlify genera redirects desde RENDER_API_ORIGIN, antes del fallback SPA. Vite usa proxy local. CSP y cabeceras estáticas están configuradas; no-store en respuestas auth corresponde al backend. Ver [DEPLOYMENT](DEPLOYMENT.md).

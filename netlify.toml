@@ -1,0 +1,23 @@
+[build]
+  command = "npm run build:netlify"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24"
+  VITE_API_BASE_URL = "/api/v1"
+
+# RENDER_API_ORIGIN is set in Netlify's build environment, never interpolated here.
+# The build generates dist/_redirects: API proxy first, SPA fallback last.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Cache-Control = "no-cache"
+
+# Netlify headers apply to static files, not proxied API responses.
+# Render must return Cache-Control: no-store for all auth responses.

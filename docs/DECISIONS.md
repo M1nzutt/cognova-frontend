@@ -91,3 +91,11 @@ Solo mediante:
 2. impacto documentado;
 3. actualización de contratos/docs;
 4. migración de código y pruebas.
+
+## Avance temporal de despliegue — 2026-10-05
+
+- Alcance: auth y dashboard provisional de perfil, sin módulos académicos.
+- Netlify frontend, Render backend y Render Postgres.
+- API de mismo origen mediante proxy /api/*; access solo en memoria.
+- CSRF Path=/; refresh HttpOnly Path=/api/v1/auth; cookies Secure/Lax host-only.
+- Sincronizar backend y validar integración antes de declarar el avance desplegado.

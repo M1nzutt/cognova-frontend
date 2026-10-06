@@ -203,9 +203,9 @@ No compartir:
 - Los mensajes de servidor se transforman en mensajes públicos controlados; no se muestran stacks ni HTML del backend. No se usa dangerouslySetInnerHTML.
 - Tests de servicios, restore, formularios, rutas, concurrencia, logout/retry y fallos. Son pruebas con HTTP interceptado, no prueba de revocación/rotación real en backend.
 - Auditoría npm ejecutada: 0 vulnerabilidades reportadas. No sustituye revisión de secretos/CI ni seguridad del backend.
-- Bloqueo: path de cookie CSRF y topología de origen pendientes de sincronizar; consultar [CONTRACT_GAPS.md](CONTRACT_GAPS.md). Auth de producción aún no certificada.
+- Decisión confirmada: CSRF Path=/, refresh HttpOnly Path=/api/v1/auth, Netlify proxy hacia Render. Falta sincronizar backend y validar cookies/rotación/revocación reales; auth de producción aún no certificada.
 
-### Política propuesta de hosting (pendiente de aplicar y verificar)
+### Política configurada de hosting (pendiente de verificar desplegada)
 
 Para bundle estático servido en el mismo origen que `/api/v1`, configurar desde hosting/gateway:
 
@@ -216,4 +216,4 @@ Referrer-Policy: strict-origin-when-cross-origin
 Permissions-Policy: camera=(), microphone=(), geolocation=()
 ```
 
-Aplicar HSTS únicamente en el dominio HTTPS confirmado, evaluando subdominios antes de includeSubDomains/preload. Si la API queda en otro origen, allowlist exacta en connect-src y CORS; primero resolver cómo se comparte CSRF. No agregar unsafe-inline/unsafe-eval para ocultar errores. Estas cabeceras son propuesta documentada: no están aplicadas a un hosting real y deben verificarse sobre el bundle desplegado, no sobre HMR.
+Aplicar HSTS únicamente en el dominio HTTPS confirmado, evaluando subdominios antes de includeSubDomains/preload. Si la API queda en otro origen, allowlist exacta en connect-src y CORS; primero resolver cómo se comparte CSRF. No agregar unsafe-inline/unsafe-eval para ocultar errores. Estas cabeceras están configuradas en netlify.toml y deben verificarse sobre el bundle desplegado, no sobre HMR. Las respuestas API proxied requieren Cache-Control: no-store desde backend; las reglas de cabeceras estáticas no las cubren. Ver [DEPLOYMENT](DEPLOYMENT.md).
