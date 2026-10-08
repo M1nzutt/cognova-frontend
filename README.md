@@ -1,4 +1,4 @@
-# Cognova · Frontend
+#  Cognova · Frontend
 
 React, TypeScript, Vite y React Router. Interfaz en español, responsive, con tema claro/oscuro.
 
