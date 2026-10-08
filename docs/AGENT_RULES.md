@@ -12,6 +12,24 @@
 
 Nunca asumir que una tarea interrumpida quedó terminada.
 
+## Repositorios y no interferencia
+
+Cognova tiene tres repositorios independientes: cognova-frontend, cognova-backend y cognova-database. Este agente trabaja exclusivamente en cognova-frontend. Frontend solo consume REST del backend; no se conecta a database ni a PostgreSQL.
+
+Alembic, migraciones, esquema físico, constraints, índices, seeds de DB y administración del schema pertenecen a cognova-database. No crearlos ni moverlos desde frontend. No modificar archivos de backend o database.
+
+Si un cambio requiere trabajo externo, registrarlo y dejar su implementación al repositorio responsable:
+
+```text
+DEPENDENCY:
+- repo afectado;
+- archivo/contrato relacionado;
+- cambio requerido;
+- motivo.
+```
+
+Durante la reconciliación arquitectónica se preservan auth, configuración de deploy y funcionalidades existentes. `academic_goal` y el formulario definitivo del cuestionario quedan pendientes de una fase posterior.
+
 ## Fuente de verdad
 
 Los documentos compartidos definen el producto y los contratos.
@@ -72,7 +90,7 @@ No usar “es solo un proyecto académico” para justificar:
 
 Antes de implementar una funcionalidad cuyo request/response no esté definido:
 1. completar el contrato;
-2. actualizar ambos repos cuando sea compartido;
+2. sincronizar los repositorios afectados cuando sea compartido, registrando DEPENDENCY para cambios fuera del repositorio asignado;
 3. luego implementar.
 
 No inferir DTO público directamente desde tablas.

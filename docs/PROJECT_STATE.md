@@ -1,38 +1,48 @@
 # Cognova — Estado del Proyecto (Frontend)
 
-Fecha: 2026-10-05.
+Fecha: 2026-10-08.
 
-## Alcance temporal confirmado
-Preparar un avance desplegable de autenticación y dashboard provisional. No desarrollar cuestionario, materias, calendario, IA ni otros módulos en esta fase.
+## Fase actual: reconciliación de arquitectura
 
-## Estado real
-- Repositorio inicial limpio; se conservaron los avances `33d6961` y `7e12cb0`.
-- CSRF Path=/ confirmado y actualizado en AUTH_CONTRACT. Refresh sigue HttpOnly Path=/api/v1/auth; access token solo en memoria.
-- Topología confirmada: navegador → Netlify /api/* → Render; PostgreSQL en Render, gestionado exclusivamente por backend.
-- Frontend implementado: registro, login, restore, refresh coordinado, retry único, logout real con error/reintento, rutas protegidas/guest y mensajes seguros.
-- Se corrigió restore para descartar tokens de memoria anteriores y no restaurar mientras logout no esté resuelto.
-- Dashboard provisional presentable: perfil/objetivo reales, consulta de /auth/me para actualizar, estados loading/success/error y aviso claro de alcance. No inventa estadísticas.
-- Registro conserva destino /questionnaire del contrato, con enlace hacia el dashboard provisional; no se implementó cuestionario.
+Cognova adopta tres repositorios independientes: cognova-frontend, cognova-backend y cognova-database. Esta fase solo actualiza documentación del frontend; no realiza la separación técnica de PostgreSQL ni desarrolla funcionalidades.
 
-## Validación actual
-- 42 pruebas frontend de auth/rutas/validación pasan; 12 pruebas adicionales de generación de configuración Netlify pasan (54 en total).
-- Build, TypeScript y lint correctos; diff revisado.
-- build:netlify rechaza correctamente el entorno sin RENDER_API_ORIGIN; falta ejecutar el pipeline con el destino real. Smoke HTTP no ejecutado por falta de sitio/cuenta.
-- No se verificó todavía contra backend real: no responde http://127.0.0.1:8000 y aún no se proporcionó origen Render/Netlify.
-- No desplegado. La conexión de producción no se declara probada con mocks.
+- Frontend consume exclusivamente REST del backend. El backend accede a PostgreSQL en ejecución.
+- cognova-database es propietario de Alembic, migraciones, esquema físico, constraints, índices, seeds de DB y administración del schema. No es una dependencia ni un destino HTTP del frontend.
+- No se inspeccionaron ni modificaron archivos fuera de cognova-frontend.
 
-## Preparación de deploy completada en el repositorio
-- Configuración Netlify y generación de redirects desde RENDER_API_ORIGIN, con /api/* antes del fallback SPA.
-- Base pública /api/v1; proxy Vite para desarrollo.
-- CSP y cabeceras estáticas; API debe emitir Cache-Control: no-store desde Render.
-- Smoke HTTP real preparado; requiere sitio HTTPS y cuenta de prueba.
+## Estado reconciliado
 
-## Siguiente paso exacto
-1. Publicar los commits locales e importar el repositorio en Netlify según DEPLOYMENT.md. El commit c8c3e19 estabiliza auth/dashboard; la configuración y guía se entregan en el commit posterior.
-2. Configurar en Netlify RENDER_API_ORIGIN con el origen HTTPS real de Render, sin /api/v1.
-3. Sincronizar en backend CSRF Path=/, refresh HttpOnly, cookies host-only sin Domain, Secure/Lax, borrado con paths correctos y no-store en auth. Este agente no modificó backend.
-4. Desplegar el avance y ejecutar smoke HTTP real + recorrido de navegador (registro/login/recarga/logout/ruta protegida). Registrar resultados.
-5. Mantener módulos académicos fuera de alcance hasta nueva instrucción.
+Git comenzó limpio y sincronizado con origin/main en af82bc9. Se conservaron los commits 33d6961, 7e12cb0, c8c3e19 y af82bc9.
 
-## Pendientes fuera del avance
-Opciones/cardinalidad del cuestionario y DTOs académicos siguen pendientes, registrados en CONTRACT_GAPS. No bloquean preparar el avance auth/dashboard autorizado. El producto completo permanece incompleto.
+El código mantiene registro, login, AuthSession/AuthProvider, restore, refresh coordinado, retry único, logout real con error/reintento, guest/protected routes, dashboard provisional y smoke auth. No se modificó código, dependencias, tests ni configuración de despliegue.
+
+Auth permanece intacta: access JWT solo en memoria; refresh HttpOnly Path=/api/v1/auth; CSRF Path=/; credentials include; ningún token o perfil en Web Storage. AUTH_CONTRACT.md no cambió. API_CONTRACT.md solo cambia la instrucción de sincronización hacia los repositorios afectados, sin modificar endpoints ni DTOs.
+
+## Despliegue existente
+
+Confirmado por el usuario, no recreado ni revalidado funcionalmente en esta fase:
+
+- Frontend: https://cognova-frontend.netlify.app
+- Backend: https://cognova-backend-1psi.onrender.com
+- Netlify: RENDER_API_ORIGIN=https://cognova-backend-1psi.onrender.com
+- Navegador → Netlify /api/* → Render backend → Render Postgres.
+
+La documentación anterior que indicaba ausencia de URLs o despliegue quedó corregida. Las comprobaciones de cookies, revocación y flujos reales requieren evidencia propia; esta fase no ejecutó smoke auth ni creó usuarios.
+
+## Evidencia de validación
+
+- Revisión de archivos versionados, cliente HTTP, proveedor/sesión auth, servicios, dependencias/lockfile y configuración: sin drivers DB, migraciones, schema SQL, DATABASE_URL ni dependencia de cognova-database en frontend.
+- npm run build:netlify ejecutado localmente con el origen Render confirmado: lint sin advertencias, 54 tests aprobados, TypeScript y build correctos.
+- dist/_redirects generado conserva /api y /api/* hacia Render antes del fallback SPA. No se publicó ningún artefacto.
+- Revisión de diff: cambios exclusivamente documentales. Contrato auth, código y configuración de deploy preservados.
+
+## Documentación actualizada
+
+ARCHITECTURE, DECISIONS, AGENT_RULES, DEPLOYMENT y CONTRACT_GAPS reconocen responsabilidades y no interferencia entre tres repositorios. README refleja el despliegue existente; API_CONTRACT generaliza la sincronización; DATA_MODEL y SECURITY_BASELINE atribuyen administración del schema a database; APP_CONTEXT aclara que faltan opciones/cardinalidad del cuestionario.
+
+## Pendientes y siguiente paso exacto
+
+1. Los responsables de backend/database coordinan la separación técnica y sincronizan la documentación de los repositorios afectados. Las dependencias externas se registran con formato DEPENDENCY en [CONTRACT_GAPS](CONTRACT_GAPS.md); no se implementan aquí.
+2. Preservar academic_goal en registro/perfil hasta acordar el refactor posterior a la separación. Conceptualmente pertenece al cuestionario, pero el contrato actual sigue vigente.
+3. Completar las opciones y cardinalidad de las 10 preguntas antes de implementar el formulario definitivo; no inventarlas.
+4. Esperar una nueva fase explícita para funcionalidades o validación funcional del despliegue. No avanzar a cuestionario, materias, calendario, IA ni otros módulos.

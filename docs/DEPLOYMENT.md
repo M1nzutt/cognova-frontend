@@ -2,9 +2,17 @@
 
 ## Estado
 
-Configuración preparada, no desplegada ni verificada contra backend real. Hace falta el origen HTTPS de Render. No modificar backend desde este repositorio.
+Despliegue existente confirmado por el usuario el 2026-10-08:
+
+- Frontend: https://cognova-frontend.netlify.app
+- Backend: https://cognova-backend-1psi.onrender.com
+- Netlify: `RENDER_API_ORIGIN=https://cognova-backend-1psi.onrender.com`.
+
+No recrear el despliegue. Esta reconciliación documental no ejecuta un nuevo smoke de auth ni certifica funcionamiento integral. No modificar backend ni database desde este repositorio.
 
 El navegador consume `/api/v1` del mismo origen Netlify. Netlify reenvía `/api/*` hacia Render conservando la ruta; Render accede a Render Postgres. Las credenciales de PostgreSQL nunca pertenecen al frontend.
+
+Hay tres repositorios independientes: cognova-frontend publica la SPA; cognova-backend publica la API; cognova-database administra Alembic, migraciones, esquema físico, constraints, índices y seeds de DB. Database no es un servicio HTTP para el frontend. El cambio de propiedad del schema no modifica el proxy, las cookies ni los DTOs.
 
 ## Preparación del backend
 
@@ -16,9 +24,11 @@ El responsable del backend debe sincronizar [AUTH_CONTRACT](AUTH_CONTRACT.md):
 - Refresh y logout validan cookie/header CSRF; rotación y revocación reales.
 - Todas las respuestas auth, incluidos errores, emiten `Cache-Control: no-store`. Las cabeceras estáticas de Netlify no se aplican a respuestas proxied.
 - Permitir el origen HTTPS exacto del frontend en las comprobaciones de origen/CORS correspondientes, credenciales y headers Authorization, Content-Type y X-CSRF-Token. No usar wildcard con credenciales.
-- Configurar PostgreSQL, migraciones, secretos, HTTPS y disponibilidad desde el proyecto backend.
+- Backend conserva configuración de conexión a PostgreSQL, secretos de aplicación, HTTPS y disponibilidad. La administración del schema y sus migraciones pertenece a cognova-database; coordinarla entre los repositorios afectados, nunca desde frontend.
 
-## Configuración de Netlify
+## Configuración de Netlify (referencia para mantenimiento)
+
+El sitio ya está importado y desplegado. Los pasos siguientes documentan la configuración; no indican repetir el despliegue en esta fase.
 
 1. Publicar los commits en el remoto e importar cognova-frontend en Netlify.
 2. Usar raíz del repositorio; [netlify.toml](../netlify.toml) define build `npm run build:netlify`, publicación `dist` y Node 24.

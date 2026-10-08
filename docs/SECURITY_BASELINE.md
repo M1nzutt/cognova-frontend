@@ -81,7 +81,7 @@ Responder `429` de forma consistente.
 ## 9. Base de datos
 
 - PostgreSQL.
-- Alembic para migraciones.
+- Alembic para migraciones, administrado en cognova-database junto con esquema físico, constraints, índices y seeds de DB. El frontend no depende de ese repositorio; en ejecución solo consume la API del backend.
 - Índices y constraints.
 - Usuario DB con mínimo privilegio.
 - Backups automáticos en producción.

@@ -177,7 +177,7 @@ Un reto aceptado no se edita.
 
 ## Profile
 
-Si se necesita edición de perfil, el agente debe documentar primero el contrato exacto y sincronizar ambos repos antes de implementarlo.
+Si se necesita edición de perfil, el agente debe documentar primero el contrato exacto y sincronizar los repositorios afectados antes de implementarlo.
 
 ## DTOs y paginación
 
@@ -188,7 +188,7 @@ Antes de implementar cualquier endpoint que todavía no tenga request/response e
 2. definir status codes;
 3. definir errores;
 4. definir paginación/filtros si aplica;
-5. actualizar este contrato en ambos repos;
+5. actualizar este contrato en los repositorios afectados;
 6. implementar backend;
 7. consumir desde frontend.
 

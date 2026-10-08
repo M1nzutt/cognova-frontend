@@ -196,7 +196,7 @@ El cuestionario tiene 10 preguntas obligatorias:
 9. Reacción habitual cuando una sesión no sale como esperaba.
 10. Qué espera comprender o mejorar usando Cognova.
 
-Las preguntas completas y sus opciones viven en `QUESTIONNAIRE.md`.
+Las 10 preguntas viven en `QUESTIONNAIRE.md`; las opciones completas y la cardinalidad exacta aún están pendientes. No inventarlas ni implementar el formulario definitivo hasta completar esa especificación.
 
 ---
 

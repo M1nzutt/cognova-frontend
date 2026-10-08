@@ -1,12 +1,12 @@
 # Contratos pendientes — frontend
 
-Fecha: 2026-10-05. Este registro describe bloqueos; no define DTOs ni decisiones de producto nuevas. Solo se modifica cognova-frontend.
+Fecha: 2026-10-08. Este registro describe pendientes; no define DTOs nuevos. Solo se modifica cognova-frontend.
 
 ## Auth: decisión resuelta, verificación pendiente
 
 El usuario confirmó CSRF Path=/ y refresh HttpOnly Path=/api/v1/auth. AUTH_CONTRACT ya refleja la decisión. Netlify sirve la SPA y reenvía /api/* a Render; cookies host-only, Secure/Lax. Backend debe sincronizar paths, eliminar la antigua cookie CSRF y enviar no-store en auth. No se reescriben cookies para ocultar diferencias.
 
-La integración real sigue pendiente de URLs y backend disponible. Consultar [DEPLOYMENT](DEPLOYMENT.md).
+Las URLs y el despliegue existente están confirmados por el usuario en [DEPLOYMENT](DEPLOYMENT.md). Esta fase no revalida los flujos reales ni presupone fallos en backend; las condiciones anteriores siguen siendo requisitos contractuales.
 
 ## Matriz de especificaciones pendientes
 
@@ -30,10 +30,24 @@ Se revisó el historial disponible de QUESTIONNAIRE: las versiones del repositor
 
 1. Responsable de producto aporta opciones/cardinalidad aprobadas del cuestionario.
 2. Frontend/backend acuerdan cada DTO público y errores, sin inferirlos del modelo persistente.
-3. Sincronizar contratos en ambos repos; este agente no modifica el backend.
+3. Sincronizar contratos en los repositorios afectados; este agente no modifica backend ni database.
 4. Backend implementa/expone lo acordado; validar respuestas reales.
 5. Implementar cada módulo frontend con tests y sus estados loading/success/empty/error.
 
 ## Integración y despliegue
 
-Proveedores confirmados: Netlify, Render y Render Postgres. Faltan URLs/entorno y comprobación real. No se han creado recursos remotos ni presentado pruebas interceptadas como E2E. Los gaps académicos quedan fuera del avance temporal auth/dashboard.
+Despliegue existente: Netlify frontend y Render backend, con Render Postgres. Tres repositorios independientes: frontend, backend y database. Frontend solo consume REST del backend. Esta fase conserva la configuración y no realiza nuevos despliegues ni E2E de auth. Los gaps académicos siguen fuera de alcance.
+
+## Dependencias externas documentadas
+
+DEPENDENCY:
+- Repo afectado: cognova-backend y cognova-database.
+- Archivo/contrato relacionado: ARCHITECTURE.md, DECISIONS.md, DATA_MODEL.md y documentación de despliegue de los repositorios afectados.
+- Cambio requerido: reflejar la propiedad de Alembic, migraciones, esquema físico, constraints, índices y seeds de DB en cognova-database y coordinar la separación técnica fuera de frontend.
+- Motivo: mantener coherencia entre tres repositorios sin introducir una dependencia frontend → database. No se inspeccionaron ni modificaron los repositorios externos.
+
+DEPENDENCY:
+- Repo afectado: cognova-frontend y cognova-backend; cognova-database si el refactor posterior afecta persistencia.
+- Archivo/contrato relacionado: AUTH_CONTRACT.md, QUESTIONNAIRE.md y DATA_MODEL.md.
+- Cambio requerido: después de terminar la separación, acordar el traslado conceptual de academic_goal desde registro/perfil al cuestionario y completar opciones/cardinalidad. No cambiar el contrato vigente ahora.
+- Motivo: academic_goal sigue siendo requerido por auth, aunque conceptualmente pertenece al cuestionario; faltan decisiones antes de modificar DTOs o datos.

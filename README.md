@@ -43,10 +43,12 @@ npm run smoke:auth
 
 El smoke requiere un sitio HTTPS y las variables `SMOKE_BASE_URL`, `SMOKE_EMAIL`, `SMOKE_PASSWORD` de una cuenta de prueba existente. No guardar credenciales en Git ni usar variables VITE para secretos. El smoke HTTP no sustituye el recorrido en navegador.
 
-No se ha verificado integración real ni realizado despliegue en esta sesión: faltan las URLs de Render/Netlify. El backend debe sincronizar los paths confirmados y emitir `Cache-Control: no-store` en auth, incluidos errores.
+Despliegue existente confirmado por el usuario el 2026-10-08: [frontend Netlify](https://cognova-frontend.netlify.app) y [backend Render](https://cognova-backend-1psi.onrender.com). Netlify usa `RENDER_API_ORIGIN=https://cognova-backend-1psi.onrender.com`. Esta fase documental no rehace el despliegue ni revalida auth en producción.
 
 ## Continuidad
 
 Código separado en [api](src/api), [auth](src/auth), [services](src/services), [hooks](src/hooks), [components](src/components), [pages](src/pages) y [routes](src/routes). CSS Modules y tokens compartidos. El frontend no accede a PostgreSQL ni al proveedor de IA.
+
+Cognova tiene tres repositorios independientes: cognova-frontend, cognova-backend y cognova-database. Frontend solo consume la API del backend. Database es propietario de Alembic, migraciones, esquema físico, constraints, índices, seeds de DB y administración del schema; no es una dependencia del frontend.
 
 Leer [PROJECT_STATE](docs/PROJECT_STATE.md), [ARCHITECTURE](docs/ARCHITECTURE.md), [SECURITY_BASELINE](docs/SECURITY_BASELINE.md) y [AGENT_RULES](docs/AGENT_RULES.md) antes de continuar. Los [contratos académicos pendientes](docs/CONTRACT_GAPS.md) están fuera del avance temporal autorizado.

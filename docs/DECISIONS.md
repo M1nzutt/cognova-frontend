@@ -16,8 +16,9 @@
 - Frontend: React + TypeScript + Vite.
 - DB: PostgreSQL.
 - API REST.
-- Dos repositorios separados; no monolito.
-- Backend es el único que accede a PostgreSQL y al proveedor de IA.
+- Tres repositorios independientes: cognova-frontend, cognova-backend y cognova-database. Esta decisión del 2026-10-08 sustituye la anterior de dos repositorios.
+- En ejecución, frontend consume únicamente la API del backend; backend accede a PostgreSQL y al proveedor de IA.
+- cognova-database es propietario de Alembic, migraciones, esquema físico, constraints, índices, seeds de DB y administración del schema. No existe conexión frontend → database.
 
 ## Código
 
@@ -78,7 +79,7 @@ Reemplaza el diseño anterior de JWT persistido.
 
 ## Persistencia y despliegue
 
-- Alembic administra esquema.
+- Alembic administra el esquema desde cognova-database; su separación técnica no corresponde al frontend.
 - No `create_all` automático en producción.
 - Entornos dev/test/prod separados.
 - Backups y procedimiento de restauración antes de declarar producción estable.
@@ -98,4 +99,8 @@ Solo mediante:
 - Netlify frontend, Render backend y Render Postgres.
 - API de mismo origen mediante proxy /api/*; access solo en memoria.
 - CSRF Path=/; refresh HttpOnly Path=/api/v1/auth; cookies Secure/Lax host-only.
-- Sincronizar backend y validar integración antes de declarar el avance desplegado.
+- Despliegue existente confirmado por el usuario el 2026-10-08; URLs y alcance de verificación en [DEPLOYMENT](DEPLOYMENT.md). La existencia del despliegue no certifica por sí sola todos los flujos de auth.
+
+## Pendiente posterior a la separación
+
+`academic_goal` permanece en registro/perfil por el contrato vigente, aunque conceptualmente pertenece al cuestionario. No cambiar campos, validaciones ni DTOs hasta acordar el refactor en los repositorios afectados después de la separación. Las opciones y cardinalidad del cuestionario siguen pendientes.

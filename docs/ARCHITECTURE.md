@@ -5,8 +5,18 @@ Usuario
   ↓
 React + TypeScript + Vite
   ↓ HTTPS / JSON
-FastAPI
+FastAPI (cognova-backend)
+  ↓
+PostgreSQL
 ```
+
+## Tres repositorios independientes — decisión 2026-10-08
+
+- `cognova-frontend`: interfaz, cliente REST y configuración de publicación frontend.
+- `cognova-backend`: API, autenticación, autorización y lógica de aplicación; accede a PostgreSQL en ejecución.
+- `cognova-database`: propietario de Alembic, migraciones, esquema físico, constraints, índices, seeds de DB y administración del schema.
+
+El repositorio database administra la persistencia; no es una API ni un destino del navegador. El frontend solo habla con backend mediante REST y no importa código, dependencias ni artefactos de database. La separación técnica se realiza fuera de este repositorio y no cambia los contratos públicos de auth.
 
 ## Límites
 

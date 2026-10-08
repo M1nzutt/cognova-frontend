@@ -1,6 +1,6 @@
 # Cognova — Modelo de Datos
 
-Este documento describe el modelo conceptual. Los detalles exactos de tipos, índices, constraints y cascadas deben reflejarse en Alembic.
+Este documento describe el modelo conceptual. Los detalles exactos de tipos, índices, constraints y cascadas deben reflejarse en Alembic, propiedad de cognova-database junto con las migraciones, esquema físico y seeds de DB. Esta copia documental no introduce acceso a DB ni administración de schema desde frontend.
 
 ## Identidad y autenticación
 
