@@ -1,48 +1,35 @@
 # Cognova — Estado del Proyecto (Frontend)
 
-Fecha: 2026-10-08.
+Fecha: 2026-10-12.
 
-## Fase actual: reconciliación de arquitectura
+## Fase actual
 
-Cognova adopta tres repositorios independientes: cognova-frontend, cognova-backend y cognova-database. Esta fase solo actualiza documentación del frontend; no realiza la separación técnica de PostgreSQL ni desarrolla funcionalidades.
+Validación real frontend → backend a través de Netlify. La separación en cognova-frontend, cognova-backend y cognova-database ya terminó según confirmación del usuario. Backend operativo; no se reabre el incidente de URL ni se modifican otros repositorios.
 
-- Frontend consume exclusivamente REST del backend. El backend accede a PostgreSQL en ejecución.
-- cognova-database es propietario de Alembic, migraciones, esquema físico, constraints, índices, seeds de DB y administración del schema. No es una dependencia ni un destino HTTP del frontend.
-- No se inspeccionaron ni modificaron archivos fuera de cognova-frontend.
+## Git y alcance
 
-## Estado reconciliado
+Rama fix/netlify-backend-origin. Inicio local limpio en 3c3c7d3 (14 commits). Al inspeccionar Netlify se detectó producción en 53e7001; se hizo fetch e incorporó ese cambio de README por fast-forward en esta rama (15 commits de base), sin modificar main.
 
-Git comenzó limpio y sincronizado con origin/main en af82bc9. Se conservaron los commits 33d6961, 7e12cb0, c8c3e19 y af82bc9.
+Auth existente preservada: access solo memoria, refresh HttpOnly Path=/api/v1/auth, CSRF Path=/, credentials include, refresh coordinado, retry único, restore, logout y rutas protegidas. academic_goal sigue en registro/perfil; no se implementan módulos académicos.
 
-El código mantiene registro, login, AuthSession/AuthProvider, restore, refresh coordinado, retry único, logout real con error/reintento, guest/protected routes, dashboard provisional y smoke auth. No se modificó código, dependencias, tests ni configuración de despliegue.
-
-Auth permanece intacta: access JWT solo en memoria; refresh HttpOnly Path=/api/v1/auth; CSRF Path=/; credentials include; ningún token o perfil en Web Storage. AUTH_CONTRACT.md no cambió. API_CONTRACT.md solo cambia la instrucción de sincronización hacia los repositorios afectados, sin modificar endpoints ni DTOs.
-
-## Despliegue existente
-
-Confirmado por el usuario, no recreado ni revalidado funcionalmente en esta fase:
+## Proxy
 
 - Frontend: https://cognova-frontend.netlify.app
-- Backend: https://cognova-backend-1psi.onrender.com
-- Netlify: RENDER_API_ORIGIN=https://cognova-backend-1psi.onrender.com
-- Navegador → Netlify /api/* → Render backend → Render Postgres.
+- Backend correcto: https://cognova-backend-lpsi.onrender.com (letra l).
+- La UI Netlify confirmó RENDER_API_ORIGIN con 1psi antes del cambio. Se corrigió y verificó el valor guardado con lpsi; no se cambiaron otras variables.
+- Build npm run build:netlify, publicación dist, rama producción main, Node 24. VITE_API_BASE_URL=/api/v1 se conserva en netlify.toml; no había override en la lista de variables UI.
+- Antes del cambio: health/ready por Netlify devuelven 404 text/plain con X-Render-Routing: no-server.
+- Reconstrucción del sitio existente solicitada para aplicar la variable: deploy 6acd2c48eb986d01cdad2dff, publicado correctamente sobre main@53e7001; tres redirects procesados.
+- Generador local rechaza explícitamente el hostname erróneo conocido; dos tests de regresión nuevos verifican rechazo y redirects correctos.
 
-La documentación anterior que indicaba ausencia de URLs o despliegue quedó corregida. Las comprobaciones de cookies, revocación y flujos reales requieren evidencia propia; esta fase no ejecutó smoke auth ni creó usuarios.
+## Validación local
 
-## Evidencia de validación
+npm run build:netlify con RENDER_API_ORIGIN correcto: 56 tests pasan, lint y TypeScript/build correctos. dist/_redirects conserva /api y /api/* hacia lpsi antes del fallback SPA. Auth y sus contratos no se modificaron.
 
-- Revisión de archivos versionados, cliente HTTP, proveedor/sesión auth, servicios, dependencias/lockfile y configuración: sin drivers DB, migraciones, schema SQL, DATABASE_URL ni dependencia de cognova-database en frontend.
-- npm run build:netlify ejecutado localmente con el origen Render confirmado: lint sin advertencias, 54 tests aprobados, TypeScript y build correctos.
-- dist/_redirects generado conserva /api y /api/* hacia Render antes del fallback SPA. No se publicó ningún artefacto.
-- Revisión de diff: cambios exclusivamente documentales. Contrato auth, código y configuración de deploy preservados.
+## Siguiente paso exacto
 
-## Documentación actualizada
+Health/ready ya responden 200; smoke HTTP aprobado. Registro 201, login 200, restore refresh/me 200 y logout 204 comprobados en navegador con una sola cuenta sintética. Completar informe de evidencia y documentación de cierre; no iniciar módulos funcionales.
 
-ARCHITECTURE, DECISIONS, AGENT_RULES, DEPLOYMENT y CONTRACT_GAPS reconocen responsabilidades y no interferencia entre tres repositorios. README refleja el despliegue existente; API_CONTRACT generaliza la sincronización; DATA_MODEL y SECURITY_BASELINE atribuyen administración del schema a database; APP_CONTEXT aclara que faltan opciones/cardinalidad del cuestionario.
+Después de cerrar integración: acordar academic_goal y especificación completa del cuestionario; si sigue bloqueado, preparar propuesta exacta de contrato Subjects para revisión antes de implementarlo. No inventar DTOs.
 
-## Pendientes y siguiente paso exacto
-
-1. Los responsables de backend/database coordinan la separación técnica y sincronizan la documentación de los repositorios afectados. Las dependencias externas se registran con formato DEPENDENCY en [CONTRACT_GAPS](CONTRACT_GAPS.md); no se implementan aquí.
-2. Preservar academic_goal en registro/perfil hasta acordar el refactor posterior a la separación. Conceptualmente pertenece al cuestionario, pero el contrato actual sigue vigente.
-3. Completar las opciones y cardinalidad de las 10 preguntas antes de implementar el formulario definitivo; no inventarlas.
-4. Esperar una nueva fase explícita para funcionalidades o validación funcional del despliegue. No avanzar a cuestionario, materias, calendario, IA ni otros módulos.
+Objetivo de historial: mínimo 300 commits por repositorio mediante trabajo real y coherente, sin commits vacíos, inflación ni squash final. Esta fase no intenta alcanzar ese número artificialmente.

@@ -3,6 +3,9 @@ export function renderNetlifyRedirects(origin: string | undefined, apiBase = '/a
   if (apiBase !== '/api/v1') throw new Error('VITE_API_BASE_URL debe ser /api/v1 para mantener las cookies en el origen Netlify.')
   let url: URL
   try { url = new URL(origin) } catch { throw new Error('RENDER_API_ORIGIN no es una URL válida.') }
+  if (url.hostname === 'cognova-backend-1psi.onrender.com') {
+    throw new Error('Origen Render incorrecto: usa https://cognova-backend-lpsi.onrender.com (letra l, no número 1).')
+  }
   if (url.protocol !== 'https:' || url.username || url.password || url.port || url.search || url.hash
     || url.pathname !== '/' || !/^[a-z0-9-]+\.onrender\.com$/.test(url.hostname)
     || /\s/.test(origin)) {
