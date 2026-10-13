@@ -44,7 +44,7 @@ async function finishQuestions(select = true) {
     const question=catalog.questions[index]
     await screen.findByText(question.text)
     if (select) fireEvent.click(screen.getByLabelText(question.options[0].label))
-    if (index<9) fireEvent.click(screen.getByRole('button',{name:'Continuar',exact:true}))
+    if (index<9) fireEvent.click(screen.getByRole('button',{name:'Continuar'}))
   }
 }
 const writes = (fetch: ReturnType<typeof setup>['fetch']) => fetch.mock.calls.filter(([,request])=>['POST','PUT'].includes(request?.method ?? '') && request?.body)
@@ -67,21 +67,21 @@ describe('questionnaire UI with real auth state and intercepted API', () => {
   it('validates missing and Other answers, preserves back navigation and clears unused Other', async () => {
     setup()
     await screen.findByText(catalog.questions[0].text)
-    fireEvent.click(screen.getByRole('button',{name:'Continuar',exact:true}))
+    fireEvent.click(screen.getByRole('button',{name:'Continuar'}))
     expect(screen.getByRole('alert')).toHaveTextContent('Selecciona una respuesta')
     fireEvent.click(screen.getByLabelText('Otro'))
-    fireEvent.click(screen.getByRole('button',{name:'Continuar',exact:true}))
+    fireEvent.click(screen.getByRole('button',{name:'Continuar'}))
     expect(screen.getByRole('alert')).toHaveTextContent('Describe tu respuesta')
     fireEvent.change(screen.getByLabelText('Cuéntanos cuál'),{target:{value:'a'.repeat(51)}})
-    fireEvent.click(screen.getByRole('button',{name:'Continuar',exact:true}))
+    fireEvent.click(screen.getByRole('button',{name:'Continuar'}))
     expect(screen.getByRole('alert')).toHaveTextContent('50 caracteres')
     fireEvent.change(screen.getByLabelText('Cuéntanos cuál'),{target:{value:'Mi meta'}})
-    fireEvent.click(screen.getByRole('button',{name:'Continuar',exact:true}))
+    fireEvent.click(screen.getByRole('button',{name:'Continuar'}))
     fireEvent.click(screen.getByRole('button',{name:'Volver'}))
     expect(screen.getByLabelText('Cuéntanos cuál')).toHaveValue('Mi meta')
     fireEvent.click(screen.getByLabelText(catalog.questions[0].options[0].label))
     expect(screen.queryByLabelText('Cuéntanos cuál')).not.toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button',{name:'Continuar',exact:true}))
+    fireEvent.click(screen.getByRole('button',{name:'Continuar'}))
     expect(screen.getByText(catalog.questions[1].text)).toBeVisible()
   })
   it('loads an existing response, preserves local edits on 409 and explicitly retries the latest revision', async () => {
