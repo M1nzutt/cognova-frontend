@@ -1,35 +1,23 @@
-# Cognova — Estado del Proyecto (Frontend)
+﻿# Cognova — Estado frontend
 
-Fecha: 2026-10-12.
+Fecha: 2026-10-13. Fase activa: registro mínimo, perfil académico y cuestionario.
 
-## Fase actual
+## Base y contratos
 
-Validación real frontend → backend a través de Netlify. La separación en cognova-frontend, cognova-backend y cognova-database ya terminó según confirmación del usuario. Backend operativo; no se reabre el incidente de URL ni se modifican otros repositorios.
+Turno iniciado en dc31fe2, 16 commits, rama fix/netlify-backend-origin. Se conservaron/revisaron los cuatro documentos pendientes y se cerraron en 1192fc4, publicado en esa rama. Nueva rama feat/onboarding-questionnaire parte de 17 commits.
 
-## Git y alcance
+Autoridad: backend a277af2ba5f2e7227b5b329aa7d935e5e12b8f94 (feat/onboarding-questionnaire). Database fijado por backend: 232c43130c0fb3eddd32e1dd3707368ba0d87d4c; schema requerido 0003_onboarding_questionnaire. Solo se consultaron fuentes remotas; no se modifican otros repositorios.
 
-Rama fix/netlify-backend-origin. Inicio local limpio en 3c3c7d3 (14 commits). Al inspeccionar Netlify se detectó producción en 53e7001; se hizo fetch e incorporó ese cambio de README por fast-forward en esta rama (15 commits de base), sin modificar main.
+API_CONTRACT, AUTH_CONTRACT, QUESTIONNAIRE y ONBOARDING_CONTRACT sincronizados desde ese SHA. Registro ahora solo name/email/password (30/50/8–12); login no aplica máximos de registro a cuentas legacy. Catálogo completo y revisiones disponibles; el frontend debe navegar por onboarding.next_step.
 
-Auth existente preservada: access solo memoria, refresh HttpOnly Path=/api/v1/auth, CSRF Path=/, credentials include, refresh coordinado, retry único, restore, logout y rutas protegidas. academic_goal sigue en registro/perfil; no se implementan módulos académicos.
+## Evidencia y entorno
 
-## Proxy
+Base antes de cambios funcionales: 56 tests, lint, TypeScript y build:netlify aprobados. Evidencia histórica de auth y proxy en INTEGRATION_VALIDATION.md.
 
-- Frontend: https://cognova-frontend.netlify.app
-- Backend correcto: https://cognova-backend-lpsi.onrender.com (letra l).
-- La UI Netlify confirmó RENDER_API_ORIGIN con 1psi antes del cambio. Se corrigió y verificó el valor guardado con lpsi; no se cambiaron otras variables.
-- Build npm run build:netlify, publicación dist, rama producción main, Node 24. VITE_API_BASE_URL=/api/v1 se conserva en netlify.toml; no había override en la lista de variables UI.
-- Antes del cambio: health/ready por Netlify devuelven 404 text/plain con X-Render-Routing: no-server.
-- Reconstrucción del sitio existente solicitada para aplicar la variable: deploy 6acd2c48eb986d01cdad2dff, publicado correctamente sobre main@53e7001; tres redirects procesados.
-- Generador local rechaza explícitamente el hostname erróneo conocido; dos tests de regresión nuevos verifican rechazo y redirects correctos.
+Render consultado el 2026-10-13 expone únicamente auth/health/ready y UserResponse antiguo con academic_goal. No tiene onboarding/catalog publicados. Esto no bloquea implementar contra el contrato fijado, pero impide validar integración real nueva allí. No desplegar frontend incompatible; pendiente URL compatible/confirmación operativa de schema 0003.
 
-## Validación local
+## Siguiente paso
 
-npm run build:netlify con RENDER_API_ORIGIN correcto: 56 tests pasan, lint y TypeScript/build correctos. dist/_redirects conserva /api y /api/* hacia lpsi antes del fallback SPA. Auth y sus contratos no se modificaron.
+Implementar tipos/servicios/validación, registro mínimo, navegación explícita, perfil y cuestionario/revisiones; tests y documentación por bloques, commits pequeños y push periódicos. Mantener auth en memoria, cookies/CSRF, refresh coordinado y retry único. No Subjects ni otros módulos.
 
-## Siguiente paso exacto
-
-Fase cerrada: health/ready responden 200; smoke HTTP aprobado. Registro 201, login 200, restore refresh/me 200 y logout 204 comprobados en navegador con una sola cuenta sintética. Informe completo en INTEGRATION_VALIDATION.md. Checks repetidos el 2026-10-13: 56 tests, lint y build:netlify correctos.
-
-Nueva fase autorizada el 2026-10-13: consumir contratos backend a277af2ba5f2e7227b5b329aa7d935e5e12b8f94 para registro mínimo, perfil y cuestionario. Primero publicar este cierre documental. Inicio del turno: dc31fe2, 16 commits, rama fix/netlify-backend-origin, con README/CONTRACT_GAPS/DEPLOYMENT modificados e INTEGRATION_VALIDATION sin versionar. No implementar Subjects.
-
-Objetivo de historial vigente: superar 500 commits mediante cambios reales y granulares, sin commits vacíos, inflación ni squash. El cierre documental agrega un commit a los 16 iniciales.
+Meta de historial: superar 500 commits con cambios reales, sin inflación ni squash. Inicio funcional: 17; contar al cierre y reportar restantes hasta 501.
