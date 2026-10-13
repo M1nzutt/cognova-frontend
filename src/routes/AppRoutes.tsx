@@ -8,7 +8,7 @@ import { NotFoundPage } from '../pages/NotFoundPage'
 import { LoginPage } from '../pages/LoginPage'
 import { RegisterPage } from '../pages/RegisterPage'
 import { DashboardPendingPage } from '../pages/DashboardPendingPage'
-import { QuestionnairePendingPage } from '../pages/QuestionnairePendingPage'
+import { QuestionnairePage } from '../pages/QuestionnairePage'
 import { ProtectedRoute } from './ProtectedRoute'
 import { GuestRoute } from './GuestRoute'
 
@@ -24,10 +24,11 @@ export function AppRoutes() {
         <Route element={<ProtectedRoute />}>
           <Route element={<CompletedRoute />}>
             <Route path="dashboard" element={<DashboardPendingPage />} />
+            <Route path="app/questionnaire" element={<QuestionnairePage />} />
           </Route>
           <Route element={<OnboardingRoute />}>
             <Route path="onboarding/academic-profile" element={<AcademicProfilePage />} />
-            <Route path="onboarding/questionnaire" element={<QuestionnairePendingPage />} />
+            <Route path="onboarding/questionnaire" element={<QuestionnairePage />} />
           </Route>
           <Route path="questionnaire" element={<Navigate to="/onboarding/questionnaire" replace />} />
         </Route>

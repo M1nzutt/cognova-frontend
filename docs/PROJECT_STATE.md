@@ -25,3 +25,5 @@ Meta de historial: superar 500 commits con cambios reales, sin inflación ni squ
 Avance: tipos contractuales, registro mínimo y límites, lectura UserResponse nullable, navegación por next_step y formulario académico implementados. Refresh conserva coordinación y consulta me sin retry recursivo. 73 tests, lint y build correctos. Falta sustituir la pantalla pendiente de cuestionario y completar edición/historial/UX e integración nueva.
 
 Continuación desde 7a232d3 (20 commits): QuestionnaireService, validación, lectores de respuesta y query paginada completados; 96 tests, lint y build correctos. Se preservaron los cambios pendientes. UI del cuestionario es el siguiente bloque.
+
+UI de cuestionario conectada: catálogo backend, diez pasos, POST inicial, GET actual, PUT con expected_revision, 409 conserva borrador y requiere decisión explícita, historial simple y reintento de sincronización de perfil sin repetir escritura. Verificados 105 tests, lint y build; falta pulido del contenedor de onboarding y ampliar pruebas de rutas/historial.
