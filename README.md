@@ -20,7 +20,7 @@ npm run verify
 
 En PowerShell puede usarse `npm.cmd` si se bloquea `npm.ps1`. La API pública es `/api/v1`; Vite reenvía `/api` a `BACKEND_PROXY_TARGET` (por defecto `http://127.0.0.1:8000`). El backend debe estar iniciado y configurado según [AUTH_CONTRACT](docs/AUTH_CONTRACT.md). No hay backend simulado.
 
-54 pruebas de servicios, auth, rutas, formularios y configuración Netlify. HTTP se intercepta exclusivamente en tests; esto no certifica cookies, revocación ni CORS reales. `verify` reúne lint, tests y build.
+56 pruebas de servicios, auth, rutas, formularios y configuración Netlify. HTTP se intercepta exclusivamente en tests unitarios; `verify` reúne lint, tests y build. La [validación real del 2026-10-12](docs/INTEGRATION_VALIDATION.md) registra por separado el smoke HTTP y el recorrido de navegador sobre Netlify.
 
 ## Autenticación
 
@@ -43,7 +43,7 @@ npm run smoke:auth
 
 El smoke requiere un sitio HTTPS y las variables `SMOKE_BASE_URL`, `SMOKE_EMAIL`, `SMOKE_PASSWORD` de una cuenta de prueba existente. No guardar credenciales en Git ni usar variables VITE para secretos. El smoke HTTP no sustituye el recorrido en navegador.
 
-Despliegue existente confirmado por el usuario el 2026-10-08: [frontend Netlify](https://cognova-frontend.netlify.app) y [backend Render](https://cognova-backend-1psi.onrender.com). Netlify usa `RENDER_API_ORIGIN=https://cognova-backend-1psi.onrender.com`. Esta fase documental no rehace el despliegue ni revalida auth en producción.
+Integración validada el 2026-10-12: [frontend Netlify](https://cognova-frontend.netlify.app) y [backend Render](https://cognova-backend-lpsi.onrender.com). Se corrigió RENDER_API_ORIGIN en Netlify a `https://cognova-backend-lpsi.onrender.com` (letra l) y se reconstruyó el sitio existente. Health, ready, login, restore y logout funcionan por Netlify; detalles y límites en [el informe](docs/INTEGRATION_VALIDATION.md).
 
 ## Continuidad
 

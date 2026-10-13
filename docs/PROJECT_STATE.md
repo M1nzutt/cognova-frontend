@@ -28,8 +28,8 @@ npm run build:netlify con RENDER_API_ORIGIN correcto: 56 tests pasan, lint y Typ
 
 ## Siguiente paso exacto
 
-Health/ready ya responden 200; smoke HTTP aprobado. Registro 201, login 200, restore refresh/me 200 y logout 204 comprobados en navegador con una sola cuenta sintética. Completar informe de evidencia y documentación de cierre; no iniciar módulos funcionales.
+Fase cerrada: health/ready responden 200; smoke HTTP aprobado. Registro 201, login 200, restore refresh/me 200 y logout 204 comprobados en navegador con una sola cuenta sintética. Informe completo en INTEGRATION_VALIDATION.md. Checks repetidos el 2026-10-13: 56 tests, lint y build:netlify correctos.
 
-Después de cerrar integración: acordar academic_goal y especificación completa del cuestionario; si sigue bloqueado, preparar propuesta exacta de contrato Subjects para revisión antes de implementarlo. No inventar DTOs.
+Nueva fase autorizada el 2026-10-13: consumir contratos backend a277af2ba5f2e7227b5b329aa7d935e5e12b8f94 para registro mínimo, perfil y cuestionario. Primero publicar este cierre documental. Inicio del turno: dc31fe2, 16 commits, rama fix/netlify-backend-origin, con README/CONTRACT_GAPS/DEPLOYMENT modificados e INTEGRATION_VALIDATION sin versionar. No implementar Subjects.
 
-Objetivo de historial: mínimo 300 commits por repositorio mediante trabajo real y coherente, sin commits vacíos, inflación ni squash final. Esta fase no intenta alcanzar ese número artificialmente.
+Objetivo de historial vigente: superar 500 commits mediante cambios reales y granulares, sin commits vacíos, inflación ni squash. El cierre documental agrega un commit a los 16 iniciales.

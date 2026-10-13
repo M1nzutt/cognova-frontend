@@ -2,13 +2,13 @@
 
 ## Estado
 
-Despliegue existente confirmado por el usuario el 2026-10-08:
+Despliegue existente verificado el 2026-10-12:
 
 - Frontend: https://cognova-frontend.netlify.app
-- Backend: https://cognova-backend-1psi.onrender.com
-- Netlify: `RENDER_API_ORIGIN=https://cognova-backend-1psi.onrender.com`.
+- Backend: https://cognova-backend-lpsi.onrender.com
+- Netlify: `RENDER_API_ORIGIN=https://cognova-backend-lpsi.onrender.com`.
 
-No recrear el despliegue. Esta reconciliación documental no ejecuta un nuevo smoke de auth ni certifica funcionamiento integral. No modificar backend ni database desde este repositorio.
+La UI Netlify tenía el hostname con número 1. Se corrigió únicamente RENDER_API_ORIGIN a lpsi (letra l), conservando sus scopes/contextos existentes, y se reconstruyó el sitio sobre main@53e7001. Deploy publicado: `6acd2c48eb986d01cdad2dff`. No se creó otro sitio ni se modificó backend/database. Smoke HTTP y navegador aprobados: [evidencia](INTEGRATION_VALIDATION.md).
 
 El navegador consume `/api/v1` del mismo origen Netlify. Netlify reenvía `/api/*` hacia Render conservando la ruta; Render accede a Render Postgres. Las credenciales de PostgreSQL nunca pertenecen al frontend.
 
@@ -28,7 +28,7 @@ El responsable del backend debe sincronizar [AUTH_CONTRACT](AUTH_CONTRACT.md):
 
 ## Configuración de Netlify (referencia para mantenimiento)
 
-El sitio ya está importado y desplegado. Los pasos siguientes documentan la configuración; no indican repetir el despliegue en esta fase.
+El sitio ya está importado y desplegado. Configuración inspeccionada: producción main, build npm run build:netlify, publish dist y Node 24. La lista UI solo contenía RENDER_API_ORIGIN; VITE_API_BASE_URL=/api/v1 procede de netlify.toml. Los pasos siguientes son referencia de mantenimiento.
 
 1. Publicar los commits en el remoto e importar cognova-frontend en Netlify.
 2. Usar raíz del repositorio; [netlify.toml](../netlify.toml) define build `npm run build:netlify`, publicación `dist` y Node 24.
@@ -38,6 +38,8 @@ El sitio ya está importado y desplegado. Los pasos siguientes documentan la con
 6. Configurar deploy previews con backend de pruebas separado o desactivarlas; no compartir sesiones/datos de producción entre entornos.
 
 No se interpola una variable dentro de TOML: [el generador](../scripts/netlifyRedirects.ts) escribe el destino concreto durante build y rechaza orígenes no HTTPS, rutas, credenciales y hosts ajenos a onrender.com. Un futuro dominio propio requiere revisar esta validación explícita.
+
+El generador también rechaza el hostname erróneo conocido con número 1; el correcto es `cognova-backend-lpsi.onrender.com`. El cambio de variable requiere un nuevo build para actualizar los redirects publicados. No cambiar /api/v1 ni agregar un redirect para /api/v1/openapi.json: OpenAPI está en /openapi.json del backend.
 
 CSP permite scripts, estilos y conexiones del mismo origen, sin unsafe-inline/unsafe-eval. Revisar las cabeceras desplegadas, no las de HMR. HTTPS obligatorio; evaluar HSTS según dominio y subdominios antes de habilitar preload.
 
