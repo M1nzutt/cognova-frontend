@@ -21,3 +21,5 @@ Render consultado el 2026-10-13 expone únicamente auth/health/ready y UserRespo
 Implementar tipos/servicios/validación, registro mínimo, navegación explícita, perfil y cuestionario/revisiones; tests y documentación por bloques, commits pequeños y push periódicos. Mantener auth en memoria, cookies/CSRF, refresh coordinado y retry único. No Subjects ni otros módulos.
 
 Meta de historial: superar 500 commits con cambios reales, sin inflación ni squash. Inicio funcional: 17; contar al cierre y reportar restantes hasta 501.
+
+Avance: tipos contractuales, registro mínimo y límites, lectura UserResponse nullable, navegación por next_step y formulario académico implementados. Refresh conserva coordinación y consulta me sin retry recursivo. 73 tests, lint y build correctos. Falta sustituir la pantalla pendiente de cuestionario y completar edición/historial/UX e integración nueva.

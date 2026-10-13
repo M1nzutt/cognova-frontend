@@ -8,7 +8,7 @@ import { validateLogin } from '../utils/authValidation'
 
 export function LoginPage() {
   const { session, message, logoutFailed } = useAuth()
-  const { loading, error, submit } = useAuthForm('/dashboard')
+  const { loading, error, submit } = useAuthForm()
   const [validation, setValidation] = useState<string | null>(null)
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {

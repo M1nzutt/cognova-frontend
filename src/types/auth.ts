@@ -1,10 +1,13 @@
+import type { OnboardingStatus } from './onboarding'
+
 export interface AuthUser {
   id: number
   name: string
   email: string
-  degree_program: string
-  semester: number
-  academic_goal: string
+  degree_program: string | null
+  semester: number | null
+  onboarding: OnboardingStatus
+  legacy_academic_goal?: { value: string | null; captured_at: string } | null
 }
 
 export interface LoginRequest {
@@ -14,9 +17,6 @@ export interface LoginRequest {
 
 export interface RegisterRequest extends LoginRequest {
   name: string
-  degree_program: string
-  semester: number
-  academic_goal: string
 }
 
 export interface TokenResponse {

@@ -1,4 +1,7 @@
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import { AcademicProfilePage } from '../pages/AcademicProfilePage'
+import { OnboardingRoute } from './OnboardingRoute'
+import { CompletedRoute } from './CompletedRoute'
 import { AppShell } from '../components/AppShell'
 import { WelcomePage } from '../pages/WelcomePage'
 import { NotFoundPage } from '../pages/NotFoundPage'
@@ -19,8 +22,14 @@ export function AppRoutes() {
           <Route path="register" element={<RegisterPage />} />
         </Route>
         <Route element={<ProtectedRoute />}>
-          <Route path="dashboard" element={<DashboardPendingPage />} />
-          <Route path="questionnaire" element={<QuestionnairePendingPage />} />
+          <Route element={<CompletedRoute />}>
+            <Route path="dashboard" element={<DashboardPendingPage />} />
+          </Route>
+          <Route element={<OnboardingRoute />}>
+            <Route path="onboarding/academic-profile" element={<AcademicProfilePage />} />
+            <Route path="onboarding/questionnaire" element={<QuestionnairePendingPage />} />
+          </Route>
+          <Route path="questionnaire" element={<Navigate to="/onboarding/questionnaire" replace />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Route>

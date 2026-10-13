@@ -6,12 +6,15 @@ import { getTokenExpiry } from '../utils/jwt'
 import { readCsrfCookie } from '../utils/csrf'
 import { clearLegacyAuth } from './clearLegacyAuth'
 import { withCookieLock } from './cookieLock'
+import { onboardingPath } from '../utils/onboardingPath'
+import type { AcademicProfileRequest } from '../types/onboarding'
+import { readAuthUser } from '../utils/readAuthUser'
 
 interface AuthSnapshot {
   status: 'loading' | 'anonymous' | 'authenticated'
   user: AuthUser | null
   message: string | null
-  destination: '/dashboard' | '/questionnaire'
+  destination: ReturnType<typeof onboardingPath>
   loggingOut: boolean
   logoutFailed: boolean
 }
@@ -40,6 +43,7 @@ export class AuthSession {
     return () => { this.listeners.delete(listener) }
   }
   private update(change: Partial<AuthSnapshot>): void {
+    if (change.user) change.destination = onboardingPath(change.user.onboarding.next_step)
     this.snapshot = { ...this.snapshot, ...change }
     this.listeners.forEach((listener) => listener())
   }
@@ -66,8 +70,7 @@ export class AuthSession {
       }
       await this.refresh()
       if (revision !== this.revision) return
-      const user = await this.service.me()
-      if (revision === this.revision) this.update({ status: 'authenticated', user })
+      this.update({ status: 'authenticated' })
     } catch (error) {
       if (revision === this.revision) this.invalidate(error instanceof ApiError ? error.message : 'No pudimos preparar una sesión segura. Revisa los permisos del navegador.')
     }
@@ -81,6 +84,11 @@ export class AuthSession {
       const response = await this.service.refresh()
       if (revision !== this.revision) throw new ApiError(expiredMessage, 401)
       this.acceptToken(response.access_token)
+      // A refresh can observe onboarding completed in another tab. This read
+      // must never refresh recursively if the newly issued token is rejected.
+      const user = await this.service.me(undefined, false)
+      if (revision !== this.revision) throw new ApiError(expiredMessage, 401)
+      this.update({ user })
     }).catch((error: unknown) => {
       if (revision === this.revision) this.invalidate(error instanceof ApiError && error.status === 401 ? expiredMessage : 'No pudimos renovar tu sesión. Inicia sesión nuevamente.')
       throw error
@@ -88,10 +96,10 @@ export class AuthSession {
     return this.refreshPending
   }
   login(details: LoginRequest, signal: AbortSignal): Promise<void> {
-    return this.authenticate(() => this.service.login(details), signal, '/dashboard')
+    return this.authenticate(() => this.service.login(details), signal)
   }
   register(details: RegisterRequest, signal: AbortSignal): Promise<void> {
-    return this.authenticate(() => this.service.register(details), signal, '/questionnaire')
+    return this.authenticate(() => this.service.register(details), signal)
   }
   async reloadProfile(signal?: AbortSignal): Promise<void> {
     if (this.snapshot.status !== 'authenticated') throw new ApiError(expiredMessage, 401)
@@ -99,14 +107,19 @@ export class AuthSession {
     const user = await this.service.me(signal)
     if (revision === this.revision) this.update({ user })
   }
-  private async authenticate(request: () => Promise<AuthResponse>, signal: AbortSignal, destination: AuthSnapshot['destination']): Promise<void> {
+  async saveAcademicProfile(details: AcademicProfileRequest, signal?: AbortSignal): Promise<void> {
+    const revision = this.revision
+    const user = readAuthUser(await this.api.request('/onboarding/academic-profile', { method: 'PUT', body: details, signal }))
+    if (revision === this.revision) this.update({ user })
+  }
+  private async authenticate(request: () => Promise<AuthResponse>, signal: AbortSignal): Promise<void> {
     if (this.snapshot.loggingOut || this.snapshot.logoutFailed) throw new ApiError('Completa el cierre de sesión antes de volver a ingresar.')
     const revision = ++this.revision
     const response = await withCookieLock(request)
     if (revision !== this.revision) throw new DOMException('Request cancelled', 'AbortError')
     // Reconcile cookie mutations even if the initiating form unmounts.
     this.acceptToken(response.access_token)
-    this.update({ status: 'authenticated', user: response.user, message: null, destination })
+    this.update({ status: 'authenticated', user: response.user, message: null })
     signal.throwIfAborted()
   }
   private acceptToken(token: string): void {

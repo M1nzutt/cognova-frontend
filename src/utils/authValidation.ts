@@ -7,10 +7,11 @@ export function validateLogin(values: LoginRequest): string | null {
 }
 
 export function validateRegistration(values: RegisterRequest): string | null {
-  if (!values.name || !values.degree_program || !values.academic_goal) return 'Completa todos los campos obligatorios.'
+  if (!values.name.trim()) return 'Completa todos los campos obligatorios.'
+  if ([...values.name.trim()].length > 30) return 'El nombre admite hasta 30 caracteres.'
   const loginError = validateLogin(values)
   if (loginError) return loginError
-  if (values.password.length < 8) return 'La contraseña debe tener al menos 8 caracteres.'
-  if (!Number.isSafeInteger(values.semester) || values.semester <= 0) return 'El semestre debe ser un número entero positivo.'
+  if ([...values.email.trim()].length > 50) return 'El correo admite hasta 50 caracteres.'
+  if ([...values.password].length < 8 || [...values.password].length > 12) return 'La contraseña debe tener entre 8 y 12 caracteres.'
   return null
 }

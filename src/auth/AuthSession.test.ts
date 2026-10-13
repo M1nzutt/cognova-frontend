@@ -57,7 +57,7 @@ describe('production session', () => {
     await session.login(credentials, signal())
     await Promise.all([session.api.request('/auth/me'), session.api.request('/auth/me'), session.api.request('/auth/me')])
     expect(fetchMock.mock.calls.filter((call) => call[0].endsWith('/refresh'))).toHaveLength(1)
-    expect(fetchMock.mock.calls.filter((call) => call[0].endsWith('/me'))).toHaveLength(6)
+    expect(fetchMock.mock.calls.filter((call) => call[0].endsWith('/me'))).toHaveLength(7)
     expect(session.getSnapshot().status).toBe('authenticated')
   })
 

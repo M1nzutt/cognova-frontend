@@ -8,6 +8,7 @@ interface RequestOptions {
   authenticated?: boolean
   csrf?: boolean
   signal?: AbortSignal
+  retryAuth?: boolean
 }
 
 export class ApiClient {
@@ -47,7 +48,7 @@ export class ApiClient {
     }
     if (token && version !== this.getSessionVersion()) throw new DOMException('Session changed', 'AbortError')
     if (response.status === 401 && token) {
-      if (retried) {
+      if (retried || options.retryAuth === false) {
         this.onUnauthorized(token)
         throw new ApiError('Tu sesión expiró. Inicia sesión nuevamente.', 401, 'INVALID_OR_EXPIRED_TOKEN')
       } else {
