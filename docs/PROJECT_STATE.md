@@ -23,3 +23,5 @@ Implementar tipos/servicios/validación, registro mínimo, navegación explícit
 Meta de historial: superar 500 commits con cambios reales, sin inflación ni squash. Inicio funcional: 17; contar al cierre y reportar restantes hasta 501.
 
 Avance: tipos contractuales, registro mínimo y límites, lectura UserResponse nullable, navegación por next_step y formulario académico implementados. Refresh conserva coordinación y consulta me sin retry recursivo. 73 tests, lint y build correctos. Falta sustituir la pantalla pendiente de cuestionario y completar edición/historial/UX e integración nueva.
+
+Continuación desde 7a232d3 (20 commits): QuestionnaireService, validación, lectores de respuesta y query paginada completados; 96 tests, lint y build correctos. Se preservaron los cambios pendientes. UI del cuestionario es el siguiente bloque.
