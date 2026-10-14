@@ -31,3 +31,5 @@ UI de cuestionario conectada: catálogo backend, diez pasos, POST inicial, GET a
 Presentación: EntryShell sin sidebar para registro/login/onboarding, progreso de bienvenida y paleta indicada sin gradientes. Rutas de la app conservan su shell. 116 tests y lint pasan; TypeScript/build corregidos y aprobados. Pruebas nuevas cubren perfil, guards y paginación del historial.
 
 Recuperación 409 reforzada: conflicto POST inicial, fallo al consultar revisión vigente, adopción explícita de la versión del servidor y validación completa también en reintento confirmado. 118 tests, lint, TypeScript y build aprobados.
+
+Cierre documental: contrato backend fijado identificado en API/AUTH/QUESTIONNAIRE; decisiones y gaps actualizados para retirar pendientes obsoletos. La única dependencia de esta fase es un entorno de integración con onboarding/schema 0003. verify y build:netlify completos vuelven a pasar: 118 tests, lint, TypeScript y build. Sin despliegue.

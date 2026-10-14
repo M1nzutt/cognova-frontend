@@ -1,5 +1,7 @@
 # Cognova — Contrato API v1
 
+Fuente de esta copia frontend: backend `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94`, rama `feat/onboarding-questionnaire`. Requiere schema `0003_onboarding_questionnaire`. Describe la versión consumida por esta rama, no la versión antigua todavía desplegada en Render. Estado de verificación en [INTEGRATION_VALIDATION.md](INTEGRATION_VALIDATION.md).
+
 Base:
 
 ```text

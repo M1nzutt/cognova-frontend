@@ -11,13 +11,13 @@ Este documento describe el modelo conceptual. Los detalles exactos de tipos, ín
 - password_hash
 - degree_program
 - semester
-- academic_goal
 - created_at
 - updated_at
 
 Reglas:
 - email único case-insensitive;
 - password_hash nunca se expone.
+- Carrera y semestre pueden ser null durante onboarding. `academic_goal` ya no es un campo vigente de User/registro: el objetivo es q1. El DTO puede incluir `legacy_academic_goal` como evidencia histórica inmutable de 0003, sin completar onboarding. Ver AUTH_CONTRACT y ONBOARDING_CONTRACT del SHA backend fijado; este frontend no administra el schema.
 
 ### AuthSession
 - id

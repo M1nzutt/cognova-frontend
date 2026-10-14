@@ -1,5 +1,7 @@
 # Cognova — Cuestionario / percepción inicial, catálogo 1
 
+Fuente verificada: backend `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94`. La UI obtiene preguntas y opciones mediante GET `/api/v1/questionnaire/catalog`; esta copia documenta el catálogo, no es un fallback local. Frontend implementa POST inicial, GET actual, PUT con `expected_revision` y consulta paginada del historial. Ante 409 conserva el borrador, consulta la revisión actual y requiere una decisión explícita antes de reintentar. Integración real nueva pendiente de entorno compatible.
+
 Las preguntas y etiquetas siguientes están aprobadas. IDs ASCII estables de backend;
 no traducir IDs ni reemplazar etiquetas. Las diez preguntas son obligatorias.
 Single: exactamente una selección. Multi: de una al máximo indicado, sin duplicados.
