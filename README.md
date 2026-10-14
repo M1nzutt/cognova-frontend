@@ -2,7 +2,9 @@
 
 React, TypeScript, Vite y React Router. Interfaz en español, responsive, con tema claro/oscuro.
 
-El avance incluye registro, login, restauración, refresh coordinado, logout real y dashboard provisional con perfil del backend. Los módulos académicos siguen pendientes; no se simulan estadísticas ni IA.
+Esta rama incluye registro mínimo, perfil académico, cuestionario de diez pasos con catálogo backend, revisiones e historial, además de login/restore/refresh/logout y dashboard provisional. Subjects y demás módulos quedan fuera de alcance.
+
+Contrato backend fijado: `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94`. **No desplegar esta rama a producción:** Render todavía expone el contrato anterior sin onboarding; falta un entorno compatible con schema `0003_onboarding_questionnaire` para validar la integración real nueva.
 
 ## Ejecutar y verificar
 
@@ -20,7 +22,7 @@ npm run verify
 
 En PowerShell puede usarse `npm.cmd` si se bloquea `npm.ps1`. La API pública es `/api/v1`; Vite reenvía `/api` a `BACKEND_PROXY_TARGET` (por defecto `http://127.0.0.1:8000`). El backend debe estar iniciado y configurado según [AUTH_CONTRACT](docs/AUTH_CONTRACT.md). No hay backend simulado.
 
-56 pruebas de servicios, auth, rutas, formularios y configuración Netlify. HTTP se intercepta exclusivamente en tests unitarios; `verify` reúne lint, tests y build. La [validación real del 2026-10-12](docs/INTEGRATION_VALIDATION.md) registra por separado el smoke HTTP y el recorrido de navegador sobre Netlify.
+118 pruebas de servicios, auth, rutas, formularios, cuestionario, conflictos, historial y configuración Netlify. `verify` reúne lint, tests y build. Las pruebas con HTTP interceptado validan el frontend contra el contrato fijado, no el despliegue real. [INTEGRATION_VALIDATION](docs/INTEGRATION_VALIDATION.md) distingue la validación histórica de auth de la integración nueva pendiente.
 
 ## Autenticación
 
@@ -29,12 +31,15 @@ En PowerShell puede usarse `npm.cmd` si se bloquea `npm.ps1`. La API pública es
 - Peticiones con credenciales; restauración mediante refresh y `/auth/me`.
 - Un refresh compartido ante 401 concurrentes y un único retry por petición; 403 no dispara refresh.
 - Logout revoca en backend. Si falla, se borra memoria y se ofrece reintentar sin afirmar que la revocación terminó.
-- Registro dirige a `/questionnaire`, pendiente, con acceso al dashboard provisional. Login dirige a `/dashboard`.
+- Registro envía solo name/email/password (30/50/8–12). Login no impone esos máximos nuevos a cuentas legacy.
+- Registro, login y restore siguen `onboarding.next_step`: `/onboarding/academic-profile` → `/onboarding/questionnaire` → `/dashboard`. Una cuenta completa no vuelve al onboarding.
+- `/app/questionnaire` permite consultar, actualizar y revisar el historial después del onboarding. PUT usa `expected_revision`; un 409 conserva las respuestas y exige una decisión explícita.
+- El borrador solo vive en memoria de la pantalla: volver/avanzar lo conserva; una recarga recupera la revisión guardada. No se persisten respuestas en Web Storage.
 - Solo el tema persiste en localStorage. La migración elimina la antigua clave de token sin leerla.
 
 ## Publicar en Netlify
 
-Seguir [DEPLOYMENT](docs/DEPLOYMENT.md). [netlify.toml](netlify.toml) configura Node 24, build, CSP y cabeceras. Configurar `RENDER_API_ORIGIN` con el origen HTTPS real del backend Render; el build genera el proxy `/api/*` y después el fallback de BrowserRouter. Si falta el origen o es incompatible, falla explícitamente.
+Seguir [DEPLOYMENT](docs/DEPLOYMENT.md) solo después de habilitar y validar el entorno compatible. [netlify.toml](netlify.toml) conserva Node 24, build, CSP y cabeceras. El build genera el proxy `/api/*` y después el fallback de BrowserRouter; si falta RENDER_API_ORIGIN o es incompatible, falla explícitamente. El build local no publica el sitio.
 
 ```sh
 npm run build:netlify
@@ -43,7 +48,7 @@ npm run smoke:auth
 
 El smoke requiere un sitio HTTPS y las variables `SMOKE_BASE_URL`, `SMOKE_EMAIL`, `SMOKE_PASSWORD` de una cuenta de prueba existente. No guardar credenciales en Git ni usar variables VITE para secretos. El smoke HTTP no sustituye el recorrido en navegador.
 
-Integración validada el 2026-10-12: [frontend Netlify](https://cognova-frontend.netlify.app) y [backend Render](https://cognova-backend-lpsi.onrender.com). Se corrigió RENDER_API_ORIGIN en Netlify a `https://cognova-backend-lpsi.onrender.com` (letra l) y se reconstruyó el sitio existente. Health, ready, login, restore y logout funcionan por Netlify; detalles y límites en [el informe](docs/INTEGRATION_VALIDATION.md).
+La integración del contrato anterior se validó el 2026-10-12 en [Netlify](https://cognova-frontend.netlify.app), con el origen [Render lpsi](https://cognova-backend-lpsi.onrender.com). Esa evidencia no valida registro mínimo, perfil ni cuestionario nuevos. En esta fase no se desplegó ni fusionó la rama en main.
 
 ## Continuidad
 

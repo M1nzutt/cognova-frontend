@@ -2,6 +2,8 @@
 
 ## Estado
 
+Aviso vigente 2026-10-13: `feat/onboarding-questionnaire` requiere backend a277af2ba5f2e7227b5b329aa7d935e5e12b8f94 y schema 0003_onboarding_questionnaire. Render sigue exponiendo el contrato anterior. No desplegar ni fusionar esta rama para producción hasta confirmar operación compatible y completar la [validación real nueva](INTEGRATION_VALIDATION.md). Los datos de despliegue siguientes corresponden al avance anterior; el build:netlify de esta rama solo se ejecutó localmente.
+
 Despliegue existente verificado el 2026-10-12:
 
 - Frontend: https://cognova-frontend.netlify.app

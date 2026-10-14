@@ -1,5 +1,23 @@
 # Integración real frontend → backend
 
+## Cierre de onboarding — 2026-10-13
+
+Rama `feat/onboarding-questionnaire`, contrato backend consumido desde fuentes: `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94`. Database fijado por backend: `232c43130c0fb3eddd32e1dd3707368ba0d87d4c`; schema requerido `0003_onboarding_questionnaire`.
+
+**La integración real nueva NO pudo validarse contra Render.** OpenAPI consultado en esta fase solo expone auth/health/ready y UserResponse antiguo con academic_goal, sin onboarding ni catálogo. No se verificó la aplicación física de schema 0003; corresponde a operación confirmarla. No se enviaron escrituras del flujo nuevo al backend antiguo. No se desplegó esta rama a producción.
+
+Verificaciones del cierre:
+
+- `npm run verify`: 118 tests en 11 archivos, lint sin advertencias, TypeScript y build aprobados.
+- `npm run build:netlify`: aprobado con `RENDER_API_ORIGIN=https://cognova-backend-lpsi.onrender.com`; redirects /api y /api/* primero, fallback SPA después.
+- `git diff --check`: sin errores. Sin cambios nuevos en auth/infraestructura durante el cierre, salvo el bloque staged de validación 409 ya autorizado.
+- Tests con HTTP interceptado: registro mínimo y límites, restauración/refresh/logout/CSRF, navegación por estado backend, perfil académico, catálogo, diez preguntas, single/multi, máximos, Otro, POST/GET/PUT, 409, borradores preservados, reintento tras fallo de lectura/sincronización e historial paginado.
+- Preview local de registro: tres campos, sin sidebar, sin overflow horizontal en viewport de 375 px; temas claro/oscuro comprobados por DOM y estilos calculados. No equivale a un E2E nuevo contra backend real.
+
+Validación real pendiente, cuando operación entregue un entorno compatible: confirmar SHA/schema; usar una cuenta dedicada para register/login/me, guardar perfil, cargar catálogo, POST inicial, GET actual, PUT con expected_revision, conflicto 409, history paginada, recarga/restore y logout; comprobar cookies, CSRF y no-store. Registrar URL/fecha/resultados sin secretos. No ejecutar migraciones ni modificar backend/database desde frontend.
+
+## Evidencia histórica: contrato de auth anterior
+
 Fecha: 2026-10-12. Pruebas sobre https://cognova-frontend.netlify.app, sin llamadas de auth directas a Render y sin modificar backend/database.
 
 ## Configuración observada y corregida
@@ -53,4 +71,4 @@ La primera consulta health tras publicar agotó el tiempo del proxy (504); al re
 
 La consola muestra bloqueos CSP de script/style inline en el HTML desplegado, que también contiene la insignia Netlify. No impidieron los flujos probados; no se relajó CSP ni se modificaron otras opciones de Netlify. El adaptador del navegador reportó ERR_ABORTED en eventos de logout, pero entregó respuesta 204 con eliminación de cookies y se comprobó el cierre tras navegar; se conserva la distinción entre aviso del adaptador y resultado HTTP.
 
-Esta evidencia valida el recorrido descrito, no certifica todas las funciones futuras ni disponibilidad continua. Siguiente fase funcional: resolver academic_goal y cuestionario; si continúa sin especificación, preparar para revisión el contrato exacto de Subjects antes de implementar.
+Esta evidencia histórica valida únicamente el recorrido anterior, no el onboarding nuevo ni disponibilidad continua. El contrato nuevo ya define academic_goal como q1 y el cuestionario completo; su validación real pendiente se detalla al principio. Subjects no forma parte de este cierre.
