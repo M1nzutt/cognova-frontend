@@ -9,12 +9,14 @@ import { jsonResponse, makeToken, user } from '../test/authFixtures'
 import type { QuestionnaireResponse } from '../types/questionnaire'
 
 const incomplete = { ...user, onboarding: { status: 'incomplete', academic_profile_complete: true, questionnaire_complete: false, next_step: 'questionnaire' } }
-function setup(options: { initial?: QuestionnaireResponse; failCatalog?: boolean; conflict?: boolean; syncFailure?: boolean } = {}) {
+function setup(options: { initial?: QuestionnaireResponse; failCatalog?: boolean; conflict?: boolean; syncFailure?: boolean; latestUnavailable?: boolean } = {}) {
   let current = options.initial ?? null
   let failCatalog = options.failCatalog ?? false
   let conflict = options.conflict ?? false
   let syncFailure = options.syncFailure ?? false
   let written = false
+  let conflictHappened = false
+  let latestUnavailable = options.latestUnavailable ?? false
   const fetch = vi.fn(async (url: string, request: RequestInit = {}) => {
     if (url.endsWith('/refresh')) return jsonResponse({ access_token: makeToken(), token_type: 'bearer' })
     if (url.endsWith('/me')) {
@@ -26,10 +28,13 @@ function setup(options: { initial?: QuestionnaireResponse; failCatalog?: boolean
       return jsonResponse(catalog)
     }
     if (url.includes('/history')) return jsonResponse({ items: current ? [current] : [], next_before_revision: null })
-    if (url.endsWith('/questionnaire') && (!request.method || request.method === 'GET')) return current ? jsonResponse(current) : jsonResponse({ error: { code: 'QUESTIONNAIRE_NOT_FOUND' } }, 404)
+    if (url.endsWith('/questionnaire') && (!request.method || request.method === 'GET')) {
+      if (conflictHappened && latestUnavailable) { latestUnavailable = false; return jsonResponse({}, 503) }
+      return current ? jsonResponse(current) : jsonResponse({ error: { code: 'QUESTIONNAIRE_NOT_FOUND' } }, 404)
+    }
     if (url.endsWith('/questionnaire')) {
       const payload = JSON.parse(String(request.body))
-      if (conflict) { conflict = false; current = { ...response, revision: 2 }; return jsonResponse({ error: { code: 'QUESTIONNAIRE_VERSION_CONFLICT' } }, 409) }
+      if (conflict) { conflict = false; conflictHappened = true; current = { ...response, revision: options.initial ? 2 : 1 }; return jsonResponse({ error: { code: options.initial ? 'QUESTIONNAIRE_VERSION_CONFLICT' : 'QUESTIONNAIRE_ALREADY_EXISTS' } }, 409) }
       current = { ...response, ...payload, revision: (current?.revision ?? 0) + 1 }; written = true
       return jsonResponse(current, request.method === 'POST' ? 201 : 200)
     }
@@ -118,5 +123,29 @@ describe('questionnaire UI with real auth state and intercepted API', () => {
     fireEvent.click(retry)
     expect(await screen.findByText('Has iniciado sesión correctamente.')).toBeVisible()
     expect(writes(fetch)).toHaveLength(1)
+  })
+  it('keeps answers when conflict reread fails, then explicitly adopts the server revision', async () => {
+    const {fetch}=setup({initial:response,conflict:true,latestUnavailable:true})
+    await screen.findByText(catalog.questions[0].text)
+    fireEvent.click(screen.getByLabelText(catalog.questions[0].options[1].label))
+    await finishQuestions(false)
+    fireEvent.click(screen.getByRole('button',{name:'Guardar nueva revisión'}))
+    const retry=await screen.findByRole('button',{name:'Consultar revisión vigente'})
+    await waitFor(()=>expect(retry).toBeEnabled())
+    expect(writes(fetch)).toHaveLength(1)
+    fireEvent.click(retry)
+    fireEvent.click(await screen.findByRole('button',{name:'Descartar mi borrador y usar revisión vigente'}))
+    expect(screen.getByLabelText(catalog.questions[0].options[0].label)).toBeChecked()
+    expect(screen.getByLabelText(catalog.questions[0].options[1].label)).not.toBeChecked()
+    expect(writes(fetch)).toHaveLength(1)
+  })
+  it('turns an initial create conflict into an explicitly confirmed versioned update', async () => {
+    const {fetch}=setup({conflict:true})
+    await finishQuestions()
+    fireEvent.click(screen.getByRole('button',{name:'Guardar percepción inicial'}))
+    fireEvent.click(await screen.findByRole('button',{name:'Guardar mis respuestas sobre revisión 1'}))
+    expect(await screen.findByText('Has iniciado sesión correctamente.')).toBeVisible()
+    expect(writes(fetch).map(([,r])=>r!.method)).toEqual(['POST','PUT'])
+    expect(JSON.parse(String(writes(fetch)[1][1]!.body)).expected_revision).toBe(1)
   })
 })

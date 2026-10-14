@@ -29,3 +29,5 @@ Continuación desde 7a232d3 (20 commits): QuestionnaireService, validación, lec
 UI de cuestionario conectada: catálogo backend, diez pasos, POST inicial, GET actual, PUT con expected_revision, 409 conserva borrador y requiere decisión explícita, historial simple y reintento de sincronización de perfil sin repetir escritura. 105 tests y lint pasan; TypeScript detectó una opción de Testing Library incompatible en los tests, corregida en el commit siguiente; falta pulido del contenedor de onboarding y ampliar pruebas de rutas/historial.
 
 Presentación: EntryShell sin sidebar para registro/login/onboarding, progreso de bienvenida y paleta indicada sin gradientes. Rutas de la app conservan su shell. 116 tests y lint pasan; TypeScript/build corregidos y aprobados. Pruebas nuevas cubren perfil, guards y paginación del historial.
+
+Recuperación 409 reforzada: conflicto POST inicial, fallo al consultar revisión vigente, adopción explícita de la versión del servidor y validación completa también en reintento confirmado. 118 tests, lint, TypeScript y build aprobados.

@@ -21,17 +21,18 @@ export function QuestionnairePage() {
   const { catalog, draft } = model
   const question = catalog.questions[step]
   const completed = catalog.questions.filter(q => !validateAnswer(q, draft[q.id])).length
+  function saveAll(expectedRevision?: number) {
+    const missing = catalog.questions.findIndex(q => validateAnswer(q, draft[q.id]))
+    if (missing >= 0) { setStep(missing); setValidation('Completa esta pregunta antes de guardar.'); return }
+    void model.save(expectedRevision)
+  }
   function next(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const issue = validateAnswer(question, draft[question.id])
     setValidation(issue)
     if (issue) return
     if (step < catalog.questions.length - 1) setStep(step + 1)
-    else {
-      const missing = catalog.questions.findIndex(q => validateAnswer(q, draft[q.id]))
-      if (missing >= 0) { setStep(missing); setValidation('Completa esta pregunta antes de guardar.'); return }
-      void model.save()
-    }
+    else saveAll()
   }
   return <section className={styles.panel} aria-labelledby="questionnaire-title">
     <p className="eyebrow">TU PERCEPCIÓN · UN PUNTO DE PARTIDA</p>
@@ -48,7 +49,7 @@ export function QuestionnairePage() {
       {model.latest ? <>
         <details><summary>Ver revisión vigente {model.latest.revision}</summary><QuestionnaireSummary catalog={catalog} response={model.latest} /></details>
         <div className={styles.actions}>
-          <button className="button" disabled={model.busy} onClick={() => void model.save(model.latest!.revision)}>Guardar mis respuestas sobre revisión {model.latest.revision}</button>
+          <button className="button" disabled={model.busy} onClick={() => saveAll(model.latest!.revision)}>Guardar mis respuestas sobre revisión {model.latest.revision}</button>
           <button className="button" disabled={model.busy} onClick={() => { model.useLatest(); setStep(0); setValidation(null) }}>Descartar mi borrador y usar revisión vigente</button>
         </div>
       </> : <button className="button" disabled={model.busy} onClick={() => void model.checkLatest()}>Consultar revisión vigente</button>}
