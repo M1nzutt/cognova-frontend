@@ -196,7 +196,7 @@ El cuestionario tiene 10 preguntas obligatorias:
 9. Reacción habitual cuando una sesión no sale como esperaba.
 10. Qué espera comprender o mejorar usando Cognova.
 
-Las 10 preguntas viven en `QUESTIONNAIRE.md`; las opciones completas y la cardinalidad exacta aún están pendientes. No inventarlas ni implementar el formulario definitivo hasta completar esa especificación.
+Las preguntas, opciones e IDs aprobados viven en `QUESTIONNAIRE.md`, sincronizado con backend a277af2ba5f2e7227b5b329aa7d935e5e12b8f94. El frontend consume el catálogo backend; no inventa opciones. Registro mínimo → perfil académico → percepción inicial → app se decide por onboarding.next_step. El objetivo vigente es q1 y cada actualización conserva la percepción previa como revisión. Ver `ONBOARDING_CONTRACT.md` para DTOs y cardinalidades exactas.
 
 ---
 

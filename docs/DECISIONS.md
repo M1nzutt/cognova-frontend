@@ -30,7 +30,7 @@
 
 ## Funcionalidad
 
-- Perfil: nombre, carrera, semestre, objetivo académico.
+- Identidad: nombre y correo. Perfil académico: carrera y semestre, nullable hasta completarse. Objetivo académico vigente: q1 del cuestionario.
 - Materias personalizables.
 - Actividad genérica con `type`.
 - Prioridades manuales y deadlines.
@@ -101,6 +101,15 @@ Solo mediante:
 - CSRF Path=/; refresh HttpOnly Path=/api/v1/auth; cookies Secure/Lax host-only.
 - Despliegue existente confirmado por el usuario el 2026-10-08; URLs y alcance de verificación en [DEPLOYMENT](DEPLOYMENT.md). La existencia del despliegue no certifica por sí sola todos los flujos de auth.
 
-## Pendiente posterior a la separación
+## Onboarding — decisión vigente 2026-10-13
 
-`academic_goal` permanece en registro/perfil por el contrato vigente, aunque conceptualmente pertenece al cuestionario. No cambiar campos, validaciones ni DTOs hasta acordar el refactor en los repositorios afectados después de la separación. Las opciones y cardinalidad del cuestionario siguen pendientes.
+La separación de repositorios ya terminó. El backend fijado en `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94` sustituye las decisiones anteriores de registro ampliado y cuestionario sin opciones:
+
+- Registro solo name/email/password: máximos 30/50 y contraseña 8–12 sin trim. Login conserva compatibilidad con credenciales legacy.
+- Carrera y semestre se guardan con PUT /onboarding/academic-profile. La navegación usa onboarding.next_step devuelto por backend, también tras login/restore/refresh.
+- `academic_goal` no se envía en registro ni se interpreta como objetivo vigente del User. `legacy_academic_goal` es evidencia histórica opcional; nunca completa onboarding. La declaración actual corresponde a q1.
+- Catálogo backend completo: diez preguntas, single/multi y máximos definidos. Otro solo en q1/q6/q7, trim y máximo 50.
+- POST conserva percepción inicial; PUT agrega revisión y exige expected_revision. No se sobrescribe ni se combinan respuestas silenciosamente ante 409.
+- Borrador en memoria de la pantalla; volver/avanzar lo conserva. Una recarga recupera lo guardado en backend, no el borrador sin enviar. No guardar datos de perfil, respuestas o credenciales en Web Storage.
+- Registro/onboarding sin sidebar pública, paleta #49225B/#6E3482/#A56ABD/#E7DBEF/#F5EBFA, sin gradientes.
+- No desplegar esta rama mientras operación no confirme backend compatible y schema 0003. No iniciar Subjects ni otros módulos en este cierre.

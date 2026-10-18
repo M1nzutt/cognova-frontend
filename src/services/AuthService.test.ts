@@ -11,7 +11,7 @@ describe('authentication contract', () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ user, access_token: token, token_type: 'bearer' }, 201))
     vi.stubGlobal('fetch', fetchMock)
     const service = new AuthService(new ApiClient('/api/v1', () => 'old-token', vi.fn()))
-    const details = { name: user.name, email: user.email, degree_program: user.degree_program, semester: 4, academic_goal: user.academic_goal, password: 'Example123!' }
+    const details = { name: user.name, email: user.email, password: 'Example123!' }
     expect(await service.register(details)).toEqual({ user, access_token: token, token_type: 'bearer' })
     expect(fetchMock.mock.calls[0][0]).toBe('/api/v1/auth/register')
     expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual(details)

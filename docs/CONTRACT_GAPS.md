@@ -1,18 +1,17 @@
 # Contratos pendientes — frontend
 
-Fecha: 2026-10-08. Este registro describe pendientes; no define DTOs nuevos. Solo se modifica cognova-frontend.
+Fecha: 2026-10-13. Solo se modifica cognova-frontend. Registro, onboarding y cuestionario ya tienen contratos completos fijados en backend a277af2ba5f2e7227b5b329aa7d935e5e12b8f94.
 
-## Auth: decisión resuelta, verificación pendiente
+## Auth anterior: integración histórica verificada
 
 El usuario confirmó CSRF Path=/ y refresh HttpOnly Path=/api/v1/auth. AUTH_CONTRACT ya refleja la decisión. Netlify sirve la SPA y reenvía /api/* a Render; cookies host-only, Secure/Lax. Backend debe sincronizar paths, eliminar la antigua cookie CSRF y enviar no-store en auth. No se reescriben cookies para ocultar diferencias.
 
-Las URLs y el despliegue existente están confirmados por el usuario en [DEPLOYMENT](DEPLOYMENT.md). Esta fase no revalida los flujos reales ni presupone fallos en backend; las condiciones anteriores siguen siendo requisitos contractuales.
+El 2026-10-12 se corrigió el origen Netlify a lpsi y se comprobaron cookies, rotación, CSRF, login, restore, logout y revocación del contrato anterior. Esa evidencia no valida el registro mínimo ni el onboarding nuevo. Ver [INTEGRATION_VALIDATION](INTEGRATION_VALIDATION.md).
 
 ## Matriz de especificaciones pendientes
 
 | Módulo | Información requerida antes de implementar |
 | --- | --- |
-| Cuestionario | Opciones/IDs y single/multi exactos por pregunta; límites; esquema GET/POST/PUT; estado de onboarding; respuesta y destino tras envío; errores |
 | Materias | DTO público, longitudes, color válido, campos opcionales, lista y detalle, efectos de borrar materia con recursos relacionados |
 | Objetivos | DTO, estados válidos/transiciones, fechas/zonas, nulabilidad de subject_id y reglas de borrado |
 | Actividades | DTO, enums definitivos de type/priority/status, fechas, relaciones, priorización, filtros y paginación |
@@ -24,11 +23,11 @@ Las URLs y el despliegue existente están confirmados por el usuario en [DEPLOYM
 | Observaciones/feedback | DTOs, campos de aceptación/contexto/periodo/exclusión, reglas y errores |
 | Retos | Estados/transiciones, DTOs aceptar/rechazar/completar, resultado, lista y evidencia, inmutabilidad |
 
-Se revisó el historial disponible de QUESTIONNAIRE: las versiones del repositorio solo contienen preguntas y la advertencia de opciones faltantes; no hay una lista aprobada que recuperar.
+El gap de cuestionario quedó resuelto por QUESTIONNAIRE y ONBOARDING_CONTRACT del SHA fijado: catálogo 1, DTOs, cardinalidades, Otro, revisiones, 409 e historial paginado. `academic_goal` se retiró del registro por ese mismo contrato; no queda una decisión funcional pendiente sobre su ubicación.
 
 ## Procedimiento para desbloquear
 
-1. Responsable de producto aporta opciones/cardinalidad aprobadas del cuestionario.
+1. Para los módulos futuros fuera de alcance, acordar la especificación que falte antes de implementarlos.
 2. Frontend/backend acuerdan cada DTO público y errores, sin inferirlos del modelo persistente.
 3. Sincronizar contratos en los repositorios afectados; este agente no modifica backend ni database.
 4. Backend implementa/expone lo acordado; validar respuestas reales.
@@ -36,18 +35,14 @@ Se revisó el historial disponible de QUESTIONNAIRE: las versiones del repositor
 
 ## Integración y despliegue
 
-Despliegue existente: Netlify frontend y Render backend, con Render Postgres. Tres repositorios independientes: frontend, backend y database. Frontend solo consume REST del backend. Esta fase conserva la configuración y no realiza nuevos despliegues ni E2E de auth. Los gaps académicos siguen fuera de alcance.
+Despliegue existente: Netlify frontend y Render backend, con Render Postgres. La separación en tres repositorios terminó. Frontend solo consume REST del backend. La rama nueva no está desplegada; Render sigue exponiendo el contrato anterior sin onboarding. No iniciar Subjects ni otros módulos.
 
 ## Dependencias externas documentadas
 
-DEPENDENCY:
-- Repo afectado: cognova-backend y cognova-database.
-- Archivo/contrato relacionado: ARCHITECTURE.md, DECISIONS.md, DATA_MODEL.md y documentación de despliegue de los repositorios afectados.
-- Cambio requerido: reflejar la propiedad de Alembic, migraciones, esquema físico, constraints, índices y seeds de DB en cognova-database y coordinar la separación técnica fuera de frontend.
-- Motivo: mantener coherencia entre tres repositorios sin introducir una dependencia frontend → database. No se inspeccionaron ni modificaron los repositorios externos.
+La dependencia anterior de separación backend/database está resuelta según confirmación del usuario; no queda como siguiente paso ni bloqueo del frontend.
 
 DEPENDENCY:
-- Repo afectado: cognova-frontend y cognova-backend; cognova-database si el refactor posterior afecta persistencia.
-- Archivo/contrato relacionado: AUTH_CONTRACT.md, QUESTIONNAIRE.md y DATA_MODEL.md.
-- Cambio requerido: después de terminar la separación, acordar el traslado conceptual de academic_goal desde registro/perfil al cuestionario y completar opciones/cardinalidad. No cambiar el contrato vigente ahora.
-- Motivo: academic_goal sigue siendo requerido por auth, aunque conceptualmente pertenece al cuestionario; faltan decisiones antes de modificar DTOs o datos.
+- Repo afectado: cognova-backend y cognova-database, coordinados por operación; frontend consume el entorno que habiliten.
+- Archivo/contrato relacionado: AUTH_CONTRACT.md y ONBOARDING_CONTRACT.md; backend a277af2ba5f2e7227b5b329aa7d935e5e12b8f94; database 232c43130c0fb3eddd32e1dd3707368ba0d87d4c; schema 0003_onboarding_questionnaire.
+- Cambio requerido: proporcionar un entorno compatible y confirmar aplicación de schema 0003 antes de validar el flujo nuevo y autorizar su publicación.
+- Motivo: OpenAPI de Render consultado en esta fase solo contiene auth/health/ready y UserResponse antiguo con academic_goal. No pudo realizarse la integración real nueva. No se ejecutan migraciones ni se cambia operación desde frontend.

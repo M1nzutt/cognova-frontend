@@ -79,6 +79,8 @@ LocalStorage queda permitido para preferencias no sensibles, por ejemplo tema vi
 
 ## Estado de sesión
 
+La rama de onboarding consume UserResponse con estado explícito del backend. `onboarding.next_step` decide perfil académico, cuestionario o dashboard; no se infiere de strings vacíos. EntryShell presenta registro/login/onboarding sin sidebar. La app conserva AppShell, y `/app/questionnaire` ofrece consulta, edición versionada e historial. QuestionnaireService usa el cliente REST existente; los borradores permanecen en memoria de la pantalla. Ver [ONBOARDING_CONTRACT](ONBOARDING_CONTRACT.md).
+
 El estado global de auth debe distinguir:
 - initializing;
 - authenticated;

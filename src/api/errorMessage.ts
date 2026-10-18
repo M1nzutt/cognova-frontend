@@ -1,4 +1,9 @@
 const messages: Record<string, string> = {
+  LEGACY_PROFILE_REMEDIATION_REQUIRED: 'Tu cuenta requiere una revisión de sus datos históricos. Contacta al equipo de Cognova; puedes seguir usando el acceso y cerrar sesión.',
+  ONBOARDING_REQUIRED: 'Completa tu perfil y cuestionario para continuar.',
+  QUESTIONNAIRE_VERSION_CONFLICT: 'Existe una revisión más reciente. Tus respuestas se conservan para que decidas cómo continuar.',
+  QUESTIONNAIRE_ALREADY_EXISTS: 'Ya existe una percepción inicial. Consulta la revisión vigente antes de guardar una nueva.',
+  QUESTIONNAIRE_NOT_FOUND: 'Todavía no tienes una percepción inicial guardada.',
   INVALID_CREDENTIALS: 'Correo o contraseña incorrectos.',
   EMAIL_ALREADY_REGISTERED: 'El correo ya está registrado.',
   VALIDATION_ERROR: 'Hay datos inválidos en el formulario.',

@@ -2,6 +2,16 @@ import { describe, expect, it } from 'vitest'
 import { renderNetlifyRedirects } from './netlifyRedirects'
 
 describe('Netlify routing', () => {
+  it('rejects the known mistyped Render hostname, including normalized variants', () => {
+    for (const origin of ['https://cognova-backend-1psi.onrender.com', 'https://COGNOVA-BACKEND-1PSI.ONRENDER.COM/']) {
+      expect(() => renderNetlifyRedirects(origin)).toThrow('letra l, no número 1')
+    }
+  })
+  it('routes the confirmed production backend before the SPA fallback', () => {
+    expect(renderNetlifyRedirects('https://cognova-backend-lpsi.onrender.com')).toBe(
+      '/api https://cognova-backend-lpsi.onrender.com/api 200!\n/api/* https://cognova-backend-lpsi.onrender.com/api/:splat 200!\n/* /index.html 200\n',
+    )
+  })
   it('preserves /api, forces the Render proxy and leaves SPA last', () => {
     expect(renderNetlifyRedirects('https://test-backend.onrender.com/')).toBe(
       '/api https://test-backend.onrender.com/api 200!\n/api/* https://test-backend.onrender.com/api/:splat 200!\n/* /index.html 200\n',

@@ -28,7 +28,7 @@ DEPENDENCY:
 - motivo.
 ```
 
-Durante la reconciliación arquitectónica se preservan auth, configuración de deploy y funcionalidades existentes. `academic_goal` y el formulario definitivo del cuestionario quedan pendientes de una fase posterior.
+La reconciliación arquitectónica terminó. La fase onboarding consume el contrato backend a277af2ba5f2e7227b5b329aa7d935e5e12b8f94: registro mínimo, perfil separado, objetivo en q1 y cuestionario completo. Preservar seguridad de auth y proxy. No publicar el frontend incompatible hasta confirmar operación con schema 0003; registrar la integración real como pendiente mientras Render exponga el contrato anterior.
 
 ## Fuente de verdad
 

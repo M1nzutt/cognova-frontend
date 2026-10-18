@@ -1,48 +1,50 @@
-# Cognova — Estado del Proyecto (Frontend)
+# Cognova — Estado frontend
 
-Fecha: 2026-10-08.
+Fecha: 2026-10-13. Rama: feat/onboarding-questionnaire.
 
-## Fase actual: reconciliación de arquitectura
+## Resultado de la fase
 
-Cognova adopta tres repositorios independientes: cognova-frontend, cognova-backend y cognova-database. Esta fase solo actualiza documentación del frontend; no realiza la separación técnica de PostgreSQL ni desarrolla funcionalidades.
+Implementación frontend de registro mínimo → perfil académico → cuestionario → app completada y verificada localmente. Cierre pendiente únicamente de validación real en entorno compatible; esta rama NO está desplegada a producción. No se iniciaron Subjects ni otros módulos.
 
-- Frontend consume exclusivamente REST del backend. El backend accede a PostgreSQL en ejecución.
-- cognova-database es propietario de Alembic, migraciones, esquema físico, constraints, índices, seeds de DB y administración del schema. No es una dependencia ni un destino HTTP del frontend.
-- No se inspeccionaron ni modificaron archivos fuera de cognova-frontend.
+Autoridad contractual: backend a277af2ba5f2e7227b5b329aa7d935e5e12b8f94 (feat/onboarding-questionnaire). Database fijado por backend: 232c43130c0fb3eddd32e1dd3707368ba0d87d4c; schema requerido 0003_onboarding_questionnaire. Solo se modificó cognova-frontend.
 
-## Estado reconciliado
+## Implementado y preservado
 
-Git comenzó limpio y sincronizado con origin/main en af82bc9. Se conservaron los commits 33d6961, 7e12cb0, c8c3e19 y af82bc9.
+- Registro solo name/email/password, límites 30/50/8–12; login mantiene compatibilidad legacy.
+- AuthUser nullable y onboarding explícito; navegación por next_step tras registro, login, restore y refresh + me.
+- /onboarding/academic-profile: guardado de carrera/semestre y manejo de errores.
+- /onboarding/questionnaire: catálogo backend, diez pasos, single/multi y máximos, Otro, validación, progreso, volver/avanzar y respuestas en memoria.
+- /app/questionnaire: GET actual, PUT con expected_revision, revisión nueva sin sobrescritura e historial paginado. POST conserva la percepción inicial.
+- 409: borrador conservado, lectura de revisión vigente, reintento confirmado o descarte explícito del borrador. Si falla sincronizar el perfil después de guardar, se reintenta solo esa lectura, no la escritura.
+- EntryShell sin sidebar para entrada/onboarding, claro/oscuro, paleta aprobada y sin gradientes.
+- Access solo en memoria; cookies refresh HttpOnly Path=/api/v1/auth y CSRF Path=/; credentials include, refresh coordinado, retry único, logout real y rutas protegidas preservados. Solo cognova.theme en Web Storage.
 
-El código mantiene registro, login, AuthSession/AuthProvider, restore, refresh coordinado, retry único, logout real con error/reintento, guest/protected routes, dashboard provisional y smoke auth. No se modificó código, dependencias, tests ni configuración de despliegue.
+## Verificaciones finales
 
-Auth permanece intacta: access JWT solo en memoria; refresh HttpOnly Path=/api/v1/auth; CSRF Path=/; credentials include; ningún token o perfil en Web Storage. AUTH_CONTRACT.md no cambió. API_CONTRACT.md solo cambia la instrucción de sincronización hacia los repositorios afectados, sin modificar endpoints ni DTOs.
+- npm run verify: 118 tests en 11 archivos, lint sin advertencias, TypeScript y build aprobados.
+- npm run build:netlify: aprobado con el origen correcto https://cognova-backend-lpsi.onrender.com.
+- dist/_redirects revisado: /api y /api/* hacia lpsi antes del fallback SPA.
+- git diff --check sin errores; diagnóstico del editor sin problemas.
+- Tests locales usan HTTP interceptado y contratos fijados. No sustituyen integración real nueva. El informe histórico de auth anterior se conserva separado en INTEGRATION_VALIDATION.md.
 
-## Despliegue existente
+## Integración real pendiente y prohibición de deploy
 
-Confirmado por el usuario, no recreado ni revalidado funcionalmente en esta fase:
+Render consultado en esta fase solo expone auth/health/ready y UserResponse antiguo con academic_goal. No están publicadas las rutas nuevas de onboarding/catalog. La integración real nueva NO pudo validarse; tampoco se confirmó físicamente schema 0003. No se desplegó esta rama ni se modificó main, backend o database.
 
-- Frontend: https://cognova-frontend.netlify.app
-- Backend: https://cognova-backend-1psi.onrender.com
-- Netlify: RENDER_API_ORIGIN=https://cognova-backend-1psi.onrender.com
-- Navegador → Netlify /api/* → Render backend → Render Postgres.
+DEPENDENCY:
+- Repo afectado: cognova-backend y cognova-database, coordinados por operación.
+- Contrato/archivo: AUTH_CONTRACT y ONBOARDING_CONTRACT; SHAs fijados arriba.
+- Cambio requerido: entregar URL de integración con backend compatible y confirmar schema 0003 aplicado.
+- Motivo: ejecutar el recorrido real completo antes de considerar compatible un release de frontend. No se ejecutan migraciones desde este repositorio.
 
-La documentación anterior que indicaba ausencia de URLs o despliegue quedó corregida. Las comprobaciones de cookies, revocación y flujos reales requieren evidencia propia; esta fase no ejecutó smoke auth ni creó usuarios.
+Siguiente paso exacto: con ese entorno disponible, verificar registro, login/me, perfil, catálogo, POST/GET/PUT, 409, historial, reload/restore, logout y cookies/CSRF/no-store; registrar resultados. No comenzar funcionalidades nuevas ni desplegar mientras esta dependencia siga pendiente.
 
-## Evidencia de validación
+## Git e historial
 
-- Revisión de archivos versionados, cliente HTTP, proveedor/sesión auth, servicios, dependencias/lockfile y configuración: sin drivers DB, migraciones, schema SQL, DATABASE_URL ni dependencia de cognova-database en frontend.
-- npm run build:netlify ejecutado localmente con el origen Render confirmado: lint sin advertencias, 54 tests aprobados, TypeScript y build correctos.
-- dist/_redirects generado conserva /api y /api/* hacia Render antes del fallback SPA. No se publicó ningún artefacto.
-- Revisión de diff: cambios exclusivamente documentales. Contrato auth, código y configuración de deploy preservados.
+Inicio del encargo antes de cerrar documentación anterior: dc31fe2, 16 commits. El cierre previo 1192fc4 agregó uno y fue publicado en fix/netlify-backend-origin. Inicio de la fase funcional en feat/onboarding-questionnaire: 17 commits.
 
-## Documentación actualizada
+Este cierre comenzó en 031683f con 25 commits y tres archivos staged del bloque 409. Se revisaron y guardaron en 5750258. Luego 143a275 cerró decisiones/procedencia contractual; el commit que contiene este informe cierra evidencia/README/estado.
 
-ARCHITECTURE, DECISIONS, AGENT_RULES, DEPLOYMENT y CONTRACT_GAPS reconocen responsabilidades y no interferencia entre tres repositorios. README refleja el despliegue existente; API_CONTRACT generaliza la sincronización; DATA_MODEL y SECURITY_BASELINE atribuyen administración del schema a database; APP_CONTEXT aclara que faltan opciones/cardinalidad del cuestionario.
+Conteo al incluir este cierre: 28 commits totales; 11 creados en la fase funcional desde 1192fc4 (12 desde los 16 del encargo original, incluyendo el cierre previo). Faltan 473 para llegar a 501. No hubo squash, commits vacíos ni inflación de historial.
 
-## Pendientes y siguiente paso exacto
-
-1. Los responsables de backend/database coordinan la separación técnica y sincronizan la documentación de los repositorios afectados. Las dependencias externas se registran con formato DEPENDENCY en [CONTRACT_GAPS](CONTRACT_GAPS.md); no se implementan aquí.
-2. Preservar academic_goal en registro/perfil hasta acordar el refactor posterior a la separación. Conceptualmente pertenece al cuestionario, pero el contrato actual sigue vigente.
-3. Completar las opciones y cardinalidad de las 10 preguntas antes de implementar el formulario definitivo; no inventarlas.
-4. Esperar una nueva fase explícita para funcionalidades o validación funcional del despliegue. No avanzar a cuestionario, materias, calendario, IA ni otros módulos.
+La rama tiene upstream origin/feat/onboarding-questionnaire. Publicar todos los commits de cierre y confirmar git status limpio y divergencia 0/0 antes de entregar; el SHA final y resultado del push se obtienen de Git, no se inventan en este documento.

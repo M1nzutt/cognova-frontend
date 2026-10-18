@@ -1,5 +1,7 @@
 # Cognova — Contrato API v1
 
+Fuente de esta copia frontend: backend `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94`, rama `feat/onboarding-questionnaire`. Requiere schema `0003_onboarding_questionnaire`. Describe la versión consumida por esta rama, no la versión antigua todavía desplegada en Render. Estado de verificación en [INTEGRATION_VALIDATION.md](INTEGRATION_VALIDATION.md).
+
 Base:
 
 ```text
@@ -21,6 +23,14 @@ Fechas y horas: ISO 8601.
 
 Los recursos privados requieren autenticación salvo indicación contraria.
 
+## Operación
+
+- GET `/health`: público, `200 {"status":"ok"}`; liveness del proceso, no consulta DB.
+- GET `/ready`: público, `200 {"status":"ready"}` si `SELECT 1` funciona y Alembic
+  está en la revisión esperada; `503 {"error":{"code":"SERVICE_UNAVAILABLE",
+  "message":"Servicio temporalmente no disponible."}}` si falla. No expone hosts,
+  credenciales, versiones ni detalles internos. Ambos usan Cache-Control: no-store.
+
 ## Auth
 
 Fuente de verdad detallada: `AUTH_CONTRACT.md`.
@@ -39,10 +49,12 @@ Fuente de verdad detallada: `AUTH_CONTRACT.md`.
 - POST `/questionnaire`
 - PUT `/questionnaire`
 
-Reglas:
-- onboarding obligatorio después de registro;
-- las preguntas/opciones salen de `QUESTIONNAIRE.md`;
-- no inventar opciones desde frontend.
+Contrato vigente de onboarding y cuestionario: [ONBOARDING_CONTRACT.md](ONBOARDING_CONTRACT.md).
+Incluye GET `/questionnaire/catalog`, GET `/questionnaire/history` y
+PUT `/onboarding/academic-profile`. Los tres endpoints existentes se conservan.
+Todas estas rutas requieren Bearer; permiten onboarding incompleto y solo operan
+sobre el usuario autenticado. No reciben user_id. No se implementan aún los
+módulos académicos listados más abajo.
 
 ## Subjects
 
@@ -119,7 +131,7 @@ Resultados:
 - GET `/analytics/by-duration`
 - GET `/analytics/by-subject`
 
-Con menos de 5 sesiones:
+Con menos de 5 sesiones válidas:
 - puede devolver datos descriptivos;
 - no debe presentar patrones como concluyentes.
 
@@ -177,7 +189,10 @@ Un reto aceptado no se edita.
 
 ## Profile
 
-Si se necesita edición de perfil, el agente debe documentar primero el contrato exacto y sincronizar los repositorios afectados antes de implementarlo.
+Datos académicos: PUT `/onboarding/academic-profile` según ONBOARDING_CONTRACT.md.
+Lectura y estado en `/auth/me`. Nombre/email no se editan en esta fase. Los futuros
+módulos académicos requieren get_onboarded_user, con403 ONBOARDING_REQUIRED cuando
+el perfil o cuestionario inicial no estén completos. Auth/onboarding no lo exigen.
 
 ## DTOs y paginación
 
@@ -188,7 +203,7 @@ Antes de implementar cualquier endpoint que todavía no tenga request/response e
 2. definir status codes;
 3. definir errores;
 4. definir paginación/filtros si aplica;
-5. actualizar este contrato en los repositorios afectados;
+5. actualizar este contrato local y coordinar los repositorios afectados;
 6. implementar backend;
 7. consumir desde frontend.
 

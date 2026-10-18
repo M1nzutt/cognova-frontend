@@ -8,6 +8,8 @@ interface RequestOptions {
   authenticated?: boolean
   csrf?: boolean
   signal?: AbortSignal
+  retryAuth?: boolean
+  query?: Record<string, number>
 }
 
 export class ApiClient {
@@ -24,6 +26,11 @@ export class ApiClient {
       throw new ApiError('La ruta de la API no es válida.', 0, 'INVALID_PATH')
     }
     const token = options.authenticated === false ? null : this.getToken()
+    const query = new URLSearchParams()
+    for (const [key, value] of Object.entries(options.query ?? {})) {
+      if (!/^[a-z_]+$/.test(key) || !Number.isSafeInteger(value) || value < 1) throw new ApiError('Los parámetros de la API no son válidos.', 0, 'INVALID_QUERY')
+      query.set(key, String(value))
+    }
     const headers = new Headers({ Accept: 'application/json' })
     if (token) headers.set('Authorization', `Bearer ${token}`)
     if (options.body !== undefined) headers.set('Content-Type', 'application/json')
@@ -35,7 +42,7 @@ export class ApiClient {
     let response: Response
     const timeout = AbortSignal.timeout(20_000)
     try {
-      response = await fetch(`${this.baseUrl.replace(/\/$/, '')}${path}`, {
+      response = await fetch(`${this.baseUrl.replace(/\/$/, '')}${path}${query.size ? `?${query}` : ''}`, {
         method: options.method ?? 'GET', headers,
         body: options.body === undefined ? undefined : JSON.stringify(options.body),
         signal: options.signal ? AbortSignal.any([options.signal, timeout]) : timeout,
@@ -47,7 +54,7 @@ export class ApiClient {
     }
     if (token && version !== this.getSessionVersion()) throw new DOMException('Session changed', 'AbortError')
     if (response.status === 401 && token) {
-      if (retried) {
+      if (retried || options.retryAuth === false) {
         this.onUnauthorized(token)
         throw new ApiError('Tu sesión expiró. Inicia sesión nuevamente.', 401, 'INVALID_OR_EXPIRED_TOKEN')
       } else {

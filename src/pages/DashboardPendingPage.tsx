@@ -2,6 +2,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useEffect, useRef, useState } from 'react'
 import { ApiError } from '../api/ApiError'
 import styles from './DashboardPendingPage.module.css'
+import { Link } from 'react-router-dom'
 
 export function DashboardPendingPage() {
   const { user, session } = useAuth()
@@ -62,8 +63,9 @@ export function DashboardPendingPage() {
         <section className={`${styles.card} ${styles.goal}`} aria-labelledby="goal-title">
           <p className="eyebrow">TU NORTE</p>
           <h2 id="goal-title">Lo que quieres lograr</h2>
-          <p className={styles.goalText}>{user?.academic_goal || 'Aún no tienes un objetivo académico registrado.'}</p>
-          <p className={styles.muted}>Este es el objetivo que compartiste al crear tu cuenta.</p>
+          <p className={styles.goalText}>Tu percepción inicial ya forma parte de tu recorrido.</p>
+          <p className={styles.muted}>Podrás consultar y actualizar tus respuestas conservando las revisiones anteriores.</p>
+          <Link to="/app/questionnaire">Consultar mi percepción</Link>
         </section>
       </div>
       <section className={styles.next} aria-labelledby="next-title">
