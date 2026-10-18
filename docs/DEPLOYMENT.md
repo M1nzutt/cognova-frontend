@@ -2,7 +2,18 @@
 
 ## Estado
 
-Aviso vigente 2026-10-13: `feat/onboarding-questionnaire` requiere backend a277af2ba5f2e7227b5b329aa7d935e5e12b8f94 y schema 0003_onboarding_questionnaire. Render sigue exponiendo el contrato anterior. No desplegar ni fusionar esta rama para producción hasta confirmar operación compatible y completar la [validación real nueva](INTEGRATION_VALIDATION.md). Los datos de despliegue siguientes corresponden al avance anterior; el build:netlify de esta rama solo se ejecutó localmente.
+## Release operativo 2026-10-17
+
+Main integra feat/onboarding-questionnaire sin squash (merge dae333d254974093b6422e2594c92782586df53f). Netlify publicó ese SHA en https://cognova-frontend.netlify.app: deploy 6ad443bb9de5414fc3a0c500, ready. Los commits posteriores de tooling/documentación conservan el mismo bundle de aplicación.
+
+Sitio existente bf6ef7b1-c280-4de9-8ea1-f70630cc14c1, rama main, build npm run build:netlify, publish dist. RENDER_API_ORIGIN ya era https://cognova-backend-lpsi.onrender.com; no se modificó. VITE_API_BASE_URL=/api/v1 en netlify.toml. Backend 9309effdd1b71acc3fe5e24bc8c19b70c3d8c0c8 y schema 0003 confirmados por operación; readiness/OpenAPI compatibles comprobados aquí. La dependencia antigua de backend sin onboarding queda resuelta.
+
+El smoke HTTP nuevo pasó por Netlify. El release completo continúa pendiente del E2E en navegador: el adaptador no tiene apps ni browsers disponibles. No confundir HTTP y tests con mocks con validación visual. No se modificaron backend ni database.
+
+Smoke reproducible: establecer SMOKE_ALLOW_PRODUCTION_WRITE=1 y ejecutar node --experimental-strip-types scripts/smokeOnboarding.ts, solo con autorización para crear una cuenta sintética de producción. Conserva respuestas y cierra sesiones. NETLIFY_AUTH_TOKEN se almacena exclusivamente en .env ignorado, nunca en .env.example ni variables VITE.
+
+## Referencia histórica anterior al release
+
 
 Despliegue existente verificado el 2026-10-12:
 

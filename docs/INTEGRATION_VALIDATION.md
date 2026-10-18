@@ -1,5 +1,48 @@
 # Integración real frontend → backend
 
+## Release operativo 2026-10-17
+
+Main integra feat/onboarding-questionnaire sin squash (merge dae333d254974093b6422e2594c92782586df53f). Netlify publicó ese SHA en https://cognova-frontend.netlify.app: deploy 6ad443bb9de5414fc3a0c500, ready. Los commits posteriores de tooling/documentación conservan el mismo bundle de aplicación.
+
+Sitio existente bf6ef7b1-c280-4de9-8ea1-f70630cc14c1, rama main, build npm run build:netlify, publish dist. RENDER_API_ORIGIN ya era https://cognova-backend-lpsi.onrender.com; no se modificó. VITE_API_BASE_URL=/api/v1 en netlify.toml. Backend 9309effdd1b71acc3fe5e24bc8c19b70c3d8c0c8 y schema 0003 confirmados por operación; readiness/OpenAPI compatibles comprobados aquí. La dependencia antigua de backend sin onboarding queda resuelta.
+
+El smoke HTTP nuevo pasó por Netlify. El release completo continúa pendiente del E2E en navegador: el adaptador no tiene apps ni browsers disponibles. No confundir HTTP y tests con mocks con validación visual. No se modificaron backend ni database.
+
+Smoke reproducible: establecer SMOKE_ALLOW_PRODUCTION_WRITE=1 y ejecutar node --experimental-strip-types scripts/smokeOnboarding.ts, solo con autorización para crear una cuenta sintética de producción. Conserva respuestas y cierra sesiones. NETLIFY_AUTH_TOKEN se almacena exclusivamente en .env ignorado, nunca en .env.example ni variables VITE.
+
+### Evidencia nueva de integración
+
+- Build de release: lint sin advertencias, 118/118 pruebas en 11 archivos, TypeScript y Vite aprobados. npm audit: 0 vulnerabilidades. Smoke nuevo: lint y tsc -b aprobados.
+- scripts/smokeOnboarding.ts ejecutado contra /api/v1 de Netlify sin mocks. Cuenta sintética user_id=3, nombre Frontend release smoke, perfil sintético y revisiones 1/2 conservados. Sesiones de registro y login cerradas. Credenciales solo en memoria.
+
+| Comprobación | Resultado |
+| --- | --- |
+| ready / me sin sesión | 200 / 401 JSON |
+| register mínimo / login / me | 201 / 200 / 200; perfil inicialmente null |
+| PUT perfil / catálogo | 200 / 200; diez preguntas |
+| POST inicial / GET actual | 201 / 200; revisión 1 |
+| Exceso multi / Otro sin texto | 422 / 422; sin revisión adicional |
+| PUT expected_revision=1 | 200; revisión 2 |
+| PUT con revisión vieja | 409 QUESTIONNAIRE_VERSION_CONFLICT |
+| Historial | [2,1]; respuestas iniciales idénticas al POST |
+| Estado final | onboarding complete |
+| Refresh sin CSRF / válido | 403 / 200; ambas cookies rotadas |
+| Restauración HTTP y me | 200, estado complete |
+| Sesiones antes del logout | Una, del login |
+| Logout / access revocado | 204 / 401; cookies eliminadas |
+| no-store | Todas las respuestas API del smoke, errores y 204 incluidos |
+
+Set-Cookie comprobado sin valores: Secure/Lax, host-only; HttpOnly solo refresh; paths /api/v1/auth y /. Preflight backend para Netlify: 200 con origen exacto y credentials=true; origen ajeno: 400 sin allow-origin. Proxy mismo origen conservado.
+
+Rutas HTTP /, /login, /register, /dashboard, /onboarding/academic-profile, /onboarding/questionnaire y /app/questionnaire: HTML 200 con bundle index-DAmSllbe.js y CSP. Token Netlify ausente del bundle y archivos versionados; sin URI PostgreSQL en el bundle.
+
+### Bloqueo de E2E real
+
+El adaptador devolvió apps=[] y browsers=[]. Pendientes: recorrido visual de diez pasos, atrás/adelante, multi/Otro por UI, POST/PUT y recuperación visual del 409, historial visual, recarga/restore, guards, cookies de navegador, Web Storage y consola. Los tests jsdom/mocks y HTTP no sustituyen esas comprobaciones. Conectar navegador y registrar resultados antes de declarar cerrado el release.
+
+## Archivo histórico
+
+
 ## Cierre de onboarding — 2026-10-13
 
 Rama `feat/onboarding-questionnaire`, contrato backend consumido desde fuentes: `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94`. Database fijado por backend: `232c43130c0fb3eddd32e1dd3707368ba0d87d4c`; schema requerido `0003_onboarding_questionnaire`.
