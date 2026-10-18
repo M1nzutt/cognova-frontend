@@ -1,50 +1,38 @@
-# Cognova — Estado frontend
+﻿# Cognova — Estado frontend
 
-Fecha: 2026-10-13. Rama: feat/onboarding-questionnaire.
+Fecha: 2026-10-17. Rama de despliegue: main.
 
-## Resultado de la fase
+## Release onboarding publicado; cierre visual pendiente
 
-Implementación frontend de registro mínimo → perfil académico → cuestionario → app completada y verificada localmente. Cierre pendiente únicamente de validación real en entorno compatible; esta rama NO está desplegada a producción. No se iniciaron Subjects ni otros módulos.
+Se integró feat/onboarding-questionnaire sin squash mediante dae333d254974093b6422e2594c92782586df53f, conservando todos los commits. Netlify publicó ese SHA en el sitio existente https://cognova-frontend.netlify.app, deploy 6ad443bb9de5414fc3a0c500 (ready). No se modificaron backend ni database.
 
-Autoridad contractual: backend a277af2ba5f2e7227b5b329aa7d935e5e12b8f94 (feat/onboarding-questionnaire). Database fijado por backend: 232c43130c0fb3eddd32e1dd3707368ba0d87d4c; schema requerido 0003_onboarding_questionnaire. Solo se modificó cognova-frontend.
+Backend de producción confirmado por operación: 9309effdd1b71acc3fe5e24bc8c19b70c3d8c0c8, schema 0003_onboarding_questionnaire. En esta fase se consultaron readiness 200 y OpenAPI 200 con las rutas de perfil y cuestionario. La dependencia anterior de backend sin onboarding queda resuelta; no repetir migraciones ni implementación funcional.
 
-## Implementado y preservado
+## Configuración y pruebas
 
-- Registro solo name/email/password, límites 30/50/8–12; login mantiene compatibilidad legacy.
-- AuthUser nullable y onboarding explícito; navegación por next_step tras registro, login, restore y refresh + me.
-- /onboarding/academic-profile: guardado de carrera/semestre y manejo de errores.
-- /onboarding/questionnaire: catálogo backend, diez pasos, single/multi y máximos, Otro, validación, progreso, volver/avanzar y respuestas en memoria.
-- /app/questionnaire: GET actual, PUT con expected_revision, revisión nueva sin sobrescritura e historial paginado. POST conserva la percepción inicial.
-- 409: borrador conservado, lectura de revisión vigente, reintento confirmado o descarte explícito del borrador. Si falla sincronizar el perfil después de guardar, se reintenta solo esa lectura, no la escritura.
-- EntryShell sin sidebar para entrada/onboarding, claro/oscuro, paleta aprobada y sin gradientes.
-- Access solo en memoria; cookies refresh HttpOnly Path=/api/v1/auth y CSRF Path=/; credentials include, refresh coordinado, retry único, logout real y rutas protegidas preservados. Solo cognova.theme en Web Storage.
+- Sitio Netlify bf6ef7b1-c280-4de9-8ea1-f70630cc14c1, repo M1nzutt/cognova-frontend, rama main, build npm run build:netlify, publish dist.
+- RENDER_API_ORIGIN ya apunta a https://cognova-backend-lpsi.onrender.com; VITE_API_BASE_URL=/api/v1 en netlify.toml. No se cambió el recurso ni el proxy.
+- npm run build:netlify: lint, 118 tests/11 archivos, TypeScript y build aprobados. npm audit: 0 vulnerabilidades. Nuevo smoke comprobado con lint y tsc -b.
+- scripts/smokeOnboarding.ts ejecutado sobre Netlify: register mínimo, login/me, perfil, catálogo de diez preguntas, POST/GET, límites multi y Otro rechazados con 422, PUT revisión 2, conflicto 409, historial con revisión 1 intacta, estado complete, refresh/CSRF/rotación, sesiones, logout y revocación aprobados.
+- Cuenta sintética user_id=3, nombre Frontend release smoke; conserva perfil y revisiones 1/2. Sus dos sesiones se cerraron. No se guardaron credenciales; el script no borra datos y crea una cuenta por ejecución explícita.
+- Todas las respuestas API del smoke incluyen no-store. Cookies Secure/Lax, host-only, HttpOnly solo refresh, paths correctos; logout elimina ambas. Evidencia HTTP, no inspección del almacén de cookies de navegador.
+- Rutas /, /login, /register, /dashboard, /onboarding/academic-profile, /onboarding/questionnaire y /app/questionnaire: HTTP 200 HTML con bundle index-DAmSllbe.js y CSP. Esto comprueba fallback, no ejecución de guards ni recarga visual.
+- CORS: preflight del origen Netlify 200 con origen exacto y credentials=true; origen ajeno 400 sin allow-origin. No wildcard.
+- Token real Netlify ausente del bundle y de archivos versionados; .env ignorado. No se versionaron secretos.
 
-## Verificaciones finales
+## Bloqueo real y siguiente paso
 
-- npm run verify: 118 tests en 11 archivos, lint sin advertencias, TypeScript y build aprobados.
-- npm run build:netlify: aprobado con el origen correcto https://cognova-backend-lpsi.onrender.com.
-- dist/_redirects revisado: /api y /api/* hacia lpsi antes del fallback SPA.
-- git diff --check sin errores; diagnóstico del editor sin problemas.
-- Tests locales usan HTTP interceptado y contratos fijados. No sustituyen integración real nueva. El informe histórico de auth anterior se conserva separado en INTEGRATION_VALIDATION.md.
+El adaptador de navegador devuelve apps=[] y browsers=[]. No pudo ejecutarse E2E en navegador real. No declarar cerrado el release completo basándose solo en HTTP y pruebas con mocks.
 
-## Integración real pendiente y prohibición de deploy
+Conectar un navegador y validar sobre el sitio publicado: register/login, restore tras recarga, perfil académico, diez pasos con atrás/adelante, límites multi y Otro, POST inicial, edición PUT, conflicto 409 conservando borrador, historial, refresh y logout; verificar guards, Web Storage, cookies y ausencia de errores de consola. No repetir el despliegue de backend/database ni reimplementar auth/onboarding. Registrar la evidencia en INTEGRATION_VALIDATION.md y actualizar este estado.
 
-Render consultado en esta fase solo expone auth/health/ready y UserResponse antiguo con academic_goal. No están publicadas las rutas nuevas de onboarding/catalog. La integración real nueva NO pudo validarse; tampoco se confirmó físicamente schema 0003. No se desplegó esta rama ni se modificó main, backend o database.
+## Smoke operativo reproducible
 
-DEPENDENCY:
-- Repo afectado: cognova-backend y cognova-database, coordinados por operación.
-- Contrato/archivo: AUTH_CONTRACT y ONBOARDING_CONTRACT; SHAs fijados arriba.
-- Cambio requerido: entregar URL de integración con backend compatible y confirmar schema 0003 aplicado.
-- Motivo: ejecutar el recorrido real completo antes de considerar compatible un release de frontend. No se ejecutan migraciones desde este repositorio.
+En PowerShell, únicamente con autorización para crear una cuenta sintética en producción:
 
-Siguiente paso exacto: con ese entorno disponible, verificar registro, login/me, perfil, catálogo, POST/GET/PUT, 409, historial, reload/restore, logout y cookies/CSRF/no-store; registrar resultados. No comenzar funcionalidades nuevas ni desplegar mientras esta dependencia siga pendiente.
+```powershell
+$env:SMOKE_ALLOW_PRODUCTION_WRITE='1'
+node --experimental-strip-types scripts/smokeOnboarding.ts
+```
 
-## Git e historial
-
-Inicio del encargo antes de cerrar documentación anterior: dc31fe2, 16 commits. El cierre previo 1192fc4 agregó uno y fue publicado en fix/netlify-backend-origin. Inicio de la fase funcional en feat/onboarding-questionnaire: 17 commits.
-
-Este cierre comenzó en 031683f con 25 commits y tres archivos staged del bloque 409. Se revisaron y guardaron en 5750258. Luego 143a275 cerró decisiones/procedencia contractual; el commit que contiene este informe cierra evidencia/README/estado.
-
-Conteo al incluir este cierre: 28 commits totales; 11 creados en la fase funcional desde 1192fc4 (12 desde los 16 del encargo original, incluyendo el cierre previo). Faltan 473 para llegar a 501. No hubo squash, commits vacíos ni inflación de historial.
-
-La rama tiene upstream origin/feat/onboarding-questionnaire. Publicar todos los commits de cierre y confirmar git status limpio y divergencia 0/0 antes de entregar; el SHA final y resultado del push se obtienen de Git, no se inventan en este documento.
+El destino está fijado al sitio existente. Passwords/tokens/cookies permanecen en memoria; errores nativos no se imprimen. Un fallo detiene el smoke y se intenta logout de limpieza. El smoke HTTP no sustituye pruebas de UI.
