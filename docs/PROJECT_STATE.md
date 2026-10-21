@@ -1,3 +1,15 @@
+# Ajuste de foco durante smoke — 2026-10-21
+
+Deploy bd417b6: edición PUT corregida y validada en Chrome real; activas/archivadas,
+cupo, duplicados, aislamiento y vistas claro/oscuro 1440/375 px aprobados.
+Cancelar diálogo DELETE no restauraba foco: cerrar el dialog nativo antes de
+restaurar foco en su botón disparador. Prueba UI y smoke verifican este comportamiento.
+Cuentas sintéticas 11/12 limpiadas (materias), sesiones revocadas.
+139 tests, lint, TypeScript y build:netlify aprobados. Regresión comprueba cierre
+nativo antes de focus y cancelación sin DELETE. Smoke limitado reproducible:
+SMOKE_ALLOW_PRODUCTION_WRITE=1; node --experimental-strip-types scripts/smokeSubjectsFocus.ts.
+Pendiente publicación y smoke final de teclado/DELETE; no cerrar aún.
+
 # Corrección durante smoke visual — 2026-10-20
 
 Primer deploy Materias e5f72ac publicado, smoke real detectó PUT422:
