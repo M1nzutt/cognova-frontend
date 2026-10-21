@@ -83,3 +83,15 @@ Si contrato y backend difieren, registrar y corregir explícitamente antes de pr
 Netlify limita sus proxies a 26 segundos; el cliente tiene timeout de 20 segundos. Un arranque lento de Render puede fallar: comprobar disponibilidad antes de la presentación y usar errores/reintentos visibles. No reintentar automáticamente un registro POST por timeout.
 
 Referencias oficiales: [rewrites y proxies](https://docs.netlify.com/manage/routing/redirects/rewrites-proxies/), [cabeceras](https://docs.netlify.com/manage/routing/headers/), [configuración de build](https://docs.netlify.com/build/configure-builds/file-based-configuration/).
+
+## Preparación de Materias — 2026-10-20
+
+Rama feat/subjects-ui; sitio Netlify existente, sin cambios de proxy ni secretos.
+Build obligatorio npm run build:netlify (lint, tests, TypeScript, build y redirects).
+Chrome instalado y @playwright/test permiten smoke real aislado. Opt-in explícito:
+SMOKE_ALLOW_PRODUCTION_WRITE=1; node --experimental-strip-types scripts/smokeSubjectsBrowser.ts.
+Crea dos cuentas sintéticas, completa su onboarding, prueba Materias y borra únicamente
+sus materias. Conserva cuentas/perfil/cuestionario, revoca sesiones. Credenciales solo
+en memoria; capturas/evidencias sin secretos en .local ignorado.
+Smoke HTTP adicional: scripts/smokeSubjectsApi.ts. No accede a PostgreSQL.
+Vite actualizado de 8.3.2 a 8.3.4 por npm audit; cero vulnerabilidades.

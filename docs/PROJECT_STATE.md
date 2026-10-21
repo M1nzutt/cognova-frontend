@@ -1,4 +1,18 @@
-﻿# Cognova — Estado frontend
+# Materias en implementación — 2026-10-20
+
+Rama feat/subjects-ui; base main dd87718 (31 commits), árbol inicial limpio.
+Contrato Subjects contrastado con OpenAPI productivo 0004; backend cerrado por operación.
+Se conserva auth/proxy. Cliente tipado y validadores implementados; 10 pruebas API, lint y TypeScript aprobados.
+Vistas activas/archivadas, detalle, edición, acciones y confirmación DELETE integradas.
+138 tests (13 archivos), lint, TypeScript y build:netlify aprobados.
+Smoke HTTP productivo pasó con usuario sintético 8; materias eliminadas, sesión revocada.
+Códigos 409 de duplicado/cupo/reactivación confirmados y mensajes específicos añadidos.
+Siguiente: merge --no-ff, push main, deploy automático y smoke visual de Materias.
+Adaptador integrado sin navegador; Chrome 155 aislado disponible mediante Playwright.
+Validación visual productiva aún pendiente.
+Las secciones siguientes conservan evidencia histórica.
+
+# Cognova — Estado frontend
 
 Fecha: 2026-10-17. Rama de despliegue: main.
 

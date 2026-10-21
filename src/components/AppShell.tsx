@@ -18,7 +18,7 @@ export function AppShell() {
         <p className={styles.caption}>TU ESPACIO ACADÉMICO</p>
         <nav aria-label="Navegación principal">
           <NavLink className={styles.navLink} to="/" end>Inicio</NavLink>
-          {status === 'authenticated' ? <NavLink className={styles.navLink} to="/dashboard">Mi espacio</NavLink> : status === 'anonymous' && (
+          {status === 'authenticated' ? <><NavLink className={styles.navLink} to="/dashboard">Mi espacio</NavLink><NavLink className={styles.navLink} to="/app/subjects">Materias</NavLink></> : status === 'anonymous' && (
             <>
               <NavLink className={styles.navLink} to="/login">Iniciar sesión</NavLink>
               <NavLink className={styles.navLink} to="/register">Crear cuenta</NavLink>
