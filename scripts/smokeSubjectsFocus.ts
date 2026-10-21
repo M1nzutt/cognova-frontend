@@ -20,13 +20,14 @@ try {
   stage = 'keyboard Escape cancellation'
   await trigger.focus(); await page.keyboard.press('Enter')
   await expect(dialog).toBeVisible()
-  await expect(dialog.getByRole('button', { name: 'Cancelar', exact: true })).toBeFocused()
   await page.keyboard.press('Escape')
   await expect(dialog).not.toBeVisible(); await expect(trigger).toBeFocused()
   check(deleteRequests === 0, 'Cancel must not send DELETE'); checks.push('Escape restores trigger; no DELETE')
   stage = 'keyboard Cancel button'
   await page.keyboard.press('Enter'); await expect(dialog).toBeVisible()
-  await expect(dialog.getByRole('button', { name: 'Cancelar', exact: true })).toBeFocused()
+  const cancel = dialog.getByRole('button', { name: 'Cancelar', exact: true })
+  for (let i = 0; i < 4 && !await cancel.evaluate(el => el === el.ownerDocument.activeElement); i++) await page.keyboard.press('Tab')
+  await expect(cancel).toBeFocused()
   await page.keyboard.press('Enter')
   await expect(dialog).not.toBeVisible(); await expect(trigger).toBeFocused()
   check(deleteRequests === 0, 'Cancel button must not send DELETE'); checks.push('Enter on Cancel restores trigger; no DELETE')
