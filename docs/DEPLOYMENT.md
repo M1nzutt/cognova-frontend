@@ -1,3 +1,26 @@
+# Frontend Materias — release cerrado 2026-10-21
+
+Sitio existente https://cognova-frontend.netlify.app, ID
+bf6ef7b1-c280-4de9-8ea1-f70630cc14c1. Producción main; proxy y variables sin cambios.
+Deploy 6ad8630286df0857a21d2ec0 ready, publicado 2026-10-21T07:00:48.532Z;
+SHA c439a821db99157fae01b0c44abd69993d68cce2. Build obligatorio build:netlify aprobado:
+lint, 139 tests, TypeScript, Vite y redirects.
+
+La corrección de foco cierra el dialog antes de restaurar foco en el trigger;
+se conserva la advertencia, confirmación explícita y el bloqueo durante DELETE.
+Smoke limitado en Chrome real aprobado, sin volver a ejecutar el CRUD completo.
+Los commits posteriores de tooling/documentación tienen [skip ci] [skip netlify]
+para mantener el despliegue validado. No se cambia diseño ni contratos API.
+
+Reproducción autorizada: SMOKE_ALLOW_PRODUCTION_WRITE=1 y
+node --experimental-strip-types scripts/smokeSubjectsFocus.ts.
+Crea una cuenta sintética y una materia, prueba Escape/Tab/Enter y DELETE, elimina
+la materia de prueba y revoca sesión. Credenciales solo en memoria. Evidencia
+.local/subjects-focus-smoke.json y captura .local/subjects-focus-confirmation.png,
+ignoradas por Git. Cuenta15/perfil/cuestionario permanecen como evidencia sintética.
+
+## Historial de despliegues anteriores
+
 # Despliegue del avance: Netlify + Render
 
 ## Estado

@@ -1,3 +1,46 @@
+# Materias — validación final aprobada 2026-10-21
+
+Producción: https://cognova-frontend.netlify.app.
+SHA c439a821db99157fae01b0c44abd69993d68cce2; deploy 6ad8630286df0857a21d2ec0 ready.
+Smoke limitado real con Chrome155 finalizado 2026-10-21T07:03:54.525Z.
+
+| Control | Resultado |
+| --- | --- |
+| Abrir DELETE desde trigger con Enter | Diálogo visible |
+| Cancelar con Escape | Diálogo cerrado; foco vuelve al trigger |
+| Tab hasta Cancelar y Enter | Diálogo cerrado; foco vuelve al trigger |
+| Cancelaciones | Cero solicitudes DELETE |
+| Sin confirmación explícita | Botón definitivo deshabilitado |
+| Casilla con Space y confirmación con Enter | Un único DELETE204, no-store |
+| GET posterior / segundo DELETE | 404 / 404 SUBJECT_NOT_FOUND |
+| Listado posterior | Materia ausente |
+| Readiness | 200 |
+| Refresh sin CSRF / válido | 403 / 200 |
+| Logout sin CSRF / válido / access revocado | 403 / 204 / 401 |
+| Regresión local | 139 tests en13 archivos; lint, TypeScript y build:netlify verdes |
+
+Cuenta sintética15; materia eliminada, sesión revocada. No se borra perfil ni
+cuestionario. Intentos anteriores: timeout de readiness antes de crear cuenta;
+cuentas13/14 por aserción del smoke sobre foco inicial (Chrome enfoca casilla),
+ambas con materia eliminada y sesión revocada. El smoke ahora navega con Tab a
+Cancelar, sin suponer el foco inicial. Ninguno exigió otro cambio de aplicación.
+
+La prueba de regresión asegura cerrar el dialog nativo antes de enfocar el botón
+externo, evitando que el modal todavía abierto impida el retorno de foco.
+Solo cambió esa restauración; no se modificaron diseño ni otros flujos.
+
+Evidencia previa de Materias conservada: HTTP y navegador validaron crear, listar,
+detalle, PUT corregido, archivar/reactivar, cupo5, duplicados, aislamiento, restore
+y rutas directas. Capturas revisadas a1440 y375px, claro/oscuro, sin desbordamiento
+horizontal ni gradientes. No repetir esas pruebas como si fueran nuevas aquí.
+Avisos CSP inline preexistentes también presentes en ruta pública, sin excepciones
+JS no controladas ni bloqueo de los flujos verificados; CSP no se relajó.
+
+**Frontend Materias cerrado.** No quedan dependencias de Backend/Database para
+este módulo. El historial siguiente corresponde a estados anteriores del proyecto.
+
+## Evidencia histórica
+
 # Integración real frontend → backend
 
 ## Release operativo 2026-10-17

@@ -1,3 +1,33 @@
+# Cognova — Frontend Materias cerrado
+
+## Estado final — 2026-10-21
+
+Materias queda cerrado. Netlify publicado en https://cognova-frontend.netlify.app,
+SHA c439a821db99157fae01b0c44abd69993d68cce2, deploy 6ad8630286df0857a21d2ec0 ready.
+La rama fix/subjects-dialog-focus se integró a main con --no-ff, sin squash.
+Único cambio funcional de este cierre: cerrar el diálogo nativo antes de restaurar
+el foco al botón que lo abrió. Sin cambios de diseño ni de backend/database.
+
+Regresión accesible: cancelación por Escape, cierre antes de focus, foco en trigger
+y ninguna solicitud DELETE al cancelar. 139 tests en 13 archivos, lint, TypeScript
+y build:netlify aprobados. Auditoría previa verde; dependencias sin cambios aquí.
+Smoke Chrome productivo limitado aprobado el 2026-10-21 07:03:54Z:
+Escape y Tab/Enter en Cancelar restauran foco; confirmación explícita por teclado
+produce un único DELETE204/no-store, GET404, segundo DELETE404 y ausencia en listado.
+Cuenta sintética15: materia eliminada, sesión revocada; perfil/cuestionario retenidos.
+
+CRUD, archivo/reactivación, cupo5, duplicados, aislamiento, rutas directas y vistas
+claro/oscuro escritorio/móvil conservan su evidencia anterior. No se repitieron
+ni cambiaron en este cierre. Avisos CSP inline preexistentes documentados; política
+sin relajaciones. No bloquean el flujo Materias validado.
+
+Base de esta continuación: bd417b6, 41 commits. Cierre: cuatro commits nuevos
+(corrección, merge, ajuste del smoke, documentación), 45 totales. Desde el inicio
+de Materias en dd87718/31 son14 nuevos. Tooling/documentación finales usan
+[skip ci] [skip netlify] y no sustituyen el SHA productivo validado.
+
+## Historial anterior (bloqueos de Materias resueltos)
+
 # Ajuste de foco durante smoke — 2026-10-21
 
 Deploy bd417b6: edición PUT corregida y validada en Chrome real; activas/archivadas,
