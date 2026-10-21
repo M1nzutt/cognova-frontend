@@ -1,3 +1,11 @@
+# Corrección durante smoke visual — 2026-10-20
+
+Primer deploy Materias e5f72ac publicado, smoke real detectó PUT422:
+el formulario extendía el objeto Subject y enviaba campos de lectura adicionales.
+Se inicializa ahora el borrador exclusivamente con name/difficulty/color_base/color_shade.
+Regresión comprueba payload PUT exacto. Cuentas sintéticas 9/10: materias eliminadas,
+sesiones revocadas. Release aún abierto hasta repetir deploy y smoke completo.
+
 # Materias en implementación — 2026-10-20
 
 Rama feat/subjects-ui; base main dd87718 (31 commits), árbol inicial limpio.
