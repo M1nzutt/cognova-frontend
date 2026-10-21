@@ -3,8 +3,10 @@
 Rama feat/subjects-ui; base main dd87718 (31 commits), árbol inicial limpio.
 Contrato Subjects contrastado con OpenAPI productivo 0004; backend cerrado por operación.
 Se conserva auth/proxy. Cliente tipado y validadores implementados; 10 pruebas API, lint y TypeScript aprobados.
-Próximo paso: validar componentes/vistas y release.
-Adaptador visual sin navegador conectado; no declarar validación visual.
+Vistas activas/archivadas, detalle, edición, acciones y confirmación DELETE integradas.
+10 pruebas de interfaz aprobadas, además de 10 pruebas API. Siguiente: verificación completa y release.
+Adaptador integrado sin navegador; Chrome 155 aislado disponible mediante Playwright.
+Validación visual productiva aún pendiente.
 Las secciones siguientes conservan evidencia histórica.
 
 ﻿# Cognova — Estado frontend

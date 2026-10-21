@@ -1,3 +1,6 @@
+import { SubjectsPage } from '../pages/SubjectsPage'
+import { SubjectCreatePage } from '../pages/SubjectCreatePage'
+import { SubjectDetailPage } from '../pages/SubjectDetailPage'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AcademicProfilePage } from '../pages/AcademicProfilePage'
 import { OnboardingRoute } from './OnboardingRoute'
@@ -36,6 +39,10 @@ export function AppRoutes() {
       <Route element={<AppShell />}>
         <Route element={<ProtectedRoute />}>
           <Route element={<CompletedRoute />}>
+            <Route path="app/subjects" element={<SubjectsPage />} />
+            <Route path="app/subjects/archived" element={<SubjectsPage />} />
+            <Route path="app/subjects/new" element={<SubjectCreatePage />} />
+            <Route path="app/subjects/:subjectId" element={<SubjectDetailPage />} />
             <Route path="dashboard" element={<DashboardPendingPage />} />
             <Route path="app/questionnaire" element={<QuestionnairePage />} />
           </Route>
