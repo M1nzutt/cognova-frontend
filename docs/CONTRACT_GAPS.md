@@ -1,3 +1,10 @@
+# Actualizaci?n 2026-10-20
+
+Materias desbloqueado por backend cerrado y OpenAPI productivo verificado.
+Ver API_CONTRACT.md. La restricci?n hist?rica de no iniciar Subjects queda
+sustituida por la autorizaci?n expl?cita del release Materias.
+Otros m?dulos siguen fuera de alcance.
+
 # Contratos pendientes — frontend
 
 Fecha: 2026-10-13. Solo se modifica cognova-frontend. Registro, onboarding y cuestionario ya tienen contratos completos fijados en backend a277af2ba5f2e7227b5b329aa7d935e5e12b8f94.

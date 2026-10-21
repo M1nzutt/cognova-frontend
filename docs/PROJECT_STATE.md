@@ -1,3 +1,11 @@
+# Materias en implementaci?n ? 2026-10-20
+
+Rama feat/subjects-ui; base main dd87718 (31 commits), ?rbol inicial limpio.
+Contrato Subjects contrastado con OpenAPI productivo 0004; backend cerrado por operaci?n.
+Se conserva auth/proxy. Pr?ximo paso: cliente tipado, vistas, pruebas y release.
+Adaptador visual sin navegador conectado; no declarar validaci?n visual.
+Las secciones siguientes conservan evidencia hist?rica.
+
 ﻿# Cognova — Estado frontend
 
 Fecha: 2026-10-17. Rama de despliegue: main.
