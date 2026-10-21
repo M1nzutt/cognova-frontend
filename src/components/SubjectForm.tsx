@@ -4,7 +4,7 @@ import { colorLabels, difficultyLabels } from '../utils/subjectPresentation'
 import styles from './Subjects.module.css'
 interface Props { catalog: SubjectCatalog; initial?: SubjectWrite; busy: boolean; error: string; onSave: (value: SubjectWrite) => void; onCancel: () => void }
 export function SubjectForm({ catalog, initial, busy, error, onSave, onCancel }: Props) {
-  const [draft, setDraft] = useState<SubjectWrite>(initial ?? { name: '', difficulty: 'medium', color_base: catalog.color_bases[0], color_shade: catalog.color_shades[0] })
+  const [draft, setDraft] = useState<SubjectWrite>({ name: initial?.name ?? '', difficulty: initial?.difficulty ?? 'medium', color_base: initial?.color_base ?? catalog.color_bases[0], color_shade: initial?.color_shade ?? catalog.color_shades[0] })
   const [validation, setValidation] = useState('')
   function submit(event: React.FormEvent) {
     event.preventDefault()
