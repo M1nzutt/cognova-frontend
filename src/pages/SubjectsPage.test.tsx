@@ -62,7 +62,7 @@ describe('Subjects routes and state', () => {
     await screen.findByLabelText('Nombre')
     fireEvent.change(screen.getByLabelText('Nombre'), { target: { value: 'Duplicada' } })
     fireEvent.click(screen.getByRole('button', { name: 'Crear materia' }))
-    expect(await screen.findByRole('alert')).toHaveTextContent('ya existe ese nombre')
+    expect(await screen.findByRole('alert')).toHaveTextContent('Ya existe una materia con ese nombre')
     expect(screen.getByLabelText('Nombre')).toHaveValue('Duplicada')
   })
   it('edits, archives and reactivates from a direct detail route', async () => {

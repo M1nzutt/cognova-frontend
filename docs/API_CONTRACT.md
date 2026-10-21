@@ -227,3 +227,10 @@ Antes de implementar cualquier endpoint que todavía no tenga request/response e
 7. consumir desde frontend.
 
 No inferir un DTO público directamente de una tabla SQLAlchemy.
+
+## Errores Subjects confirmados por smoke real 2026-10-20
+
+409 SUBJECT_NAME_CONFLICT (duplicado), SUBJECT_ACTIVE_LIMIT (sexta activa),
+SUBJECT_REACTIVATION_LIMIT (reactivar sin cupo). 404 SUBJECT_NOT_FOUND para
+inexistente/segunda eliminación. DELETE sin confirmación:422 VALIDATION_ERROR.
+Smoke por Netlify con cuenta sintética 8, materias eliminadas y sesión revocada.
