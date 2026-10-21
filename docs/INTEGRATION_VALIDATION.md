@@ -115,3 +115,14 @@ La primera consulta health tras publicar agotó el tiempo del proxy (504); al re
 La consola muestra bloqueos CSP de script/style inline en el HTML desplegado, que también contiene la insignia Netlify. No impidieron los flujos probados; no se relajó CSP ni se modificaron otras opciones de Netlify. El adaptador del navegador reportó ERR_ABORTED en eventos de logout, pero entregó respuesta 204 con eliminación de cookies y se comprobó el cierre tras navegar; se conserva la distinción entre aviso del adaptador y resultado HTTP.
 
 Esta evidencia histórica valida únicamente el recorrido anterior, no el onboarding nuevo ni disponibilidad continua. El contrato nuevo ya define academic_goal como q1 y el cuestionario completo; su validación real pendiente se detalla al principio. Subjects no forma parte de este cierre.
+
+## Preflight Materias — 2026-10-20
+
+138 tests locales, lint, TypeScript y build aprobados antes del release.
+Smoke HTTP por proxy Netlify aprobado con cuenta sintética 8: catálogo real,
+crear/editar/archivar/reactivar, duplicado409, sexta activa409, reactivación sin cupo409,
+DELETE sin confirm422, DELETE204, GET posterior404, segundo DELETE404 y ausencia
+en listado. Se eliminaron las seis materias sintéticas y se revocó la sesión;
+refresh/logout sin CSRF403, válido200/204, access revocado401, no-store en todo.
+Primer intento agotó timeout en readiness antes de registrar datos; segundo aprobado.
+La evidencia HTTP no sustituye la validación visual, todavía pendiente de publicación.
