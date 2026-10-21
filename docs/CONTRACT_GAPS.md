@@ -1,9 +1,9 @@
-# Actualizaci?n 2026-10-20
+# Actualización 2026-10-20
 
 Materias desbloqueado por backend cerrado y OpenAPI productivo verificado.
-Ver API_CONTRACT.md. La restricci?n hist?rica de no iniciar Subjects queda
-sustituida por la autorizaci?n expl?cita del release Materias.
-Otros m?dulos siguen fuera de alcance.
+Ver API_CONTRACT.md. La restricción histórica de no iniciar Subjects queda
+sustituida por la autorización explícita del release Materias.
+Otros módulos siguen fuera de alcance.
 
 # Contratos pendientes — frontend
 

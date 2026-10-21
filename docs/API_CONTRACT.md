@@ -56,32 +56,32 @@ Todas estas rutas requieren Bearer; permiten onboarding incompleto y solo operan
 sobre el usuario autenticado. No reciben user_id. No se implementan aún los
 módulos académicos listados más abajo.
 
-## Subjects ? contrato productivo verificado 2026-10-20
+## Subjects — contrato productivo verificado 2026-10-20
 
 Fuente: OpenAPI de https://cognova-backend-lpsi.onrender.com/openapi.json.
-Backend cerrado por operaci?n: 430c64a3c299f82853f7947498f663f1cded590c,
-schema 0004_subjects. Sustituye la especificaci?n preliminar de Materias.
-Bearer y onboarding completo obligatorios; identidad derivada de sesi?n.
+Backend cerrado por operación: 430c64a3c299f82853f7947498f663f1cded590c,
+schema 0004_subjects. Sustituye la especificación preliminar de Materias.
+Bearer y onboarding completo obligatorios; identidad derivada de sesión.
 
 - GET /subjects/catalog: {version:1,color_bases:string[],color_shades:number[]}.
-  Opciones obtenidas del backend; CSS solo traduce sus IDs a presentaci?n.
+  Opciones obtenidas del backend; CSS solo traduce sus IDs a presentación.
 - SubjectWrite: {name:string,difficulty:"easy"|"medium"|"hard",
   color_base:string,color_shade:number}. Nombre trim, 1..20 caracteres.
 - Subject: SubjectWrite + {id:number,status:"active"|"archived",
   created_at:datetime,updated_at:datetime}. Sin user_id ni description.
 - GET /subjects?status=active|archived|all&limit=20&after_id=<id>:
   {items:Subject[],next_after_id:number|null}. Limit 1..100; cursor positivo
-  exclusivo, orden ascendente por id. La UI ofrece cargar m?s archivadas.
+  exclusivo, orden ascendente por id. La UI ofrece cargar más archivadas.
 - POST /subjects: SubjectWrite + status opcional (active por defecto); 201 Subject.
 - GET /subjects/{subject_id}: 200 Subject.
 - PUT /subjects/{subject_id}: SubjectWrite completo, sin status; 200 Subject.
 - POST /subjects/{subject_id}/archive y /reactivate: sin body; 200 Subject.
 - DELETE /subjects/{subject_id}?confirm=true: 204 sin body, irreversible.
-  Confirm obligatorio; advertencia y confirmaci?n expl?cita antes de enviar.
+  Confirm obligatorio; advertencia y confirmación explícita antes de enviar.
 
-M?ximo cinco activas; archivadas excluidas. Nombres ?nicos por usuario.
+Máximo cinco activas; archivadas excluidas. Nombres únicos por usuario.
 Reactivar exige cupo; conflictos 409 conservan borrador. Ajena/inexistente:404;
-sin sesi?n:401; onboarding incompleto:403; validaci?n:422; indisponibilidad:503.
+sin sesión:401; onboarding incompleto:403; validación:422; indisponibilidad:503.
 Formato global error/code/message; no mostrar mensajes arbitrarios del servidor.
 Responses API no-store. Grants y persistencia pertenecen a Database.
 
