@@ -1,3 +1,11 @@
+# Actividades — implementación en curso (2026-10-24)
+
+Rama feat/activities-ui; base main2be1f8f,45 commits, árbol inicial limpio.
+Autorización vigente: interfaz, merge sin squash, Netlify y smoke real de Actividades.
+Backend productivo fe5989b /0005 cerrado; contrato contrastado con OpenAPI.
+Solo Frontend; sin cambios de auth, backend/database, calendario, sesiones ni IA.
+Contrato actualizado antes del código; interfaz y validación productiva pendientes.
+
 # Cognova — Frontend Materias cerrado
 
 ## Estado final — 2026-10-21
