@@ -1,0 +1,419 @@
+{
+  "production_sha": "27a2c29a61fb0b393d27cd6a591e0f025581a13d",
+  "netlify_deploy": "6add4f267df000662f67a235",
+  "url": "https://cognova-frontend.netlify.app",
+  "date": "2026-10-25T00:37:55.759Z",
+  "passed": true,
+  "stage": "security/cleanup",
+  "userId": 20,
+  "retainedId": 4,
+  "deletedId": 5,
+  "pageErrors": 0,
+  "cspWarnings": 10,
+  "checks": [
+    "create201; edit200",
+    "subject/status/priority/range/exact filters; empty; clear",
+    "state; postponed/rescheduled history; original preserved",
+    "1440/375 light/dark; no overflow",
+    "DELETE409 explains preservation; keyboard Escape/Cancel focus",
+    "refresh session restore; direct route/history",
+    "confirmed keyboard DELETE204; GET/repeat404; list absence",
+    "auth restore; CSRF; no-store; revoked logout; no token storage"
+  ],
+  "responses": [
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/subjects",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/activities",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/subjects",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities/4",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/activities/4",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities/4/deadline-history",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/subjects",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/subjects",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities/4",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities/4/deadline-history",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/activities/4/status",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/activities/4/deadline",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities/4/deadline-history",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/activities/4/deadline",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities/4/deadline-history",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/activities/4",
+      "status": 409,
+      "noStore": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities/4",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/subjects",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities/4/deadline-history",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/subjects",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities/4",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities/4/deadline-history",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/subjects",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/activities",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities/5",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/subjects",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities/5/deadline-history",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/activities/5",
+      "status": 204,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/subjects",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/activities",
+      "status": 200,
+      "noStore": true
+    }
+  ],
+  "api": [
+    {
+      "label": "ready",
+      "status": 200
+    },
+    {
+      "label": "synthetic_register",
+      "status": 201
+    },
+    {
+      "label": "academic_profile",
+      "status": 200
+    },
+    {
+      "label": "questionnaire_catalog",
+      "status": 200
+    },
+    {
+      "label": "questionnaire",
+      "status": 201
+    },
+    {
+      "label": "csrf_rejected",
+      "status": 403,
+      "code": "CSRF_VALIDATION_FAILED"
+    },
+    {
+      "label": "csrf_refresh",
+      "status": 200
+    },
+    {
+      "label": "subjects_catalog",
+      "status": 200
+    },
+    {
+      "label": "create",
+      "status": 201
+    },
+    {
+      "label": "original_preserved",
+      "status": 200
+    },
+    {
+      "label": "history_verified",
+      "status": 200
+    },
+    {
+      "label": "retained_after409",
+      "status": 200
+    },
+    {
+      "label": "deleted_get404",
+      "status": 404,
+      "code": "ACTIVITY_NOT_FOUND"
+    },
+    {
+      "label": "deleted_repeat404",
+      "status": 404,
+      "code": "ACTIVITY_NOT_FOUND"
+    },
+    {
+      "label": "cleanup_activities",
+      "status": 200
+    },
+    {
+      "label": "retain_cancelled",
+      "status": 200
+    },
+    {
+      "label": "retain_archived_subject",
+      "status": 200
+    },
+    {
+      "label": "logout_csrf_rejected",
+      "status": 403,
+      "code": "CSRF_VALIDATION_FAILED"
+    },
+    {
+      "label": "cleanup_logout",
+      "status": 204
+    },
+    {
+      "label": "revoked_access",
+      "status": 401,
+      "code": "SESSION_REVOKED"
+    }
+  ],
+  "local_suite": {
+    "tests": 170,
+    "files": 15,
+    "lint": "passed",
+    "typescript": "passed",
+    "build_netlify": "passed",
+    "audit_vulnerabilities": 0
+  },
+  "visual_review": {
+    "viewports": [
+      1440,
+      375
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "reviewed": true,
+    "horizontal_overflow": false,
+    "screenshots": [
+      {
+        "name": "activities-1440-light.png",
+        "sha256": "0402e8886608c009c07fa227d22892f43735f757c4dd2eb5af552dc267c9d728"
+      },
+      {
+        "name": "activities-1440-dark.png",
+        "sha256": "788015651de02484020044ddb143f57e2d14c75eed189d463f6601183c8c8c9d"
+      },
+      {
+        "name": "activities-375-light.png",
+        "sha256": "d023d160c07fe111953a89e3862c05be268a3f54d33994be705b582f3ee29933"
+      },
+      {
+        "name": "activities-375-dark.png",
+        "sha256": "f3f29e9bb0f7bdedf7162821e739ce710b868f52aa807a75f2150a3d83e62d2b"
+      },
+      {
+        "name": "activities-delete409-mobile.png",
+        "sha256": "d72c754b9d1c2cc55c48b43216515926aef7cd2246abc5276ac565abaa072a51"
+      }
+    ]
+  },
+  "public_csp": {
+    "public_login_csp_warnings": [
+      "style-src",
+      "script-src"
+    ],
+    "checked_at": "2026-10-25T00:38:53.264Z"
+  }
+}

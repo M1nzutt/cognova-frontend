@@ -1,16 +1,39 @@
-# Actividades — implementación en curso (2026-10-24)
+# Cognova — Frontend Actividades cerrado
 
-Rama feat/activities-ui; base main2be1f8f,45 commits, árbol inicial limpio.
-Autorización vigente: interfaz, merge sin squash, Netlify y smoke real de Actividades.
-Backend productivo fe5989b /0005 cerrado; contrato contrastado con OpenAPI.
-Solo Frontend; sin cambios de auth, backend/database, calendario, sesiones ni IA.
-Contrato y cliente tipado actualizados: DTOs exactos, filtros codificados, precondiciones,
-historial validado y errores públicos. 23 pruebas de API Actividades/Materias verdes.
-Componentes/formularios/filtros/historial y controles accesibles implementados.
-Rutas lista/crear/detalle, navegación autenticada y 18 regresiones de vistas listas.
-170 tests, lint, TypeScript y build:netlify aprobados. Smoke productivo pendiente.
-Auditoría detectó dos dependencias transitivas vulnerables: undici8.11.2→8.12.3
-y zod4.6.5→4.6.7. Solo lock actualizado; auditoría posterior:0 vulnerabilidades.
+## Estado final — 2026-10-24 (America/Bogota)
+
+Rama feat/activities-ui integrada a main con --no-ff, sin squash.
+Netlify https://cognova-frontend.netlify.app, SHA 27a2c29a61fb0b393d27cd6a591e0f025581a13d,
+deploy 6add4f267df000662f67a235 ready. Backend consumido fe5989b / 0005_activities,
+readiness200 por proxy; no cambios en Backend/Database ni en auth/proxy.
+
+CRUD, filtros materia/estado/prioridad/fecha exacta/rango, transiciones con
+precondición, cambios de fecha e historial paginado. Fecha original visible e
+inmutable; fechas en hora local indicada, API con zona. DELETE exige confirmación;
+409 explica la conservación de actividades con historia. Borradores conservados
+ante404/409/422/503, consulta explícita de versión actual ante conflicto.
+Acceso desde navegación y dashboard, guards existentes, sin rediseño global.
+
+170 pruebas en15 archivos; lint, TypeScript y build:netlify verdes. Auditoría0
+tras actualizar únicamente undici8.12.3 y zod4.6.7 en lock. Build advierte sobre
+PostCSS sin opción from; bundle/CSS se generaron y validaron visualmente.
+
+Smoke Chrome155 real aprobado el24/oct a19:37:55 Bogotá (25/oct00:37:55Z):
+crear/editar/filtrar, cambiar estado, postergar/adelantar, historial, DELETE204
+con GET/segundo DELETE404, DELETE409 con fila conservada, refresh y rutas directas.
+Escritorio1440/móvil375, claro/oscuro y teclado aprobados; sin overflow ni errores
+JS no controlados. Diez avisos CSP; también observados en /login público, como en
+releases anteriores; CSP no relajada. Evidencia en INTEGRATION_VALIDATION.
+
+Usuario sintético20: actividad5 borrada; actividad4 cancelada con sus dos eventos,
+materia archivada; perfil/cuestionario conservados y sesión revocada. Solo REST;
+ninguna consulta PostgreSQL ni modificación de datos ajenos.
+
+Inicio45 commits (2be1f8f); ocho nuevos,53 totales: contrato, cliente API,
+componentes/estado, vistas/regresiones, parche seguridad, smoke, merge y cierre.
+Último commit documental con [skip ci] [skip netlify] conserva el SHA desplegado.
+**Actividades queda cerrado.** Calendario, sesiones e IA siguen fuera de alcance.
+Las secciones siguientes son historia de Materias/onboarding, no bloqueos actuales.
 
 # Cognova — Frontend Materias cerrado
 

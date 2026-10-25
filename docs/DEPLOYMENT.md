@@ -1,15 +1,30 @@
-# Actividades — preparación del release 2026-10-24
+# Frontend Actividades — release cerrado 2026-10-24
 
-Sitio existente confirmado bf6ef7b1-c280-4de9-8ea1-f70630cc14c1, main,
-build:netlify, publicación automática habilitada. Sin cambios de proxy ni secretos.
-Smoke preparado: SMOKE_ALLOW_PRODUCTION_WRITE=1; ejecutar
+Sitio existente bf6ef7b1-c280-4de9-8ea1-f70630cc14c1;
+https://cognova-frontend.netlify.app. Main integra feat/activities-ui sin squash.
+SHA productivo 27a2c29a61fb0b393d27cd6a591e0f025581a13d; deploy 6add4f267df000662f67a235,ready,
+confirmado tras smoke. Publicación automática con npm run build:netlify;
+proxy, variables, sitio y configuración de sesión conservados.
+
+Build local y Netlify aprobados. 170 tests, lint, TypeScript y Vite; auditoría sin
+vulnerabilidades tras parche transitivo undici/zod. Warning no fatal PostCSS from;
+CSS publicado revisado a1440/375px en ambos temas. No cambios de schema ni Backend.
+Readiness200 por /api/v1/ready; backend compatible0005 confirmado por operación.
+
+Smoke real autorizado: SMOKE_ALLOW_PRODUCTION_WRITE=1 y
 node --experimental-strip-types scripts/smokeActivitiesBrowser.ts.
-Chrome real, una cuenta sintética, CRUD/filtros/estado/fechas/historia,
-DELETE204 y409, teclado, 1440/375px claro/oscuro, rutas/refresh, CSRF/no-store.
-Al terminar, borrar solo actividades sin historial; cancelar las restantes y
-archivar su materia; conservar cuenta/cuestionario/historial, revocar sesión.
-Tokens/cookies solo en memoria; capturas y evidencia ignoradas en .local.
-Todavía no ejecutado contra el release Actividades publicado.
+Ejecutado una vez con resultado aprobado. Crea cuenta/materia y dos actividades;
+elimina la que no tiene historia, conserva y cancela la histórica, archiva su
+materia y revoca sesión. No ejecutar como simple consulta documental.
+Credenciales solo en memoria; capturas .local/activities-*.png ignoradas por Git.
+[Evidencia sanitizada](evidence/activities-release-2026-10-24.json) registra SHA,
+resultados HTTP, IDs sintéticos y hashes de las capturas revisadas.
+
+Cierre documental [skip ci] [skip netlify], sin redeploy adicional. Fallback,
+refresh, guard tras logout, CSRF y no-store comprobados en Chrome por Netlify.
+Los avisos CSP inline también aparecen en /login público; no se relajó política.
+Actividades cerrado; no desplegar una versión anterior que retire estos flujos
+sin coordinar el release. Las secciones siguientes son historial.
 
 # Frontend Materias — release cerrado 2026-10-21
 

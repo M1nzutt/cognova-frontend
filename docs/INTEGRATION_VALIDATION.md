@@ -1,3 +1,49 @@
+# Actividades — validación productiva aprobada 2026-10-24
+
+Producción https://cognova-frontend.netlify.app; SHA 27a2c29a61fb0b393d27cd6a591e0f025581a13d;
+Netlify 6add4f267df000662f67a235 ready. Smoke Chrome155 finalizado
+2026-10-24 19:37:55 America/Bogota (2026-10-25T00:37:55.759Z).
+Backend fe5989b/0005 cerrado por operación; frontend solo consume REST por proxy.
+
+| Control | Resultado real |
+| --- | --- |
+| Crear / detalle / editar | 201 / 200 / 200; campos de lectura excluidos del PUT |
+| Filtros materia, estado, prioridad | inclusión/exclusión y limpieza correctas |
+| Fecha exacta / rango inclusivo | filtros aplicados desde la UI, hora local Bogotá |
+| Cambiar estado | Pendiente→En progreso200 con expected_status |
+| Postergar / adelantar fecha | PATCH200; historial «Fecha postergada» / «Fecha adelantada» |
+| Fecha original | intacta tras dos cambios, visible en detalle |
+| DELETE con historial | 409; explicación clara, actividad idéntica antes/después |
+| DELETE sin historial | casilla explícita, teclado,204; GET404 y segundo DELETE404 |
+| Listado después de DELETE | actividad eliminada ausente |
+| Escape y Cancelar por teclado | cierra diálogo y restaura foco al trigger |
+| Refresh / ruta directa | sesión restaurada, detalle e historial visibles |
+| Cookies / Web Storage | Secure/Lax/HttpOnly esperado; sin tokens/perfil en Storage |
+| CSRF / logout | refresh/logout sin CSRF403; válidos200/204; acceso revocado401 |
+| Caché | todas las respuestas API observadas con no-store |
+| Escritorio/móvil | capturas1440/375px claro/oscuro revisadas; sin overflow horizontal |
+| Errores JavaScript no controlados | cero |
+
+Usuario sintético20, actividad4 retenida cancelada con dos eventos inmutables;
+actividad5 eliminada y materia de prueba archivada. Cuenta/perfil/cuestionario
+retenidos; sesión revocada. No se modificaron datos ajenos ni otros repositorios.
+No se usó PostgreSQL desde Frontend. Los estados404/409/422/503, conservación del
+borrador, consultas explícitas tras conflicto, límites y guards tienen regresión
+local. No se provocó indisponibilidad503 del backend productivo para probar la UI.
+
+170 tests/15 archivos aprobados,31 más que la base139. Lint, TypeScript, build:netlify
+y auditoría0 verdes. Netlify ejecutó el build obligatorio antes de publicar.
+PostCSS reportó warning from, no bloqueo de compilación ni fallo visual observado.
+Diez avisos CSP durante el smoke; una visita separada a /login también muestra
+style-src/script-src inline bloqueados, como el historial previo. No hay excepción
+JS ni flujo bloqueado; no se añadieron excepciones CSP para ocultarlos.
+
+[Evidencia del release](evidence/activities-release-2026-10-24.json) sin secretos;
+capturas locales: activities-1440-light/dark, activities-375-light/dark y
+activities-delete409-mobile.png. Hashes registrados después de revisión visual.
+**Frontend Actividades queda cerrado.** El historial siguiente pertenece a releases
+anteriores y no implica dependencias pendientes para Actividades.
+
 # Materias — validación final aprobada 2026-10-21
 
 Producción: https://cognova-frontend.netlify.app.
