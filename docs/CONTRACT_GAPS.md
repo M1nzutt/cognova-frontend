@@ -1,11 +1,24 @@
-# Actualización 2026-10-20
+# Estado vigente — 2026-10-25
+
+Materias y Actividades están cerrados en el frontend productivo.
+Backend: `fe5989b86d93d10e724cbf28de4f9d64048bb711`; schema `0005_activities`.
+Siguiente módulo funcional: **Calendario**, con contrato aún por definir.
+Este cierre no añade endpoints, DTOs, reglas ni diseño de Calendario.
+
+Los contratos de Materias/Actividades están resueltos en API_CONTRACT y ambos
+módulos están publicados. El bloqueo de entorno/publicación de onboarding también
+está resuelto. La matriz y las dependencias siguientes son el archivo histórico
+del 2026-10-13/20: sus filas de Materias/Actividades no son gaps actuales.
+No se define aquí un contrato de Calendario.
+
+# Histórico — Actualización 2026-10-20
 
 Materias desbloqueado por backend cerrado y OpenAPI productivo verificado.
 Ver API_CONTRACT.md. La restricción histórica de no iniciar Subjects queda
 sustituida por la autorización explícita del release Materias.
 Otros módulos siguen fuera de alcance.
 
-# Contratos pendientes — frontend
+# Histórico — Contratos pendientes al 2026-10-13
 
 Fecha: 2026-10-13. Solo se modifica cognova-frontend. Registro, onboarding y cuestionario ya tienen contratos completos fijados en backend a277af2ba5f2e7227b5b329aa7d935e5e12b8f94.
 
@@ -15,7 +28,7 @@ El usuario confirmó CSRF Path=/ y refresh HttpOnly Path=/api/v1/auth. AUTH_CONT
 
 El 2026-10-12 se corrigió el origen Netlify a lpsi y se comprobaron cookies, rotación, CSRF, login, restore, logout y revocación del contrato anterior. Esa evidencia no valida el registro mínimo ni el onboarding nuevo. Ver [INTEGRATION_VALIDATION](INTEGRATION_VALIDATION.md).
 
-## Matriz de especificaciones pendientes
+## Matriz histórica de especificaciones entonces pendientes
 
 | Módulo | Información requerida antes de implementar |
 | --- | --- |
@@ -40,11 +53,11 @@ El gap de cuestionario quedó resuelto por QUESTIONNAIRE y ONBOARDING_CONTRACT d
 4. Backend implementa/expone lo acordado; validar respuestas reales.
 5. Implementar cada módulo frontend con tests y sus estados loading/success/empty/error.
 
-## Integración y despliegue
+## Histórico — Integración y despliegue
 
 Despliegue existente: Netlify frontend y Render backend, con Render Postgres. La separación en tres repositorios terminó. Frontend solo consume REST del backend. La rama nueva no está desplegada; Render sigue exponiendo el contrato anterior sin onboarding. No iniciar Subjects ni otros módulos.
 
-## Dependencias externas documentadas
+## Histórico — Dependencias externas documentadas
 
 La dependencia anterior de separación backend/database está resuelta según confirmación del usuario; no queda como siguiente paso ni bloqueo del frontend.
 

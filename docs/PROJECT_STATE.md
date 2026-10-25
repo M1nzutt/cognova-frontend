@@ -1,5 +1,21 @@
 # Cognova — Frontend Actividades cerrado
 
+## Estado vigente — 2026-10-25
+
+Materias y Actividades están cerrados en el frontend productivo.
+Backend: `fe5989b86d93d10e724cbf28de4f9d64048bb711`; schema `0005_activities`.
+Siguiente módulo funcional: **Calendario**, con contrato aún por definir.
+Este cierre no añade endpoints, DTOs, reglas ni diseño de Calendario.
+
+Netlify conserva el SHA `27a2c29a61fb0b393d27cd6a591e0f025581a13d`.
+El bloqueo de publicación por backend sin onboarding/0003 está resuelto.
+Los registros siguientes conservan resultados y límites de cada fecha; no son
+bloqueos actuales de Materias/Actividades ni acreditan pruebas nuevas.
+
+Esta tarea parte de main limpio edde382 (53 commits). Un commit documental con
+[skip ci] [skip netlify] deja 54. Solo Markdown: sin código, diseño, deploy ni smoke
+productivo. Controles del cierre: diff, enlaces locales, evidencia JSON y alcance Git.
+
 ## Estado final — 2026-10-24 (America/Bogota)
 
 Rama feat/activities-ui integrada a main con --no-ff, sin squash.
@@ -32,12 +48,13 @@ ninguna consulta PostgreSQL ni modificación de datos ajenos.
 Inicio45 commits (2be1f8f); ocho nuevos,53 totales: contrato, cliente API,
 componentes/estado, vistas/regresiones, parche seguridad, smoke, merge y cierre.
 Último commit documental con [skip ci] [skip netlify] conserva el SHA desplegado.
-**Actividades queda cerrado.** Calendario, sesiones e IA siguen fuera de alcance.
+**Actividades queda cerrado.** Sesiones e IA no se implementaron en ese release.
+Calendario es el siguiente módulo funcional, con contrato todavía por definir.
 Las secciones siguientes son historia de Materias/onboarding, no bloqueos actuales.
 
-# Cognova — Frontend Materias cerrado
+# Histórico — Cognova — Frontend Materias cerrado
 
-## Estado final — 2026-10-21
+## Histórico — Estado final — 2026-10-21
 
 Materias queda cerrado. Netlify publicado en https://cognova-frontend.netlify.app,
 SHA c439a821db99157fae01b0c44abd69993d68cce2, deploy 6ad8630286df0857a21d2ec0 ready.
@@ -65,7 +82,7 @@ de Materias en dd87718/31 son14 nuevos. Tooling/documentación finales usan
 
 ## Historial anterior (bloqueos de Materias resueltos)
 
-# Ajuste de foco durante smoke — 2026-10-21
+# Histórico — Ajuste de foco durante smoke — 2026-10-21
 
 Deploy bd417b6: edición PUT corregida y validada en Chrome real; activas/archivadas,
 cupo, duplicados, aislamiento y vistas claro/oscuro 1440/375 px aprobados.
@@ -77,7 +94,7 @@ nativo antes de focus y cancelación sin DELETE. Smoke limitado reproducible:
 SMOKE_ALLOW_PRODUCTION_WRITE=1; node --experimental-strip-types scripts/smokeSubjectsFocus.ts.
 Pendiente publicación y smoke final de teclado/DELETE; no cerrar aún.
 
-# Corrección durante smoke visual — 2026-10-20
+# Histórico — Corrección durante smoke visual — 2026-10-20
 
 Primer deploy Materias e5f72ac publicado, smoke real detectó PUT422:
 el formulario extendía el objeto Subject y enviaba campos de lectura adicionales.
@@ -85,7 +102,7 @@ Se inicializa ahora el borrador exclusivamente con name/difficulty/color_base/co
 Regresión comprueba payload PUT exacto. Cuentas sintéticas 9/10: materias eliminadas,
 sesiones revocadas. Release aún abierto hasta repetir deploy y smoke completo.
 
-# Materias en implementación — 2026-10-20
+# Histórico — Materias en implementación — 2026-10-20
 
 Rama feat/subjects-ui; base main dd87718 (31 commits), árbol inicial limpio.
 Contrato Subjects contrastado con OpenAPI productivo 0004; backend cerrado por operación.
@@ -99,17 +116,17 @@ Adaptador integrado sin navegador; Chrome 155 aislado disponible mediante Playwr
 Validación visual productiva aún pendiente.
 Las secciones siguientes conservan evidencia histórica.
 
-# Cognova — Estado frontend
+# Histórico — Cognova — Estado frontend
 
 Fecha: 2026-10-17. Rama de despliegue: main.
 
-## Release onboarding publicado; cierre visual pendiente
+## Histórico — Release onboarding publicado; cierre visual pendiente
 
 Se integró feat/onboarding-questionnaire sin squash mediante dae333d254974093b6422e2594c92782586df53f, conservando todos los commits. Netlify publicó ese SHA en el sitio existente https://cognova-frontend.netlify.app, deploy 6ad443bb9de5414fc3a0c500 (ready). No se modificaron backend ni database.
 
 Backend de producción confirmado por operación: 9309effdd1b71acc3fe5e24bc8c19b70c3d8c0c8, schema 0003_onboarding_questionnaire. En esta fase se consultaron readiness 200 y OpenAPI 200 con las rutas de perfil y cuestionario. La dependencia anterior de backend sin onboarding queda resuelta; no repetir migraciones ni implementación funcional.
 
-## Configuración y pruebas
+## Histórico — Configuración y pruebas
 
 - Sitio Netlify bf6ef7b1-c280-4de9-8ea1-f70630cc14c1, repo M1nzutt/cognova-frontend, rama main, build npm run build:netlify, publish dist.
 - RENDER_API_ORIGIN ya apunta a https://cognova-backend-lpsi.onrender.com; VITE_API_BASE_URL=/api/v1 en netlify.toml. No se cambió el recurso ni el proxy.
@@ -121,13 +138,13 @@ Backend de producción confirmado por operación: 9309effdd1b71acc3fe5e24bc8c19b
 - CORS: preflight del origen Netlify 200 con origen exacto y credentials=true; origen ajeno 400 sin allow-origin. No wildcard.
 - Token real Netlify ausente del bundle y de archivos versionados; .env ignorado. No se versionaron secretos.
 
-## Bloqueo real y siguiente paso
+## Histórico — Bloqueo real y siguiente paso
 
 El adaptador de navegador devuelve apps=[] y browsers=[]. No pudo ejecutarse E2E en navegador real. No declarar cerrado el release completo basándose solo en HTTP y pruebas con mocks.
 
 Conectar un navegador y validar sobre el sitio publicado: register/login, restore tras recarga, perfil académico, diez pasos con atrás/adelante, límites multi y Otro, POST inicial, edición PUT, conflicto 409 conservando borrador, historial, refresh y logout; verificar guards, Web Storage, cookies y ausencia de errores de consola. No repetir el despliegue de backend/database ni reimplementar auth/onboarding. Registrar la evidencia en INTEGRATION_VALIDATION.md y actualizar este estado.
 
-## Smoke operativo reproducible
+## Histórico — Smoke operativo reproducible
 
 En PowerShell, únicamente con autorización para crear una cuenta sintética en producción:
 

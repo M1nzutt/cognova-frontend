@@ -37,7 +37,7 @@ Ya existe:
 - cliente Fetch/AuthService inicial;
 - tests iniciales de auth service.
 
-El trabajo de autenticación interrumpido se reconcilió. `PROJECT_STATE.md` registra alcance verificado y bloqueos de integración.
+El trabajo de autenticación interrumpido se reconcilió. `PROJECT_STATE.md` registra Materias/Actividades cerrados y el siguiente módulo, Calendario.
 
 ## Capas sugeridas
 
@@ -73,7 +73,8 @@ Evitar componentes gigantes y lógica de red duplicada.
 
 `ApiClient` delega refresh a la misma sesión. Las peticiones concurrentes comparten una promesa; solo se reintenta una vez. Las mutaciones de cookies se serializan con una cola y Web Locks entre pestañas cuando está disponible. Un fallo de logout elimina memoria y se informa con opción de reintentar la revocación.
 
-Decisión confirmada: CSRF Path=/ y refresh HttpOnly Path=/api/v1/auth. Netlify publica la SPA y reenvía /api/* a Render, con cookies host-only. El backend debe sincronizar el contrato antes de validar integración real. No se reescriben cookies ni se omite CSRF.
+Decisión confirmada: CSRF Path=/ y refresh HttpOnly Path=/api/v1/auth. Netlify publica la SPA y reenvía /api/* a Render, con cookies host-only. El contrato está sincronizado; la integración productiva verificada se registra
+en INTEGRATION_VALIDATION. No se reescriben cookies ni se omite CSRF.
 
 LocalStorage queda permitido para preferencias no sensibles, por ejemplo tema visual.
 

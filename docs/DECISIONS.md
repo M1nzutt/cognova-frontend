@@ -32,7 +32,7 @@
 
 - Identidad: nombre y correo. Perfil académico: carrera y semestre, nullable hasta completarse. Objetivo académico vigente: q1 del cuestionario.
 - Materias personalizables.
-- Actividad genérica con `type`.
+- Actividades según API_CONTRACT, sin `type`; la propuesta inicial fue sustituida.
 - Prioridades manuales y deadlines.
 - Calendario visual.
 - Temporizador integrado con backend como fuente oficial.
@@ -93,7 +93,7 @@ Solo mediante:
 3. actualización de contratos/docs;
 4. migración de código y pruebas.
 
-## Avance temporal de despliegue — 2026-10-05
+## Histórico — Avance temporal de despliegue — 2026-10-05
 
 - Alcance: auth y dashboard provisional de perfil, sin módulos académicos.
 - Netlify frontend, Render backend y Render Postgres.
@@ -101,9 +101,9 @@ Solo mediante:
 - CSRF Path=/; refresh HttpOnly Path=/api/v1/auth; cookies Secure/Lax host-only.
 - Despliegue existente confirmado por el usuario el 2026-10-08; URLs y alcance de verificación en [DEPLOYMENT](DEPLOYMENT.md). La existencia del despliegue no certifica por sí sola todos los flujos de auth.
 
-## Onboarding — decisión vigente 2026-10-13
+## Onboarding — contrato conservado; contexto histórico 2026-10-13
 
-La separación de repositorios ya terminó. El backend fijado en `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94` sustituye las decisiones anteriores de registro ampliado y cuestionario sin opciones:
+El backend fijado históricamente en `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94` sustituye las decisiones anteriores de registro ampliado y cuestionario sin opciones:
 
 - Registro solo name/email/password: máximos 30/50 y contraseña 8–12 sin trim. Login conserva compatibilidad con credenciales legacy.
 - Carrera y semestre se guardan con PUT /onboarding/academic-profile. La navegación usa onboarding.next_step devuelto por backend, también tras login/restore/refresh.
@@ -112,4 +112,6 @@ La separación de repositorios ya terminó. El backend fijado en `a277af2ba5f2e7
 - POST conserva percepción inicial; PUT agrega revisión y exige expected_revision. No se sobrescribe ni se combinan respuestas silenciosamente ante 409.
 - Borrador en memoria de la pantalla; volver/avanzar lo conserva. Una recarga recupera lo guardado en backend, no el borrador sin enviar. No guardar datos de perfil, respuestas o credenciales en Web Storage.
 - Registro/onboarding sin sidebar pública, paleta #49225B/#6E3482/#A56ABD/#E7DBEF/#F5EBFA, sin gradientes.
-- No desplegar esta rama mientras operación no confirme backend compatible y schema 0003. No iniciar Subjects ni otros módulos en este cierre.
+- Restricción histórica de aquella fase, ya resuelta: no publicar sin backend
+  compatible/0003 ni iniciar Subjects. Materias y Actividades ya están cerrados
+  sobre fe5989b / 0005; siguiente módulo Calendario, con contrato por definir.

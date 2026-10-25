@@ -173,7 +173,10 @@ No compartir:
 - cookies;
 - secretos.
 
-## 18. Checklist previo a producción
+## 18. Plantilla de checklist para cada release
+
+No es una lista de bloqueos actuales de Materias/Actividades; ver las evidencias
+fechadas en INTEGRATION_VALIDATION. No marcar controles futuros como implementados.
 
 - [ ] Auth completa y probada
 - [ ] Refresh rotation
@@ -196,7 +199,11 @@ No compartir:
 - [ ] Health/readiness
 - [ ] Variables de producción documentadas
 
-## Evidencia frontend — 2026-10-05
+## Evidencia histórica frontend — 2026-10-05
+
+Los pendientes siguientes pertenecen a esa fecha. Auth/proxy/cookies se validaron
+posteriormente; evidencia actual de Materias/Actividades en INTEGRATION_VALIDATION.
+Se conservan los avisos CSP documentados, sin afirmar una validación nueva.
 
 - Access token solo en memoria. Refresh no se lee desde JS. Se retiró TokenStorage; se elimina la clave heredada sin reutilizarla.
 - Fetch con credentials include, CSRF en refresh/logout, coordinación de 401 y un retry máximo. 403/429 no disparan refresh. Las respuestas tardías de otra sesión se descartan.
@@ -205,7 +212,10 @@ No compartir:
 - Auditoría npm ejecutada: 0 vulnerabilidades reportadas. No sustituye revisión de secretos/CI ni seguridad del backend.
 - Decisión confirmada: CSRF Path=/, refresh HttpOnly Path=/api/v1/auth, Netlify proxy hacia Render. Falta sincronizar backend y validar cookies/rotación/revocación reales; auth de producción aún no certificada.
 
-### Política configurada de hosting (pendiente de verificar desplegada)
+### Política de hosting: referencia histórica de configuración
+
+La verificación desplegada posterior y sus límites están en INTEGRATION_VALIDATION;
+este apartado conserva la configuración propuesta en la fase inicial.
 
 Para bundle estático servido en el mismo origen que `/api/v1`, configurar desde hosting/gateway:
 

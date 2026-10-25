@@ -3,7 +3,9 @@
 Producción https://cognova-frontend.netlify.app; SHA 27a2c29a61fb0b393d27cd6a591e0f025581a13d;
 Netlify 6add4f267df000662f67a235 ready. Smoke Chrome155 finalizado
 2026-10-24 19:37:55 America/Bogota (2026-10-25T00:37:55.759Z).
-Backend fe5989b/0005 cerrado por operación; frontend solo consume REST por proxy.
+Backend fe5989b86d93d10e724cbf28de4f9d64048bb711 / 0005_activities cerrado por
+operación; frontend solo consume REST por proxy. Materias y Actividades cerrados.
+Esta rectificación documental no repite smoke ni amplía las pruebas acreditadas.
 
 | Control | Resultado real |
 | --- | --- |
@@ -44,7 +46,7 @@ activities-delete409-mobile.png. Hashes registrados después de revisión visual
 **Frontend Actividades queda cerrado.** El historial siguiente pertenece a releases
 anteriores y no implica dependencias pendientes para Actividades.
 
-# Materias — validación final aprobada 2026-10-21
+# Histórico — Materias — validación final aprobada 2026-10-21
 
 Producción: https://cognova-frontend.netlify.app.
 SHA c439a821db99157fae01b0c44abd69993d68cce2; deploy 6ad8630286df0857a21d2ec0 ready.
@@ -89,7 +91,7 @@ este módulo. El historial siguiente corresponde a estados anteriores del proyec
 
 # Integración real frontend → backend
 
-## Release operativo 2026-10-17
+## Histórico — Release operativo 2026-10-17
 
 Main integra feat/onboarding-questionnaire sin squash (merge dae333d254974093b6422e2594c92782586df53f). Netlify publicó ese SHA en https://cognova-frontend.netlify.app: deploy 6ad443bb9de5414fc3a0c500, ready. Los commits posteriores de tooling/documentación conservan el mismo bundle de aplicación.
 
@@ -125,14 +127,14 @@ Set-Cookie comprobado sin valores: Secure/Lax, host-only; HttpOnly solo refresh;
 
 Rutas HTTP /, /login, /register, /dashboard, /onboarding/academic-profile, /onboarding/questionnaire y /app/questionnaire: HTML 200 con bundle index-DAmSllbe.js y CSP. Token Netlify ausente del bundle y archivos versionados; sin URI PostgreSQL en el bundle.
 
-### Bloqueo de E2E real
+### Histórico — Límite de E2E registrado en aquel release
 
 El adaptador devolvió apps=[] y browsers=[]. Pendientes: recorrido visual de diez pasos, atrás/adelante, multi/Otro por UI, POST/PUT y recuperación visual del 409, historial visual, recarga/restore, guards, cookies de navegador, Web Storage y consola. Los tests jsdom/mocks y HTTP no sustituyen esas comprobaciones. Conectar navegador y registrar resultados antes de declarar cerrado el release.
 
 ## Archivo histórico
 
 
-## Cierre de onboarding — 2026-10-13
+## Histórico — Cierre de onboarding — 2026-10-13
 
 Rama `feat/onboarding-questionnaire`, contrato backend consumido desde fuentes: `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94`. Database fijado por backend: `232c43130c0fb3eddd32e1dd3707368ba0d87d4c`; schema requerido `0003_onboarding_questionnaire`.
 
@@ -205,7 +207,7 @@ La consola muestra bloqueos CSP de script/style inline en el HTML desplegado, qu
 
 Esta evidencia histórica valida únicamente el recorrido anterior, no el onboarding nuevo ni disponibilidad continua. El contrato nuevo ya define academic_goal como q1 y el cuestionario completo; su validación real pendiente se detalla al principio. Subjects no forma parte de este cierre.
 
-## Preflight Materias — 2026-10-20
+## Histórico — Preflight Materias — 2026-10-20
 
 138 tests locales, lint, TypeScript y build aprobados antes del release.
 Smoke HTTP por proxy Netlify aprobado con cuenta sintética 8: catálogo real,

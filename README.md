@@ -2,9 +2,13 @@
 
 React, TypeScript, Vite y React Router. Interfaz en español, responsive, con tema claro/oscuro.
 
-Esta rama incluye registro mínimo, perfil académico, cuestionario de diez pasos con catálogo backend, revisiones e historial, además de login/restore/refresh/logout y dashboard provisional. Subjects y demás módulos quedan fuera de alcance.
+El frontend productivo incluye registro mínimo, perfil académico, cuestionario
+versionado, auth y los módulos **Materias y Actividades cerrados**.
 
-Contrato backend fijado: `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94`. **No desplegar esta rama a producción:** Render todavía expone el contrato anterior sin onboarding; falta un entorno compatible con schema `0003_onboarding_questionnaire` para validar la integración real nueva.
+Backend productivo: `fe5989b86d93d10e724cbf28de4f9d64048bb711`, schema `0005_activities`.
+Netlify publicado: `27a2c29a61fb0b393d27cd6a591e0f025581a13d`. El bloqueo histórico
+de publicación de onboarding está resuelto. Siguiente módulo: **Calendario**,
+con contrato por definir; este cierre no lo implementa.
 
 ## Ejecutar y verificar
 
@@ -22,7 +26,10 @@ npm run verify
 
 En PowerShell puede usarse `npm.cmd` si se bloquea `npm.ps1`. La API pública es `/api/v1`; Vite reenvía `/api` a `BACKEND_PROXY_TARGET` (por defecto `http://127.0.0.1:8000`). El backend debe estar iniciado y configurado según [AUTH_CONTRACT](docs/AUTH_CONTRACT.md). No hay backend simulado.
 
-118 pruebas de servicios, auth, rutas, formularios, cuestionario, conflictos, historial y configuración Netlify. `verify` reúne lint, tests y build. Las pruebas con HTTP interceptado validan el frontend contra el contrato fijado, no el despliegue real. [INTEGRATION_VALIDATION](docs/INTEGRATION_VALIDATION.md) distingue la validación histórica de auth de la integración nueva pendiente.
+Último release validado: 170 pruebas, lint, TypeScript y build aprobados. `verify`
+reúne lint, tests y build. [INTEGRATION_VALIDATION](docs/INTEGRATION_VALIDATION.md)
+conserva resultados locales y smoke real de navegador, con sus fechas y límites.
+Esta revisión documental no repite pruebas ni despliegues.
 
 ## Autenticación
 
@@ -39,7 +46,7 @@ En PowerShell puede usarse `npm.cmd` si se bloquea `npm.ps1`. La API pública es
 
 ## Publicar en Netlify
 
-Seguir [DEPLOYMENT](docs/DEPLOYMENT.md) solo después de habilitar y validar el entorno compatible. [netlify.toml](netlify.toml) conserva Node 24, build, CSP y cabeceras. El build genera el proxy `/api/*` y después el fallback de BrowserRouter; si falta RENDER_API_ORIGIN o es incompatible, falla explícitamente. El build local no publica el sitio.
+El sitio existente está publicado. Para futuros releases, seguir [DEPLOYMENT](docs/DEPLOYMENT.md). [netlify.toml](netlify.toml) conserva Node 24, build, CSP y cabeceras. El build genera el proxy `/api/*` y después el fallback de BrowserRouter; si falta RENDER_API_ORIGIN o es incompatible, falla explícitamente. El build local no publica el sitio.
 
 ```sh
 npm run build:netlify
@@ -48,7 +55,10 @@ npm run smoke:auth
 
 El smoke requiere un sitio HTTPS y las variables `SMOKE_BASE_URL`, `SMOKE_EMAIL`, `SMOKE_PASSWORD` de una cuenta de prueba existente. No guardar credenciales en Git ni usar variables VITE para secretos. El smoke HTTP no sustituye el recorrido en navegador.
 
-La integración del contrato anterior se validó el 2026-10-12 en [Netlify](https://cognova-frontend.netlify.app), con el origen [Render lpsi](https://cognova-backend-lpsi.onrender.com). Esa evidencia no valida registro mínimo, perfil ni cuestionario nuevos. En esta fase no se desplegó ni fusionó la rama en main.
+Producción: [Netlify](https://cognova-frontend.netlify.app) con proxy al
+[backend Render](https://cognova-backend-lpsi.onrender.com). Materias y Actividades
+ya se integraron a main y publicaron; las referencias a releases anteriores se
+conservan como históricas en DEPLOYMENT e INTEGRATION_VALIDATION.
 
 ## Continuidad
 
@@ -56,4 +66,4 @@ Código separado en [api](src/api), [auth](src/auth), [services](src/services), 
 
 Cognova tiene tres repositorios independientes: cognova-frontend, cognova-backend y cognova-database. Frontend solo consume la API del backend. Database es propietario de Alembic, migraciones, esquema físico, constraints, índices, seeds de DB y administración del schema; no es una dependencia del frontend.
 
-Leer [PROJECT_STATE](docs/PROJECT_STATE.md), [ARCHITECTURE](docs/ARCHITECTURE.md), [SECURITY_BASELINE](docs/SECURITY_BASELINE.md) y [AGENT_RULES](docs/AGENT_RULES.md) antes de continuar. Los [contratos académicos pendientes](docs/CONTRACT_GAPS.md) están fuera del avance temporal autorizado.
+Leer [PROJECT_STATE](docs/PROJECT_STATE.md), [ARCHITECTURE](docs/ARCHITECTURE.md), [SECURITY_BASELINE](docs/SECURITY_BASELINE.md) y [AGENT_RULES](docs/AGENT_RULES.md) antes de continuar. [CONTRACT_GAPS](docs/CONTRACT_GAPS.md) distingue los gaps resueltos del historial. Calendario es el siguiente módulo, aún sin contrato.

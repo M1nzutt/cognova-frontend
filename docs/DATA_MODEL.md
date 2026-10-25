@@ -1,5 +1,15 @@
 # Cognova — Modelo de Datos
 
+## Alcance de esta copia conceptual
+
+Materias y Actividades están implementados y cerrados sobre backend fe5989b /
+0005_activities. Los DTOs vigentes viven en [API_CONTRACT](API_CONTRACT.md) y
+[ONBOARDING_CONTRACT](ONBOARDING_CONTRACT.md); no inferirlos de las listas antiguas.
+Las secciones Questionnaire, Subject y AcademicActivity inferiores se conservan
+como propuestas históricas sustituidas: el cuestionario ya está versionado,
+Subject usa difficulty/color_base/color_shade y Activity no usa type/goal_id.
+Las demás entidades son visión futura; no constituyen contrato de Calendario.
+
 Este documento describe el modelo conceptual. Los detalles exactos de tipos, índices, constraints y cascadas deben reflejarse en Alembic, propiedad de cognova-database junto con las migraciones, esquema físico y seeds de DB. Esta copia documental no introduce acceso a DB ni administración de schema desde frontend.
 
 ## Identidad y autenticación
@@ -36,7 +46,7 @@ Reglas:
 
 ## Onboarding
 
-### Questionnaire
+### Histórico — Questionnaire (propuesta sustituida)
 - id
 - user_id
 - answers_json
@@ -48,7 +58,7 @@ Regla:
 
 ## Organización académica
 
-### Subject
+### Histórico — Subject (propuesta sustituida)
 - id
 - user_id
 - name
@@ -68,7 +78,7 @@ Regla:
 - created_at
 - updated_at
 
-### AcademicActivity
+### Histórico — AcademicActivity (propuesta sustituida)
 - id
 - user_id
 - subject_id

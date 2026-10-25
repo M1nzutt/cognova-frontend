@@ -1,6 +1,14 @@
 # Cognova — Contrato API v1
 
-Fuente de esta copia frontend: backend `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94`, rama `feat/onboarding-questionnaire`. Requiere schema `0003_onboarding_questionnaire`. Describe la versión consumida por esta rama, no la versión antigua todavía desplegada en Render. Estado de verificación en [INTEGRATION_VALIDATION.md](INTEGRATION_VALIDATION.md).
+Materias y Actividades están cerrados en el frontend productivo.
+Backend: `fe5989b86d93d10e724cbf28de4f9d64048bb711`; schema `0005_activities`.
+Siguiente módulo funcional: **Calendario**, con contrato aún por definir.
+Este cierre no añade endpoints, DTOs, reglas ni diseño de Calendario.
+
+Fuente productiva vigente indicada arriba; ver [INTEGRATION_VALIDATION](INTEGRATION_VALIDATION.md).
+Procedencia histórica de auth/onboarding: backend `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94`
+sobre 0003. Esa referencia no es el backend desplegado actual. Las secciones de
+otros módulos conservan planificación conceptual, no funcionalidades publicadas.
 
 Base:
 
@@ -53,14 +61,15 @@ Contrato vigente de onboarding y cuestionario: [ONBOARDING_CONTRACT.md](ONBOARDI
 Incluye GET `/questionnaire/catalog`, GET `/questionnaire/history` y
 PUT `/onboarding/academic-profile`. Los tres endpoints existentes se conservan.
 Todas estas rutas requieren Bearer; permiten onboarding incompleto y solo operan
-sobre el usuario autenticado. No reciben user_id. No se implementan aún los
-módulos académicos listados más abajo.
+sobre el usuario autenticado. No reciben user_id. Materias y Actividades ya están implementados y cerrados;
+los restantes módulos son planificación futura.
 
 ## Subjects — contrato productivo verificado 2026-10-20
 
 Fuente: OpenAPI de https://cognova-backend-lpsi.onrender.com/openapi.json.
-Backend cerrado por operación: 430c64a3c299f82853f7947498f663f1cded590c,
-schema 0004_subjects. Sustituye la especificación preliminar de Materias.
+Referencia histórica de la verificación inicial: backend
+430c64a3c299f82853f7947498f663f1cded590c / 0004_subjects. El contrato se conserva
+en el backend vigente fe5989b / 0005. Sustituye la especificación preliminar.
 Bearer y onboarding completo obligatorios; identidad derivada de sesión.
 
 - GET /subjects/catalog: {version:1,color_bases:string[],color_shades:number[]}.

@@ -1,6 +1,10 @@
 # Cognova — Contrato de autenticación
 
-Fuente verificada: backend `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94`. El frontend de esta rama implementa este contrato. Su integración real nueva está pendiente de un entorno con onboarding y schema `0003_onboarding_questionnaire`; no usar la evidencia del auth anterior como prueba de este registro mínimo.
+Backend productivo vigente: `fe5989b86d93d10e724cbf28de4f9d64048bb711`, schema
+`0005_activities`. El bloqueo de entorno/publicación del onboarding está resuelto.
+Procedencia histórica de este contrato: `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94`
+sobre 0003; no es el SHA desplegado actual. Ver INTEGRATION_VALIDATION para las
+pruebas y los límites de cada release; esta revisión no ejecuta nuevas pruebas.
 
 Vigente 2026-10-12. Base /api/v1. La seguridad de sesión se conserva; el registro
 se separa del onboarding. Contrato complementario: [ONBOARDING_CONTRACT](ONBOARDING_CONTRACT.md).

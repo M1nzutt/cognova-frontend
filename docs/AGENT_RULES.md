@@ -28,7 +28,14 @@ DEPENDENCY:
 - motivo.
 ```
 
-La reconciliación arquitectónica terminó. La fase onboarding consume el contrato backend a277af2ba5f2e7227b5b329aa7d935e5e12b8f94: registro mínimo, perfil separado, objetivo en q1 y cuestionario completo. Preservar seguridad de auth y proxy. No publicar el frontend incompatible hasta confirmar operación con schema 0003; registrar la integración real como pendiente mientras Render exponga el contrato anterior.
+Materias y Actividades están cerrados en el frontend productivo.
+Backend: `fe5989b86d93d10e724cbf28de4f9d64048bb711`; schema `0005_activities`.
+Siguiente módulo funcional: **Calendario**, con contrato aún por definir.
+Este cierre no añade endpoints, DTOs, reglas ni diseño de Calendario.
+
+El bloqueo histórico de publicación del onboarding está resuelto; ver PROJECT_STATE
+e INTEGRATION_VALIDATION. Preservar auth y proxy. La tarea del 2026-10-25 autoriza
+solo documentación, un commit con [skip ci] [skip netlify] y push; no código ni diseño.
 
 ## Fuente de verdad
 
