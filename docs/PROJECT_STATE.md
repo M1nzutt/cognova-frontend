@@ -4,7 +4,9 @@ Rama feat/activities-ui; base main2be1f8f,45 commits, árbol inicial limpio.
 Autorización vigente: interfaz, merge sin squash, Netlify y smoke real de Actividades.
 Backend productivo fe5989b /0005 cerrado; contrato contrastado con OpenAPI.
 Solo Frontend; sin cambios de auth, backend/database, calendario, sesiones ni IA.
-Contrato actualizado antes del código; interfaz y validación productiva pendientes.
+Contrato y cliente tipado actualizados: DTOs exactos, filtros codificados, precondiciones,
+historial validado y errores públicos. 23 pruebas de API Actividades/Materias verdes.
+Vistas en preparación; release y validación productiva todavía pendientes.
 
 # Cognova — Frontend Materias cerrado
 

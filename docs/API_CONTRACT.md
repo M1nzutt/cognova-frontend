@@ -95,20 +95,37 @@ Responses API no-store. Grants y persistencia pertenecen a Database.
 
 `subject_id` puede ser opcional si así lo define `DATA_MODEL.md`.
 
-## Activities
+## Activities — contrato productivo verificado 2026-10-24
 
-- GET `/activities`
-- POST `/activities`
-- GET `/activities/{id}`
-- PUT `/activities/{id}`
-- DELETE `/activities/{id}`
-- GET `/activities/prioritized`
+Backend fe5989b86d93d10e724cbf28de4f9d64048bb711 / 0005_activities.
+OpenAPI productivo sustituye la propuesta anterior: no type, goal_id ni prioritized.
+Bearer y onboarding completo; propietario derivado de sesión; no-store.
+ActivityWrite: {title:string trim 1..50,subject_id:integer positivo,
+deadline:ISO8601 con zona,priority:low|medium|high|urgent,
+status:pending|in_progress|completed|postponed|cancelled,
+estimated_duration:integer 10..300,notes:string(max200)|null}.
+Activity añade id,original_deadline,deadline_revision,created_at,updated_at.
+Nunca enviar campos de lectura ni user_id.
 
-Debe soportar:
-- `type`;
-- `priority`;
-- `deadline`;
-- estado.
+- POST /activities:201; GET /activities/{id}:200; PUT /activities/{id}:200.
+  POST/PUT reciben ActivityWrite completo y devuelven Activity.
+- GET /activities: subject_id,status,priority,deadline exacto,deadline_from/to
+  inclusivos; limit1..100 (20),after_id positivo. {items,next_after_id}, id ASC.
+- PATCH /activities/{id}/status: {status,expected_status};200 Activity.
+- PATCH /activities/{id}/deadline: {deadline,expected_revision>=0};200 Activity.
+- GET /activities/{id}/deadline-history?limit=20&after_revision=<positivo>:
+  {items:[{revision,previous_deadline,new_deadline,event_type,occurred_at}],
+  next_after_revision:number|null}, revision ASC.
+- DELETE /activities/{id}?confirm=true:204 sin cuerpo; historial/dependencias409.
+
+Fecha mayor:postponed; menor:rescheduled; mismo instante no crea evento.
+Original inmutable; cambiar fecha no cambia estado. Completada/cancelada requieren
+reabrir a pending antes de otro estado. Precondición obsoleta409, sin retry automático.
+Materia propia obligatoria, también archivada. Ajena/inexistente404; invalidación422;
+indisponibilidad503. Conflictos ACTIVITY_HAS_DEPENDENCIES, ACTIVITY_STATE_CONFLICT,
+ACTIVITY_DEADLINE_CONFLICT, ACTIVITY_TRANSITION_CONFLICT y ACTIVITY_WRITE_CONFLICT.
+UI etiqueta zona local y envía ISO con zona. Edición general conserva estado/fecha;
+controles separados usan PATCH. Borrador solo en memoria, mensajes locales seguros.
 
 ## Dependencies
 
