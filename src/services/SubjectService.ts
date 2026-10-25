@@ -9,7 +9,7 @@ const path = (id: number) => {
 export class SubjectService {
   constructor(private readonly client: ApiClient) {}
   async catalog(signal?: AbortSignal) { return readSubjectCatalog(await this.client.request('/subjects/catalog', { signal })) }
-  async list(status: SubjectStatus, afterId?: number, signal?: AbortSignal) {
+  async list(status: SubjectStatus | 'all', afterId?: number, signal?: AbortSignal) {
     return readSubjectList(await this.client.request('/subjects', { signal, query: { status, limit: 20, ...(afterId === undefined ? {} : { after_id: afterId }) } }))
   }
   async detail(id: number, signal?: AbortSignal) { return readSubject(await this.client.request(path(id), { signal })) }

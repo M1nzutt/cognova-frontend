@@ -6,7 +6,8 @@ Backend productivo fe5989b /0005 cerrado; contrato contrastado con OpenAPI.
 Solo Frontend; sin cambios de auth, backend/database, calendario, sesiones ni IA.
 Contrato y cliente tipado actualizados: DTOs exactos, filtros codificados, precondiciones,
 historial validado y errores públicos. 23 pruebas de API Actividades/Materias verdes.
-Vistas en preparación; release y validación productiva todavía pendientes.
+Componentes/formularios/filtros/historial y controles accesibles implementados.
+18 pruebas de vistas verdes; TypeScript corregido y aprobado. Release pendiente.
 
 # Cognova — Frontend Materias cerrado
 
