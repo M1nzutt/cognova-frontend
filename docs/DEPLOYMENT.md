@@ -1,3 +1,16 @@
+# Actividades — preparación del release 2026-10-24
+
+Sitio existente confirmado bf6ef7b1-c280-4de9-8ea1-f70630cc14c1, main,
+build:netlify, publicación automática habilitada. Sin cambios de proxy ni secretos.
+Smoke preparado: SMOKE_ALLOW_PRODUCTION_WRITE=1; ejecutar
+node --experimental-strip-types scripts/smokeActivitiesBrowser.ts.
+Chrome real, una cuenta sintética, CRUD/filtros/estado/fechas/historia,
+DELETE204 y409, teclado, 1440/375px claro/oscuro, rutas/refresh, CSRF/no-store.
+Al terminar, borrar solo actividades sin historial; cancelar las restantes y
+archivar su materia; conservar cuenta/cuestionario/historial, revocar sesión.
+Tokens/cookies solo en memoria; capturas y evidencia ignoradas en .local.
+Todavía no ejecutado contra el release Actividades publicado.
+
 # Frontend Materias — release cerrado 2026-10-21
 
 Sitio existente https://cognova-frontend.netlify.app, ID
