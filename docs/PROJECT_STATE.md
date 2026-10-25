@@ -9,6 +9,8 @@ historial validado y errores públicos. 23 pruebas de API Actividades/Materias v
 Componentes/formularios/filtros/historial y controles accesibles implementados.
 Rutas lista/crear/detalle, navegación autenticada y 18 regresiones de vistas listas.
 170 tests, lint, TypeScript y build:netlify aprobados. Smoke productivo pendiente.
+Auditoría detectó dos dependencias transitivas vulnerables: undici8.11.2→8.12.3
+y zod4.6.5→4.6.7. Solo lock actualizado; auditoría posterior:0 vulnerabilidades.
 
 # Cognova — Frontend Materias cerrado
 
