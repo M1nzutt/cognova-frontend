@@ -7,7 +7,8 @@ Solo Frontend; sin cambios de auth, backend/database, calendario, sesiones ni IA
 Contrato y cliente tipado actualizados: DTOs exactos, filtros codificados, precondiciones,
 historial validado y errores públicos. 23 pruebas de API Actividades/Materias verdes.
 Componentes/formularios/filtros/historial y controles accesibles implementados.
-18 pruebas de vistas verdes; TypeScript corregido y aprobado. Release pendiente.
+Rutas lista/crear/detalle, navegación autenticada y 18 regresiones de vistas listas.
+170 tests, lint, TypeScript y build:netlify aprobados. Smoke productivo pendiente.
 
 # Cognova — Frontend Materias cerrado
 

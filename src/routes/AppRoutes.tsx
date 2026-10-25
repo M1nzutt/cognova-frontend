@@ -1,3 +1,6 @@
+import { ActivitiesPage } from '../pages/ActivitiesPage'
+import { ActivityCreatePage } from '../pages/ActivityCreatePage'
+import { ActivityDetailPage } from '../pages/ActivityDetailPage'
 import { SubjectsPage } from '../pages/SubjectsPage'
 import { SubjectCreatePage } from '../pages/SubjectCreatePage'
 import { SubjectDetailPage } from '../pages/SubjectDetailPage'
@@ -39,6 +42,9 @@ export function AppRoutes() {
       <Route element={<AppShell />}>
         <Route element={<ProtectedRoute />}>
           <Route element={<CompletedRoute />}>
+            <Route path="app/activities" element={<ActivitiesPage />} />
+            <Route path="app/activities/new" element={<ActivityCreatePage />} />
+            <Route path="app/activities/:activityId" element={<ActivityDetailPage />} />
             <Route path="app/subjects" element={<SubjectsPage />} />
             <Route path="app/subjects/archived" element={<SubjectsPage />} />
             <Route path="app/subjects/new" element={<SubjectCreatePage />} />

@@ -71,7 +71,7 @@ export function DashboardPendingPage() {
       <section className={styles.next} aria-labelledby="next-title">
         <span className={styles.release}>AVANCE INICIAL</span>
         <h2 id="next-title">Dale espacio a lo que aprendes</h2>
-        <Link to="/app/subjects">Organizar mis materias</Link>
+        <div className="actions"><Link to="/app/subjects">Organizar mis materias</Link><Link to="/app/activities">Organizar mis actividades</Link></div>
         <p>Tus materias ya tienen un lugar en Cognova. Organiza hasta cinco activas y conserva las demás archivadas.</p>
         <p className={styles.muted}>Puedes crear, editar, archivar y consultar tus materias desde tu espacio.</p>
       </section>
