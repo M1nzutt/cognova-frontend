@@ -1,0 +1,30 @@
+/* Shared visual language through CSS Modules composition; no global redesign. */
+.page { composes: page from './Subjects.module.css'; }
+.heading { composes: heading from './Subjects.module.css'; }
+.primary { composes: primary from './Subjects.module.css'; }
+.danger { composes: danger from './Subjects.module.css'; }
+.badge { composes: badge from './Subjects.module.css'; }
+.empty { composes: empty from './Subjects.module.css'; }
+.notice { composes: notice from './Subjects.module.css'; }
+.error { composes: error from './Subjects.module.css'; }
+.form { composes: form from './Subjects.module.css'; }
+.columns { composes: columns from './Subjects.module.css'; }
+.detail { composes: detail from './Subjects.module.css'; overflow-wrap: anywhere; }
+.dangerZone { composes: dangerZone from './Subjects.module.css'; }
+.dialog { composes: dialog from './Subjects.module.css'; }
+.confirm { composes: confirm from './Subjects.module.css'; }
+.form textarea { width: 100%; min-height: 100px; resize: vertical; border: 1px solid var(--border); border-radius: .5rem; padding: .7rem; background: var(--surface); color: var(--text); font: inherit; }
+.filters { padding: 1.2rem; border: 1px solid var(--border); border-radius: 1rem; background: var(--surface); margin: 1.5rem 0; }
+.filters .form { max-width: none; }
+.list { list-style: none; padding: 0; display: grid; gap: .85rem; }
+.card { display: block; padding: 1.3rem; border: 1px solid var(--border); border-radius: .8rem; text-decoration: none; background: var(--surface); color: var(--text); overflow-wrap: anywhere; }
+.card:hover { border-color: var(--accent); }
+.card h2 { font-size: 1.15rem; margin: 0 0 .5rem; }
+.meta { display: flex; flex-wrap: wrap; gap: .6rem 1.3rem; color: var(--muted); font-size: .9rem; }
+.history { padding-left: 1.4rem; }
+.history li { padding: .8rem 0; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
+.history p { margin: .4rem 0; }
+.controls { margin: 2rem 0; border-top: 1px solid var(--border); padding-top: 1rem; }
+.notes { white-space: pre-wrap; }
+.form input, .form select { min-width: 0; }
+@media(max-width: 450px) { .filters { padding: .8rem; } .detail dl { grid-template-columns: 1fr; } }

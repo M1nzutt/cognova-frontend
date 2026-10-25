@@ -1,3 +1,4 @@
+import { validQueryParameter } from './queryParameter'
 import { ApiError } from './ApiError'
 import { errorMessage } from './errorMessage'
 import { readCsrfCookie } from '../utils/csrf'
@@ -9,7 +10,7 @@ interface RequestOptions {
   csrf?: boolean
   signal?: AbortSignal
   retryAuth?: boolean
-  query?: Record<string, number | 'active' | 'archived' | 'all' | 'true'>
+  query?: Record<string, number | string>
 }
 
 export class ApiClient {
@@ -28,7 +29,7 @@ export class ApiClient {
     const token = options.authenticated === false ? null : this.getToken()
     const query = new URLSearchParams()
     for (const [key, value] of Object.entries(options.query ?? {})) {
-      if (!/^[a-z_]+$/.test(key) || !(typeof value === 'number' ? Number.isSafeInteger(value) && value >= 1 : (key === 'status' && ['active', 'archived', 'all'].includes(value)) || (key === 'confirm' && value === 'true'))) throw new ApiError('Los parámetros de la API no son válidos.', 0, 'INVALID_QUERY')
+      if (!validQueryParameter(key, value)) throw new ApiError('Los parámetros de la API no son válidos.', 0, 'INVALID_QUERY')
       query.set(key, String(value))
     }
     const headers = new Headers({ Accept: 'application/json' })
