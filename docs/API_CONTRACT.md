@@ -260,3 +260,9 @@ No inferir un DTO público directamente de una tabla SQLAlchemy.
 SUBJECT_REACTIVATION_LIMIT (reactivar sin cupo). 404 SUBJECT_NOT_FOUND para
 inexistente/segunda eliminación. DELETE sin confirmación:422 VALIDATION_ERROR.
 Smoke por Netlify con cuenta sintética 8, materias eliminadas y sesión revocada.
+
+## Calendario — contrato vigente 2026-10-26
+
+GET /calendar de solo lectura: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md).
+Backend vigente 61a2f98668f0d3452f0582d7a074f1290dbae43d, schema 0005_activities.
+Esta decisión sustituye las referencias anteriores a contrato pendiente.

@@ -115,3 +115,9 @@ El backend fijado históricamente en `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94` 
 - Restricción histórica de aquella fase, ya resuelta: no publicar sin backend
   compatible/0003 ni iniciar Subjects. Materias y Actividades ya están cerrados
   sobre fe5989b / 0005; siguiente módulo Calendario, con contrato por definir.
+
+## Calendario — decisión vigente 2026-10-26
+
+Vista académica transversal, sin eventos libres ni edición directa. Solo Actividades
+en esta fase; mes/semana en zona local. Sesiones, Planes y Retos quedan futuros.
+Contrato: CALENDAR_CONTRACT.md. No migraciones ni cambios externos.

@@ -154,3 +154,9 @@ node --experimental-strip-types scripts/smokeOnboarding.ts
 ```
 
 El destino está fijado al sitio existente. Passwords/tokens/cookies permanecen en memoria; errores nativos no se imprimen. Un fallo detiene el smoke y se intenta logout de limpieza. El smoke HTTP no sustituye pruebas de UI.
+
+## Trabajo vigente — Calendario 2026-10-26
+
+Rama feat/calendar-ui desde main 3b4c057, 54 commits iniciales, árbol limpio.
+Implementación y release autorizados; sustituye el alcance documental anterior.
+Contrato productivo verificado; ver CALENDAR_CONTRACT.md. Validación y deploy pendientes.
