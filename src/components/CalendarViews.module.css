@@ -1,0 +1,7 @@
+.month { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border: 1px solid var(--border); border-radius: .8rem; overflow: hidden; margin-top: 1rem; }
+.day { min-width: 0; padding: .45rem; border: 1px solid var(--border); background: var(--surface); }
+.day h3 { font-size: .75rem; margin: .3rem 0 .6rem; line-height: 1.5; }
+.day ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem; }
+.day[data-outside] { background: var(--background); }
+.day[data-today] h3 { color: var(--accent); text-decoration: underline; text-underline-offset: .3rem; }
+.free { font-size: .75rem; color: var(--muted); }
