@@ -5,3 +5,4 @@
 .day[data-outside] { background: var(--background); }
 .day[data-today] h3 { color: var(--accent); text-decoration: underline; text-underline-offset: .3rem; }
 .free { font-size: .75rem; color: var(--muted); }
+.week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: .65rem; margin-top: 1rem; }
