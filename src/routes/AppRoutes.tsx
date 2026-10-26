@@ -1,3 +1,4 @@
+import { CalendarPage } from '../pages/CalendarPage'
 import { ActivitiesPage } from '../pages/ActivitiesPage'
 import { ActivityCreatePage } from '../pages/ActivityCreatePage'
 import { ActivityDetailPage } from '../pages/ActivityDetailPage'
@@ -42,6 +43,7 @@ export function AppRoutes() {
       <Route element={<AppShell />}>
         <Route element={<ProtectedRoute />}>
           <Route element={<CompletedRoute />}>
+            <Route path="app/calendar" element={<CalendarPage />} />
             <Route path="app/activities" element={<ActivitiesPage />} />
             <Route path="app/activities/new" element={<ActivityCreatePage />} />
             <Route path="app/activities/:activityId" element={<ActivityDetailPage />} />
