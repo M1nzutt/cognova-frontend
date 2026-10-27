@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- Test-only render harness, never imported by the application. */
 import { StrictMode } from 'react'
 import { render } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router-dom'
