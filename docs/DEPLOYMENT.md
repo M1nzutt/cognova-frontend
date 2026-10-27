@@ -1,3 +1,30 @@
+# Calendario — release publicado y cerrado, 2026-10-26
+
+Sitio existente: https://cognova-frontend.netlify.app
+ID bf6ef7b1-c280-4de9-8ea1-f70630cc14c1; producción main.
+Merge --no-ff 0541a59ab048cbc2687400a68eab53d1d85716a9.
+Deploy 6ae010bbf41b67a5e8c44bfa ready; mismo SHA confirmado tras smoke.
+Backend 61a2f98668f0d3452f0582d7a074f1290dbae43d / 0005_activities;
+readiness200/no-store por proxy. No cambios de backend/database, auth ni hosting.
+
+Build obligatorio npm run build:netlify: lint, 214 pruebas, TypeScript y Vite verdes.
+Auditoría npm0. Warning PostCSS from preexistente, bundle/CSS revisados en navegador.
+No workflow de GitHub Actions en este repo; Netlify ejecutó el build antes de publicar.
+
+Reproducir únicamente con autorización para fixtures sintéticos:
+SMOKE_ALLOW_PRODUCTION_WRITE=1; node --experimental-strip-types scripts/smokeCalendarBrowser.ts.
+Usa Chrome real, credenciales aleatorias en memoria, tres actividades y dos materias
+propias; compara snapshots, elimina recursos sin historial y revoca sesión.
+Conserva cuenta/perfil/cuestionario inicial, nunca datos ajenos ni secretos en logs.
+Capturas/evidencias locales en .local ignorado; evidencia sanitizada versionada.
+
+Smoke final aprobado: mes/semana, filtros, fecha/año/hoy, detalle, refresh/ruta directa,
+escritorio/móvil/claro/oscuro, teclado, guards y no-store. Sin excepciones JS.
+Correcciones posteriores solo del smoke/documentación usan [skip ci] [skip netlify].
+No disparar otro deploy para este cierre. Ver INTEGRATION_VALIDATION y CALENDAR_CONTRACT.
+
+## Histórico — releases previos y preparación, no estado vigente
+
 # Frontend Actividades — release cerrado 2026-10-24
 
 Estado vigente — 2026-10-25: Materias y Actividades están cerrados en el frontend productivo.

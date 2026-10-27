@@ -1,0 +1,779 @@
+{
+    "date":  "2026-10-27T02:54:38.691Z",
+    "passed":  true,
+    "stage":  "cleanup",
+    "userId":  26,
+    "activityIds":  [
+                        21,
+                        22,
+                        23
+                    ],
+    "subjectIds":  [
+                       42,
+                       43
+                   ],
+    "cleaned":  true,
+    "pageErrors":  0,
+    "cspWarnings":  10,
+    "beforeHash":  "1b99a6895f8b239b608f6f8b84e2bddabd9dfa77cf497d1fa34d7f66d51cc9c1",
+    "afterHash":  "1b99a6895f8b239b608f6f8b84e2bddabd9dfa77cf497d1fa34d7f66d51cc9c1",
+    "checks":  [
+                   "anonymous direct route protected",
+                   "monthly; deadlines grouped in America/Bogota including UTC day boundary",
+                   "weekly",
+                   "subject/status/priority AND filters; empty; clear",
+                   "next period; month/year boundary; today",
+                   "keyboard controls; activity link to original detail/edit flow",
+                   "direct route; refresh restores session/date/view/filter",
+                   "1440/375 month/week light/dark; no horizontal overflow",
+                   "read-only activity snapshot equality; no-store; no auth/academic storage; zero unhandled JS errors",
+                   "synthetic activities/subjects deleted; session revoked; protected route after logout"
+               ],
+    "responses":  [
+                      {
+                          "path":  "/api/v1/auth/refresh",
+                          "method":  "POST",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/auth/me",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/subjects",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/subjects",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/activities/21",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/auth/refresh",
+                          "method":  "POST",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/auth/me",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/subjects",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/auth/refresh",
+                          "method":  "POST",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/auth/me",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/subjects",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      },
+                      {
+                          "path":  "/api/v1/calendar",
+                          "method":  "GET",
+                          "status":  200,
+                          "noStore":  true
+                      }
+                  ],
+    "api":  [
+                {
+                    "label":  "ready",
+                    "status":  200
+                },
+                {
+                    "label":  "synthetic_register",
+                    "status":  201
+                },
+                {
+                    "label":  "academic_profile",
+                    "status":  200
+                },
+                {
+                    "label":  "questionnaire_catalog",
+                    "status":  200
+                },
+                {
+                    "label":  "questionnaire",
+                    "status":  201
+                },
+                {
+                    "label":  "csrf_rejected",
+                    "status":  403,
+                    "code":  "CSRF_VALIDATION_FAILED"
+                },
+                {
+                    "label":  "csrf_refresh",
+                    "status":  200
+                },
+                {
+                    "label":  "subjects_catalog",
+                    "status":  200
+                },
+                {
+                    "label":  "create",
+                    "status":  201
+                },
+                {
+                    "label":  "subjects_catalog",
+                    "status":  200
+                },
+                {
+                    "label":  "create",
+                    "status":  201
+                },
+                {
+                    "label":  "create_calendar_fixture",
+                    "status":  201
+                },
+                {
+                    "label":  "create_calendar_fixture",
+                    "status":  201
+                },
+                {
+                    "label":  "create_calendar_fixture",
+                    "status":  201
+                },
+                {
+                    "label":  "snapshot_before",
+                    "status":  200
+                },
+                {
+                    "label":  "snapshot_after",
+                    "status":  200
+                },
+                {
+                    "label":  "cleanup_activities",
+                    "status":  200
+                },
+                {
+                    "label":  "cleanup_activity_delete",
+                    "status":  204
+                },
+                {
+                    "label":  "cleanup_activity_delete",
+                    "status":  204
+                },
+                {
+                    "label":  "cleanup_activity_delete",
+                    "status":  204
+                },
+                {
+                    "label":  "cleanup_list",
+                    "status":  200
+                },
+                {
+                    "label":  "cleanup_delete",
+                    "status":  204
+                },
+                {
+                    "label":  "cleanup_list",
+                    "status":  200
+                },
+                {
+                    "label":  "cleanup_delete",
+                    "status":  204
+                },
+                {
+                    "label":  "logout_csrf_rejected",
+                    "status":  403,
+                    "code":  "CSRF_VALIDATION_FAILED"
+                },
+                {
+                    "label":  "cleanup_logout",
+                    "status":  204
+                },
+                {
+                    "label":  "revoked_access",
+                    "status":  401,
+                    "code":  "SESSION_REVOKED"
+                },
+                {
+                    "label":  "revoked_session",
+                    "status":  401,
+                    "code":  "SESSION_REVOKED"
+                },
+                {
+                    "label":  "revoked_session",
+                    "status":  401,
+                    "code":  "SESSION_REVOKED"
+                },
+                {
+                    "label":  "revoked_session",
+                    "status":  401,
+                    "code":  "SESSION_REVOKED"
+                }
+            ],
+    "deployedSha":  "0541a59ab048cbc2687400a68eab53d1d85716a9",
+    "deployId":  "6ae010bbf41b67a5e8c44bfa",
+    "screenshots":  [
+                        {
+                            "file":  "calendar-1440-mes-dark.png",
+                            "sha256":  "69d16aa8650e200d9670ce048d83b7843225bafa385b3232c7cd6ab2fc9742ab",
+                            "reviewed":  true
+                        },
+                        {
+                            "file":  "calendar-1440-mes-light.png",
+                            "sha256":  "d0aa9252d7dab55cb6223034a1f1aa77340b5eb20719a730fc30a41fedd7b99e",
+                            "reviewed":  true
+                        },
+                        {
+                            "file":  "calendar-1440-semana-dark.png",
+                            "sha256":  "7425719cdb47f838e190ae7d2ecfe1108e7d95ac59c4aeccf233146473c9c705",
+                            "reviewed":  true
+                        },
+                        {
+                            "file":  "calendar-1440-semana-light.png",
+                            "sha256":  "02a954240aa8aab9292e6803c0b84fcabb22ab93f5a05b8e3fbdfb69c65a830c",
+                            "reviewed":  true
+                        },
+                        {
+                            "file":  "calendar-375-mes-dark.png",
+                            "sha256":  "4985dafb02503655e91da96ff324734b2c3d2aecc5ba4b7fb39ea79239214614",
+                            "reviewed":  true
+                        },
+                        {
+                            "file":  "calendar-375-mes-light.png",
+                            "sha256":  "80145fffa95511f6e1681e7601051ab03d1185715bd8d5ba1484e06b7277d478",
+                            "reviewed":  true
+                        },
+                        {
+                            "file":  "calendar-375-semana-dark.png",
+                            "sha256":  "3c692c5259694487e87a23fb470461f3a73ef8a5248fa54c74a41504507ccce4",
+                            "reviewed":  true
+                        },
+                        {
+                            "file":  "calendar-375-semana-light.png",
+                            "sha256":  "eb4a0f2b4782211c0fcfcdc58194af87716181ff622970e5a124b3006d9fa1f0",
+                            "reviewed":  true
+                        }
+                    ],
+    "previousAttempts":  [
+                             {
+                                 "file":  "calendar-browser-attempt1.json",
+                                 "date":  "2026-10-27T02:49:02.742Z",
+                                 "stage":  "synthetic setup",
+                                 "userId":  0,
+                                 "activityIds":  [
+
+                                                 ],
+                                 "subjectIds":  [
+
+                                                ],
+                                 "cleaned":  false,
+                                 "api":  [
+
+                                         ]
+                             },
+                             {
+                                 "file":  "calendar-browser-attempt2.json",
+                                 "date":  "2026-10-27T02:50:35.384Z",
+                                 "stage":  "navigation",
+                                 "userId":  23,
+                                 "activityIds":  [
+                                                     12,
+                                                     13,
+                                                     14
+                                                 ],
+                                 "subjectIds":  [
+                                                    36,
+                                                    37
+                                                ],
+                                 "cleaned":  true,
+                                 "api":  [
+                                             {
+                                                 "label":  "ready",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "synthetic_register",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "academic_profile",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "questionnaire_catalog",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "questionnaire",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "csrf_rejected",
+                                                 "status":  403,
+                                                 "code":  "CSRF_VALIDATION_FAILED"
+                                             },
+                                             {
+                                                 "label":  "csrf_refresh",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "subjects_catalog",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "create",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "subjects_catalog",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "create",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "create_calendar_fixture",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "create_calendar_fixture",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "create_calendar_fixture",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "snapshot_before",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "cleanup_activities",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "cleanup_activity_delete",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "cleanup_activity_delete",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "cleanup_activity_delete",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "cleanup_list",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "cleanup_delete",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "cleanup_list",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "cleanup_delete",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "logout_csrf_rejected",
+                                                 "status":  403,
+                                                 "code":  "CSRF_VALIDATION_FAILED"
+                                             },
+                                             {
+                                                 "label":  "cleanup_logout",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "revoked_access",
+                                                 "status":  401,
+                                                 "code":  "SESSION_REVOKED"
+                                             }
+                                         ]
+                             },
+                             {
+                                 "file":  "calendar-browser-attempt3.json",
+                                 "date":  "2026-10-27T02:51:34.535Z",
+                                 "stage":  "navigation",
+                                 "userId":  24,
+                                 "activityIds":  [
+                                                     15,
+                                                     16,
+                                                     17
+                                                 ],
+                                 "subjectIds":  [
+                                                    38,
+                                                    39
+                                                ],
+                                 "cleaned":  true,
+                                 "api":  [
+                                             {
+                                                 "label":  "ready",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "synthetic_register",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "academic_profile",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "questionnaire_catalog",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "questionnaire",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "csrf_rejected",
+                                                 "status":  403,
+                                                 "code":  "CSRF_VALIDATION_FAILED"
+                                             },
+                                             {
+                                                 "label":  "csrf_refresh",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "subjects_catalog",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "create",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "subjects_catalog",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "create",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "create_calendar_fixture",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "create_calendar_fixture",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "create_calendar_fixture",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "snapshot_before",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "cleanup_activities",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "cleanup_activity_delete",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "cleanup_activity_delete",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "cleanup_activity_delete",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "cleanup_list",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "cleanup_delete",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "cleanup_list",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "cleanup_delete",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "logout_csrf_rejected",
+                                                 "status":  403,
+                                                 "code":  "CSRF_VALIDATION_FAILED"
+                                             },
+                                             {
+                                                 "label":  "cleanup_logout",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "revoked_access",
+                                                 "status":  401,
+                                                 "code":  "SESSION_REVOKED"
+                                             }
+                                         ]
+                             },
+                             {
+                                 "file":  "calendar-browser-attempt4.json",
+                                 "date":  "2026-10-27T02:53:16.955Z",
+                                 "stage":  "navigation February",
+                                 "userId":  25,
+                                 "activityIds":  [
+                                                     18,
+                                                     19,
+                                                     20
+                                                 ],
+                                 "subjectIds":  [
+                                                    40,
+                                                    41
+                                                ],
+                                 "cleaned":  true,
+                                 "api":  [
+                                             {
+                                                 "label":  "ready",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "synthetic_register",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "academic_profile",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "questionnaire_catalog",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "questionnaire",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "csrf_rejected",
+                                                 "status":  403,
+                                                 "code":  "CSRF_VALIDATION_FAILED"
+                                             },
+                                             {
+                                                 "label":  "csrf_refresh",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "subjects_catalog",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "create",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "subjects_catalog",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "create",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "create_calendar_fixture",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "create_calendar_fixture",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "create_calendar_fixture",
+                                                 "status":  201
+                                             },
+                                             {
+                                                 "label":  "snapshot_before",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "cleanup_activities",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "cleanup_activity_delete",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "cleanup_activity_delete",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "cleanup_activity_delete",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "cleanup_list",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "cleanup_delete",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "cleanup_list",
+                                                 "status":  200
+                                             },
+                                             {
+                                                 "label":  "cleanup_delete",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "logout_csrf_rejected",
+                                                 "status":  403,
+                                                 "code":  "CSRF_VALIDATION_FAILED"
+                                             },
+                                             {
+                                                 "label":  "cleanup_logout",
+                                                 "status":  204
+                                             },
+                                             {
+                                                 "label":  "revoked_access",
+                                                 "status":  401,
+                                                 "code":  "SESSION_REVOKED"
+                                             }
+                                         ]
+                             }
+                         ]
+}

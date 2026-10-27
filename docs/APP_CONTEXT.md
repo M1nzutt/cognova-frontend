@@ -4,7 +4,7 @@
 
 Materias y Actividades están cerrados en el frontend productivo.
 Backend: `61a2f98668f0d3452f0582d7a074f1290dbae43d`; schema `0005_activities`.
-Calendario implementado en feat/calendar-ui; publicación y smoke pendientes.
+Calendario cerrado y publicado desde feat/calendar-ui, integrado a main sin squash.
 Contrato vigente de solo lectura: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md).
 
 Las secciones conceptuales siguientes expresan la visión de producto, no acreditan
@@ -260,19 +260,15 @@ El sistema no debe cambiar automáticamente una prioridad declarada por el usuar
 
 # 11. Calendario
 
-El calendario es una parte importante de la experiencia.
+Vista académica transversal de Cognova, cerrada en esta fase con Actividades.
+No admite eventos personales/libres ni edición directa de datos.
+Mes y semana muestran las fechas límite, materia, prioridad y estado; filtros,
+navegación y hoy. Cada elemento abre el detalle y edición normal de Actividades.
+Semanas lunes–domingo y zona local indicada. Mes móvil apila los días.
+Sesiones, Planes y Retos podrán incorporarse mediante futuros contratos;
+no están implementados aquí. Ver CALENDAR_CONTRACT.md.
 
-Debe permitir visualizar:
-
-- sesiones programadas;
-- materia;
-- actividad asociada;
-- duración;
-- fecha;
-- hora;
-- estado.
-
-El calendario debe sentirse como una herramienta práctica, no como una pantalla decorativa.
+El calendario es una herramienta práctica, no una pantalla decorativa.
 
 ---
 

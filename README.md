@@ -3,12 +3,11 @@
 React, TypeScript, Vite y React Router. Interfaz en español, responsive, con tema claro/oscuro.
 
 El frontend productivo incluye registro mínimo, perfil académico, cuestionario
-versionado, auth y los módulos **Materias y Actividades cerrados**.
+versionado, auth y los módulos **Materias, Actividades y Calendario cerrados**.
 
-Backend productivo: `fe5989b86d93d10e724cbf28de4f9d64048bb711`, schema `0005_activities`.
-Netlify publicado: `27a2c29a61fb0b393d27cd6a591e0f025581a13d`. El bloqueo histórico
-de publicación de onboarding está resuelto. Siguiente módulo: **Calendario**,
-con contrato por definir; este cierre no lo implementa.
+Backend productivo: `61a2f98668f0d3452f0582d7a074f1290dbae43d`, schema `0005_activities`.
+Netlify publicado: `0541a59ab048cbc2687400a68eab53d1d85716a9`. El bloqueo histórico
+de publicación de onboarding está resuelto. Calendario ofrece mes/semana y filtros como vista académica de solo lectura; abre el detalle de Actividades.
 
 ## Ejecutar y verificar
 
@@ -26,10 +25,10 @@ npm run verify
 
 En PowerShell puede usarse `npm.cmd` si se bloquea `npm.ps1`. La API pública es `/api/v1`; Vite reenvía `/api` a `BACKEND_PROXY_TARGET` (por defecto `http://127.0.0.1:8000`). El backend debe estar iniciado y configurado según [AUTH_CONTRACT](docs/AUTH_CONTRACT.md). No hay backend simulado.
 
-Último release validado: 170 pruebas, lint, TypeScript y build aprobados. `verify`
+Último release validado: 214 pruebas, lint, TypeScript y build aprobados. `verify`
 reúne lint, tests y build. [INTEGRATION_VALIDATION](docs/INTEGRATION_VALIDATION.md)
 conserva resultados locales y smoke real de navegador, con sus fechas y límites.
-Esta revisión documental no repite pruebas ni despliegues.
+Calendario tiene smoke productivo de navegador y revisión visual; ver la evidencia fechada.
 
 ## Autenticación
 

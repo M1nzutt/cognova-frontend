@@ -45,3 +45,11 @@ microsegundos, cancelación y respuestas tardías, filtros, rutas, guards, tecla
 loading/empty/error. Lint, TypeScript, build:netlify y auditoría0 verdes.
 Smoke real preparado en scripts/smokeCalendarBrowser.ts; resultados productivos
 se registrarán en INTEGRATION_VALIDATION, sin sustituirlos por mocks.
+
+## Cierre productivo — 2026-10-26
+Contrato consumido en producción Netlify SHA0541a59ab048cbc2687400a68eab53d1d85716a9.
+Smoke real aprobado y capturas revisadas; ver INTEGRATION_VALIDATION.md.
+Solo consulta, sin alteraciones de actividades. Filtros/rutas/zona local/teclado
+aprobados. Materias archivadas se incluyen. Mes móvil muestra todos los días
+apilados. Cursores de varias páginas y carreras cubiertos por tests locales.
+No eventos propios ni endpoints adicionales; futuros tipos siguen fuera de alcance.

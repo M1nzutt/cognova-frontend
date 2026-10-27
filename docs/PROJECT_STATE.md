@@ -1,3 +1,45 @@
+# Frontend Calendario — cerrado, 2026-10-26 (America/Bogota)
+
+Main integra feat/calendar-ui con --no-ff, sin squash. Netlify ready:
+0541a59ab048cbc2687400a68eab53d1d85716a9, deploy 6ae010bbf41b67a5e8c44bfa,
+https://cognova-frontend.netlify.app. Backend consumido:
+61a2f98668f0d3452f0582d7a074f1290dbae43d / 0005_activities.
+Solo este repositorio fue modificado. Auth/proxy y estilo existentes conservados.
+
+Calendario transversal de solo lectura: mes/semana, anterior/siguiente/hoy/fecha,
+zona local, filtros materia/estado/prioridad, paginación completa y enlace al
+detalle/edición normal de Actividades. Sin eventos libres ni persistencia local.
+Loading, vacío, errores seguros y reintento. Respuestas tardías abortadas/descartadas.
+URL conserva fecha/vista/filtros; guards de sesión y onboarding existentes.
+
+214 tests en 26 archivos (44 nuevos); lint, TypeScript, build:netlify y auditoría0.
+Netlify ejecutó build obligatorio antes de publicar. Warning PostCSS from previo,
+sin fallo de CSS/build. Smoke Chrome real aprobado a las 21:54:38 del 26/oct
+(2026-10-27T02:54:38.691Z): mes/semana, filtros, navegación/año/hoy, fecha local
+correcta, detalle, refresh/ruta directa, 1440/375, ambos temas, teclado y auth.
+Ocho capturas revisadas. Cero errores JS no controlados; 10 avisos CSP preexistentes,
+también observados en acceso público. CSP conservada, sin relajación.
+Los cursores de varias páginas tienen regresión local; el smoke UI usó tres items.
+
+Snapshots API de actividades antes/después idénticos; Calendario solo envió GET.
+Usuario sintético26: actividades21–23 y materias42–43 eliminadas; sesión revocada.
+Intentos anteriores: timeout de readiness sin cuenta; usuarios23–25 limpiados tras
+fallos del tooling (selector de encabezados, espera). Ningún cambio de aplicación
+ni redeploy fue necesario. En total 12 actividades y 8 materias eliminadas.
+Se retienen solo las cuatro cuentas/perfiles/cuestionarios iniciales y registros
+de sesiones revocadas; sin endpoint de borrado de cuenta. Ningún dato ajeno alterado.
+
+Git: 54 commits iniciales; 69 al reanudar (15 de Calendario existentes).
+12 adicionales tras reanudar, 27 creados desde inicio, 81 totales; faltan420 para501.
+Incluye merge y correcciones reales del smoke; sin commits vacíos ni squash.
+Commits finales de tooling/documentación [skip ci] [skip netlify] no cambian SHA live.
+
+**Calendario queda cerrado de punta a punta.** Materias/Actividades conservan su cierre.
+[Evidencia](evidence/calendar-release-2026-10-26.json) y
+[validación](INTEGRATION_VALIDATION.md). No se implementaron Sesiones/Planes/Retos/IA.
+
+## Historia anterior — estados y pendientes ya superados
+
 # Calendario — listo para publicación, 2026-10-26
 
 Rama feat/calendar-ui; inicio 54 commits, reanudación en 6ce8594 con 69 (15 nuevos).

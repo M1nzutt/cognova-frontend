@@ -30,7 +30,7 @@ DEPENDENCY:
 
 Materias y Actividades están cerrados en el frontend productivo.
 Backend: `61a2f98668f0d3452f0582d7a074f1290dbae43d`; schema `0005_activities`.
-Calendario implementado en feat/calendar-ui; publicación y smoke pendientes.
+Calendario cerrado y publicado desde feat/calendar-ui, integrado a main sin squash.
 Contrato vigente de solo lectura: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md).
 
 El bloqueo histórico de publicación del onboarding está resuelto; ver PROJECT_STATE

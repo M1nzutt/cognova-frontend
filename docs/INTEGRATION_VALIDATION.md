@@ -1,3 +1,56 @@
+# Calendario — integración productiva aprobada, 2026-10-26
+
+URL https://cognova-frontend.netlify.app; SHA 0541a59ab048cbc2687400a68eab53d1d85716a9.
+Deploy Netlify 6ae010bbf41b67a5e8c44bfa ready. Backend 61a2f98668f0d3452f0582d7a074f1290dbae43d
+sobre0005. Smoke Chrome real finalizado el26/oct a21:54:38 America/Bogota
+(2026-10-27T02:54:38.691Z). Solo REST del frontend por proxy.
+
+| Control | Resultado |
+| --- | --- |
+| Mes / semana | Fechas visibles y actividades correctas |
+| Zona local | UTC16/ene01:30 aparece el15/ene20:30 en Bogotá |
+| Navegación / hoy | Cambio de periodo, diciembre2030→enero2031, fecha y hoy aprobados |
+| Filtros | Materia/estado/prioridad combinados, vacío contextual y limpieza |
+| Actividad | Enlace por teclado al detalle; edición normal disponible |
+| Refresh / directa | Sesión restaurada y fecha/vista/filtro conservados |
+| Responsive / temas | 1440/375px, mes/semana, claro/oscuro; sin overflow horizontal |
+| Teclado | Botones y enlaces operables; foco conservado al cambiar vista |
+| Auth / CSRF | Ruta anónima→login; refresh sin CSRF403, válido200; logout403/204 |
+| Revocación | Bearer revocado401; recarga protegida→login |
+| Caché / Storage | Respuestas observadas no-store; solo preferencia de tema persistida |
+| Escrituras de Calendario | Solo GET, snapshots API idénticos antes/después |
+| JavaScript | Cero excepciones no controladas |
+
+Hash antes/después: 1b99a6895f8b239b608f6f8b84e2bddabd9dfa77cf497d1fa34d7f66d51cc9c1.
+Alcance de comparación: listado completo de las actividades sintéticas con sus
+campos públicos, incluidos timestamps. No acceso directo a PostgreSQL.
+La paginación de más de50 items, precisión de cursor, límites366 y respuestas
+tardías están cubiertas por tests locales; no se crearon51 fixtures productivos.
+
+214 tests/26 archivos verdes; 44 nuevos frente a170. Incluyen cliente/DTO,
+mes/semana, filtros, cambio de año, URL/restauración, onboarding, apertura,
+loading/empty/error/reintento y carreras. Lint, TypeScript, build:netlify y auditoría0.
+No se provocó indisponibilidad del backend para probar errores productivos.
+
+Usuario26: actividades21,22,23 y materias42,43 eliminadas204. Sesión revocada.
+Intentos previos: readiness falló antes de crear cuenta; luego usuarios23,24,25
+con recursos eliminados y sesión revocada, documentados en evidencia.
+El tooling necesitó encabezado nivel2 inequívoco y espera acorde al timeout API;
+no hubo cambio funcional ni redeploy. Total12 actividades/8 materias eliminadas.
+Retenidas las cuentas23–26, perfiles, revisión inicial del cuestionario y registros
+de sesión revocada; no existe DELETE de cuenta. Credenciales nunca persistidas.
+
+Ocho capturas revisadas; hashes en [evidencia](evidence/calendar-release-2026-10-26.json).
+Mes móvil apila todos los días, sin ocultar actividades. Diez avisos CSP durante
+el smoke; también se observaron2 en acceso público inicial y ya constan en releases
+anteriores. No se relajó CSP; no bloquearon flujo ni generaron excepciones JS.
+Warning PostCSS from previo, sin fallo de build ni visual.
+
+**Frontend Calendario cerrado.** Sin eventos libres, sin edición directa ni nuevos
+módulos. La historia inferior conserva sus fechas y no expresa bloqueos vigentes.
+
+## Histórico — validaciones previas
+
 # Actividades — validación productiva aprobada 2026-10-24
 
 Producción https://cognova-frontend.netlify.app; SHA 27a2c29a61fb0b393d27cd6a591e0f025581a13d;

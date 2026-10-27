@@ -2,7 +2,7 @@
 
 Materias y Actividades están cerrados en el frontend productivo.
 Backend: `61a2f98668f0d3452f0582d7a074f1290dbae43d`; schema `0005_activities`.
-Calendario implementado en feat/calendar-ui; publicación y smoke pendientes.
+Calendario cerrado y publicado desde feat/calendar-ui, integrado a main sin squash.
 Contrato vigente de solo lectura: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md).
 
 Fuente productiva vigente indicada arriba; ver [INTEGRATION_VALIDATION](INTEGRATION_VALIDATION.md).
@@ -69,7 +69,7 @@ los restantes módulos son planificación futura.
 Fuente: OpenAPI de https://cognova-backend-lpsi.onrender.com/openapi.json.
 Referencia histórica de la verificación inicial: backend
 430c64a3c299f82853f7947498f663f1cded590c / 0004_subjects. El contrato se conserva
-en el backend vigente fe5989b / 0005. Sustituye la especificación preliminar.
+en el backend vigente 61a2f98 / 0005. Sustituye la especificación preliminar.
 Bearer y onboarding completo obligatorios; identidad derivada de sesión.
 
 - GET /subjects/catalog: {version:1,color_bases:string[],color_shades:number[]}.
