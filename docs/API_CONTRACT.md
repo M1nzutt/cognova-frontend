@@ -1,9 +1,9 @@
 # Cognova — Contrato API v1
 
 Materias y Actividades están cerrados en el frontend productivo.
-Backend: `fe5989b86d93d10e724cbf28de4f9d64048bb711`; schema `0005_activities`.
-Siguiente módulo funcional: **Calendario**, con contrato aún por definir.
-Este cierre no añade endpoints, DTOs, reglas ni diseño de Calendario.
+Backend: `61a2f98668f0d3452f0582d7a074f1290dbae43d`; schema `0005_activities`.
+Calendario implementado en feat/calendar-ui; publicación y smoke pendientes.
+Contrato vigente de solo lectura: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md).
 
 Fuente productiva vigente indicada arriba; ver [INTEGRATION_VALIDATION](INTEGRATION_VALIDATION.md).
 Procedencia histórica de auth/onboarding: backend `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94`
@@ -260,3 +260,9 @@ No inferir un DTO público directamente de una tabla SQLAlchemy.
 SUBJECT_REACTIVATION_LIMIT (reactivar sin cupo). 404 SUBJECT_NOT_FOUND para
 inexistente/segunda eliminación. DELETE sin confirmación:422 VALIDATION_ERROR.
 Smoke por Netlify con cuenta sintética 8, materias eliminadas y sesión revocada.
+
+## Calendario — contrato vigente 2026-10-26
+
+GET /calendar de solo lectura: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md).
+Backend vigente 61a2f98668f0d3452f0582d7a074f1290dbae43d, schema 0005_activities.
+Esta decisión sustituye las referencias anteriores a contrato pendiente.

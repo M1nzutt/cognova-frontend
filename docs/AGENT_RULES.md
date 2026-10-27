@@ -29,12 +29,12 @@ DEPENDENCY:
 ```
 
 Materias y Actividades están cerrados en el frontend productivo.
-Backend: `fe5989b86d93d10e724cbf28de4f9d64048bb711`; schema `0005_activities`.
-Siguiente módulo funcional: **Calendario**, con contrato aún por definir.
-Este cierre no añade endpoints, DTOs, reglas ni diseño de Calendario.
+Backend: `61a2f98668f0d3452f0582d7a074f1290dbae43d`; schema `0005_activities`.
+Calendario implementado en feat/calendar-ui; publicación y smoke pendientes.
+Contrato vigente de solo lectura: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md).
 
 El bloqueo histórico de publicación del onboarding está resuelto; ver PROJECT_STATE
-e INTEGRATION_VALIDATION. Preservar auth y proxy. La tarea del 2026-10-25 autoriza
+e INTEGRATION_VALIDATION. Preservar auth y proxy. Histórico: la tarea del 2026-10-25 autorizó
 solo documentación, un commit con [skip ci] [skip netlify] y push; no código ni diseño.
 
 ## Fuente de verdad

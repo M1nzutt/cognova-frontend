@@ -1,0 +1,8 @@
+.event { display: flex; flex-direction: column; gap: .2rem; padding: .7rem; border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: .5rem; background: var(--surface); text-decoration: none; color: var(--text); font-size: .8rem; overflow-wrap: anywhere; min-width: 0; }
+.event strong { font-size: .9rem; line-height: 1.4; }
+.event:hover { background: var(--lavender); }
+.event time { font-weight: 600; }
+.event[data-priority="urgent"] { border-left-width: 6px; }
+.event[data-priority="high"] { border-left-width: 4px; }
+.subject { display: flex; align-items: center; gap: .4rem; }
+.subject > span { width: .8rem; height: .8rem; border-radius: 50%; }

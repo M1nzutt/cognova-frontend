@@ -152,3 +152,11 @@ Producción debe:
 - aplicar CSP/security headers desde hosting/CDN cuando sea posible.
 
 El build Netlify genera redirects desde RENDER_API_ORIGIN, antes del fallback SPA. Vite usa proxy local. CSP y cabeceras estáticas están configuradas; no-store en respuestas auth corresponde al backend. Ver [DEPLOYMENT](DEPLOYMENT.md).
+
+## Calendario — 2026-10-26
+CalendarService consulta GET /calendar con ApiClient; DTO propio sin duplicar Activity.
+CalendarPage coordina controles y componentes Month/Week/Day/Event separados.
+El recurso de consulta se remonta con clave completa (rango y filtros), cancela al
+salir y descarta respuestas abortadas. Todas las páginas se validan antes de mostrar.
+La URL conserva solo fecha/vista/filtros, nunca respuestas ni secretos. Presentación
+en zona local, links al recurso original. Contrato: CALENDAR_CONTRACT.md.

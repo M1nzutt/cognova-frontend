@@ -3,9 +3,9 @@
 ## Estado implementado — 2026-10-25
 
 Materias y Actividades están cerrados en el frontend productivo.
-Backend: `fe5989b86d93d10e724cbf28de4f9d64048bb711`; schema `0005_activities`.
-Siguiente módulo funcional: **Calendario**, con contrato aún por definir.
-Este cierre no añade endpoints, DTOs, reglas ni diseño de Calendario.
+Backend: `61a2f98668f0d3452f0582d7a074f1290dbae43d`; schema `0005_activities`.
+Calendario implementado en feat/calendar-ui; publicación y smoke pendientes.
+Contrato vigente de solo lectura: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md).
 
 Las secciones conceptuales siguientes expresan la visión de producto, no acreditan
 implementación ni fijan por sí solas el contrato del próximo módulo.
@@ -206,7 +206,7 @@ El cuestionario tiene 10 preguntas obligatorias:
 9. Reacción habitual cuando una sesión no sale como esperaba.
 10. Qué espera comprender o mejorar usando Cognova.
 
-Las preguntas, opciones e IDs aprobados viven en `QUESTIONNAIRE.md`, sincronizado originalmente con el backend histórico a277af2ba5f2e7227b5b329aa7d935e5e12b8f94; la referencia productiva vigente es fe5989b86d93d10e724cbf28de4f9d64048bb711. El frontend consume el catálogo backend; no inventa opciones. Registro mínimo → perfil académico → percepción inicial → app se decide por onboarding.next_step. El objetivo vigente es q1 y cada actualización conserva la percepción previa como revisión. Ver `ONBOARDING_CONTRACT.md` para DTOs y cardinalidades exactas.
+Las preguntas, opciones e IDs aprobados viven en `QUESTIONNAIRE.md`, sincronizado originalmente con el backend histórico a277af2ba5f2e7227b5b329aa7d935e5e12b8f94; la referencia productiva vigente es 61a2f98668f0d3452f0582d7a074f1290dbae43d. El frontend consume el catálogo backend; no inventa opciones. Registro mínimo → perfil académico → percepción inicial → app se decide por onboarding.next_step. El objetivo vigente es q1 y cada actualización conserva la percepción previa como revisión. Ver `ONBOARDING_CONTRACT.md` para DTOs y cardinalidades exactas.
 
 ---
 

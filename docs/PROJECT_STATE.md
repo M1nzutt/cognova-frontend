@@ -1,3 +1,22 @@
+# Calendario — listo para publicación, 2026-10-26
+
+Rama feat/calendar-ui; inicio 54 commits, reanudación en 6ce8594 con 69 (15 nuevos).
+Implementación de solo lectura: cliente validado/paginado, mes/semana, filtros,
+zona local, URL restaurable, detalle de Actividades, guards existentes, sin
+persistencia académica local ni cambios en Backend/Database.
+214 pruebas/26 archivos, lint, TypeScript, build:netlify y auditoría0 aprobados.
+Regresión de respuestas tardías: cancela y descarta la consulta anterior; nunca
+presenta datos del periodo previo durante carga/error. Teclado y estados probados.
+Responsive local implementado; revisión visual y smoke real todavía pendientes.
+PostCSS mantiene su warning previo sobre from; build genera CSS y bundle.
+
+Siguiente: merge --no-ff, push main, esperar Netlify existente, ejecutar
+scripts/smokeCalendarBrowser.ts con opt-in SMOKE_ALLOW_PRODUCTION_WRITE=1.
+El smoke crea una cuenta sintética, dos materias y tres actividades sin historial;
+elimina sus recursos, conserva perfil/cuestionario y revoca la sesión.
+Credenciales aleatorias solo en memoria. No cerrar hasta revisar evidencia visual.
+
+## Historia anterior — los estados de publicación inferiores son fechados
 # Cognova — Frontend Actividades cerrado
 
 ## Estado vigente — 2026-10-25
@@ -154,3 +173,9 @@ node --experimental-strip-types scripts/smokeOnboarding.ts
 ```
 
 El destino está fijado al sitio existente. Passwords/tokens/cookies permanecen en memoria; errores nativos no se imprimen. Un fallo detiene el smoke y se intenta logout de limpieza. El smoke HTTP no sustituye pruebas de UI.
+
+## Trabajo vigente — Calendario 2026-10-26
+
+Rama feat/calendar-ui desde main 3b4c057, 54 commits iniciales, árbol limpio.
+Implementación y release autorizados; sustituye el alcance documental anterior.
+Contrato productivo verificado; ver CALENDAR_CONTRACT.md. Validación y deploy pendientes.
