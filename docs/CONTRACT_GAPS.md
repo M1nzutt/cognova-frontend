@@ -1,15 +1,15 @@
 # Estado vigente — 2026-10-25
 
 Materias y Actividades están cerrados en el frontend productivo.
-Backend: `fe5989b86d93d10e724cbf28de4f9d64048bb711`; schema `0005_activities`.
-Siguiente módulo funcional: **Calendario**, con contrato aún por definir.
-Este cierre no añade endpoints, DTOs, reglas ni diseño de Calendario.
+Backend: `61a2f98668f0d3452f0582d7a074f1290dbae43d`; schema `0005_activities`.
+Calendario implementado en feat/calendar-ui; publicación y smoke pendientes.
+Contrato vigente de solo lectura: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md).
 
 Los contratos de Materias/Actividades están resueltos en API_CONTRACT y ambos
 módulos están publicados. El bloqueo de entorno/publicación de onboarding también
 está resuelto. La matriz y las dependencias siguientes son el archivo histórico
 del 2026-10-13/20: sus filas de Materias/Actividades no son gaps actuales.
-No se define aquí un contrato de Calendario.
+El contrato vigente de Calendario sustituye la planificación anterior.
 
 # Histórico — Actualización 2026-10-20
 

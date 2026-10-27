@@ -38,3 +38,10 @@ creación, arrastre ni edición directa. Cada item abre /app/activities/:id y ut
 el flujo normal de detalle/edición, fecha original e historial de Actividades.
 Futuros tipos (Sesiones, Planes, Retos) requieren ampliar contrato; no implementados.
 
+
+## Evidencia local previa a publicación
+214 pruebas totales (44 nuevas), incluyendo mensual/semanal, límites y cursores,
+microsegundos, cancelación y respuestas tardías, filtros, rutas, guards, teclado,
+loading/empty/error. Lint, TypeScript, build:netlify y auditoría0 verdes.
+Smoke real preparado en scripts/smokeCalendarBrowser.ts; resultados productivos
+se registrarán en INTEGRATION_VALIDATION, sin sustituirlos por mocks.
