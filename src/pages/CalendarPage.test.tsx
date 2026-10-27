@@ -16,7 +16,7 @@ describe('Calendar protected screen', () => {
     link.focus(); await userEvent.keyboard('{Enter}')
     expect(await screen.findByRole('heading', { name:'Preparar ensayo' })).toBeVisible()
     expect(await screen.findByRole('button', { name:'Editar actividad' })).toBeVisible()
-    expect(fetch.mock.calls.filter(([url]) => url.includes('/calendar')).every(([,request]) => request.method === 'GET')).toBe(true)
+    expect(fetch.mock.calls.filter(([url]) => url.includes('/calendar')).every(([,request]) => request?.method === 'GET')).toBe(true)
   })
   it('loads all pages before reporting the complete period', async () => {
     let resolve!: (response:Response) => void
