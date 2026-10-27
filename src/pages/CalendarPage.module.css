@@ -4,3 +4,7 @@
 .zone { color: var(--muted); font-size: .85rem; }
 .page input { max-width: 100%; color: var(--text); background: var(--surface); }
 .page button[aria-pressed="true"] { background: var(--lavender); border-color: var(--accent); font-weight: 650; }
+@media (max-width: 450px) {
+  .page form > div > div { grid-template-columns: 1fr; }
+  .page input { width: 100%; min-width: 0; }
+}
