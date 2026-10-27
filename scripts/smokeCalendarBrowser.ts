@@ -1,10 +1,11 @@
-import { chromium, expect } from '@playwright/test'
+import { chromium, expect as baseExpect } from '@playwright/test'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { ActivitySmokeApi } from './ActivitySmokeApi.ts'
 import { check, production } from './SubjectSmokeApi.ts'
 import type { Activity, ActivityList } from '../src/types/activity.ts'
 check(process.env.SMOKE_ALLOW_PRODUCTION_WRITE === '1', 'Explicit production write opt-in required')
+const expect = baseExpect.configure({ timeout:25000 })
 const browser = await chromium.launch({ channel:'chrome',headless:true })
 const context = await browser.newContext({ viewport:{ width:1440,height:1000 },timezoneId:'America/Bogota',colorScheme:'light' })
 const page = await context.newPage(), api = new ActivitySmokeApi(context)
@@ -51,10 +52,10 @@ try {
   await page.getByLabel('Filtrar por prioridad').selectOption('urgent');await expect(page.getByText('No hay actividades con estos filtros')).toBeVisible()
   await page.getByRole('button',{ name:'Limpiar filtros' }).click();await expect(itemLink()).toBeVisible();checks.push('subject/status/priority AND filters; empty; clear')
   stage='navigation';await page.getByRole('button',{ name:'Mes',exact:true }).click();await viewReady('mensual')
-  await page.getByRole('button',{ name:'Periodo siguiente' }).click();await expect(page.getByRole('heading',{ name:/febrero de 2030/i })).toBeVisible();await viewReady('mensual')
-  await page.getByLabel('Ir a fecha').fill('2030-12-31');await viewReady('mensual')
+  stage='navigation February';await page.getByRole('button',{ name:'Periodo siguiente' }).click();await expect(page.getByRole('heading',{ name:/febrero de 2030/i })).toBeVisible();await viewReady('mensual')
+  stage='navigation year';await page.getByLabel('Ir a fecha').fill('2030-12-31');await viewReady('mensual')
   await page.getByRole('button',{ name:'Periodo siguiente' }).click();await expect(page.getByRole('heading',{ name:/enero de 2031/i })).toBeVisible();await viewReady('mensual')
-  await page.getByRole('button',{ name:'Hoy',exact:true }).click();await viewReady('mensual')
+  stage='navigation today';await page.getByRole('button',{ name:'Hoy',exact:true }).click();await viewReady('mensual')
   const today=await page.evaluate(()=>{ const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0') })
   await expect(page.getByLabel('Ir a fecha')).toHaveValue(today);checks.push('next period; month/year boundary; today')
   stage='keyboard/detail';await page.getByLabel('Ir a fecha').fill('2030-01-15');await viewReady('mensual')
@@ -89,7 +90,8 @@ try {
   for (const id of ids) await api.request('revoked_session','activities/'+id,401)
   await page.reload();await expect(page).toHaveURL(/\/login$/);checks.push('synthetic activities/subjects deleted; session revoked; protected route after logout')
   passed=true
-} catch {
+} catch (error) {
+  console.error('Failure category: '+(error instanceof Error ? error.name : 'Unknown'))
   await page.screenshot({ path:'.local/calendar-failure.png',fullPage:true }).catch(()=>undefined)
   console.error('Calendar smoke stopped at '+stage+'; API operation '+api.operation);process.exitCode=1
 } finally {
