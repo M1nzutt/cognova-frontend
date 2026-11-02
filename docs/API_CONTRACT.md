@@ -146,28 +146,53 @@ Representan dependencias reales entre actividades.
 
 ## Sessions
 
-- GET `/sessions`
-- POST `/sessions`
-- GET `/sessions/{id}`
-- DELETE `/sessions/{id}`
-- POST `/sessions/{id}/start`
-- POST `/sessions/{id}/pause`
-- POST `/sessions/{id}/resume`
-- POST `/sessions/{id}/finish`
+Contrato productivo consultado en OpenAPI el 2026-11-02; detalle de interfaz:
+[STUDY_SESSIONS_CONTRACT](STUDY_SESSIONS_CONTRACT.md). Backend productivo
+`56e7caccb247776ed93c63e949faf9b76202ebcf`, schema `0006_study_sessions`.
+Bearer y onboarding completo son obligatorios; las respuestas privadas son
+`no-store`. Identidad y ownership se derivan de la sesión autenticada.
 
-El backend es la fuente de verdad del temporizador.
+- GET `/sessions`: filtros opcionales `subject_id`, `activity_id`,
+  `execution_state`, `status`, `planned_start_from`, `planned_start_to`;
+  `limit` 1..100 (50 predeterminado). Cursores exclusivos
+  `after_planned_start_at` y `after_id` se envían juntos. Orden
+  `planned_start_at ASC, id ASC`; respuesta `{items,next_cursor}`, donde el
+  cursor es `null` o `{after_planned_start_at,after_id}`.
+- POST `/sessions`: `{subject_id,activity_id?,planned_start_at,planned_duration}`;
+  fecha/hora ISO 8601 con zona, duración 10..180; responde 201 con detalle.
+- GET `/sessions/{id}`: devuelve detalle e intervalos.
+- PUT `/sessions/{id}`: reemplaza los campos de planificación; solo plan sin
+  ejecución; responde detalle.
+- DELETE `/sessions/{id}?confirm=true`: 204 solamente para plan sin inicio ni
+  intervalos; conflictos/dependencias responden 409.
+- POST `/sessions/{id}/start`, `/pause` y `/resume`: sin body; devuelven detalle
+  actualizado.
+- POST `/sessions/{id}/finish`: `{status,context?,other_text?}`; devuelve
+  detalle actualizado. `other_text` solo aplica a `context=other`, máximo 200.
 
-`finish` registra:
-- resultado;
-- motivo cuando corresponda;
-- motivo personalizado opcional;
-- contexto opcional.
+Ciclo: `planned`, `running`, `paused`, `finished`. Resultado nullable hasta
+finalizar: `completed`, `partial`, `postponed`, `cancelled`. Contexto nullable:
+`finished_early`, `distracted`, `tired`, `interrupted`, `changed_activity`,
+`other`. Se permiten `postponed`/`cancelled` sin ejecución; `completed`/`partial`
+requieren ejecución real.
 
-Resultados:
-- completed
-- partial
-- postponed
-- cancelled
+El detalle incluye `id`, `subject_id`, `activity_id`, `planned_start_at`,
+`planned_duration`, `execution_state`, `status`, `start_at`, `end_at`,
+`actual_duration` (segundos decimales como string), `context`, `other_text`,
+`created_at`, `updated_at` e `intervals[{id,started_at,ended_at}]`.
+El backend es la fuente de verdad del temporizador. La UI puede animar un valor
+provisional desde el intervalo abierto, pero sincroniza cada transición con API
+y solo presenta `actual_duration` como tiempo efectivo confirmado.
+
+Subject es obligatoria y propia; actividad opcional debe ser propia y pertenecer
+a la misma materia. Una sesión running/paused por usuario. Transiciones o
+precondiciones incompatibles producen 409; ajena/inexistente 404; validación
+422; falta de sesión 401; onboarding incompleto 403; indisponibilidad 503. La UI
+no muestra mensajes arbitrarios del servidor ni reintenta mutaciones en conflicto.
+
+Calendario vigente sigue siendo lectura de Actividades. La aparición de sesiones
+en Calendario requiere ampliar contrato/backend en un bloque posterior; esta
+interfaz no crea ni persiste eventos de calendario.
 
 ## Analytics
 
