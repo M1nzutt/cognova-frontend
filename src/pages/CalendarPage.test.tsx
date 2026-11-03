@@ -2,7 +2,7 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { calendarSetup } from '../test/calendarSetup'
-import { calendarItem } from '../test/calendarFixtures'
+import { calendarItem, calendarSession } from '../test/calendarFixtures'
 import { jsonResponse } from '../test/authFixtures'
 describe('Calendar protected screen', () => {
   it.each([{ anonymous:true },{ incomplete:true }])('enforces existing session/onboarding guard: %j', async options => {
@@ -18,14 +18,40 @@ describe('Calendar protected screen', () => {
     expect(await screen.findByRole('button', { name:'Editar actividad' })).toBeVisible()
     expect(fetch.mock.calls.filter(([url]) => url.includes('/calendar')).every(([,request]) => request?.method === 'GET')).toBe(true)
   })
+  it('renders a Study Session at planned_start_at with subject, duration, lifecycle and result', async () => {
+    calendarSetup({ calendar:async () => jsonResponse({ items:[{ ...calendarSession, lifecycle:'finished', result:'partial', start_at:'2030-01-15T15:02:00Z', end_at:'2030-01-15T15:25:00Z' }],next_cursor:null }) })
+    const link = await screen.findByRole('link', { name:'Abrir detalle: Sesión de Álgebra' })
+    expect(link).toHaveAttribute('href','/app/sessions/1')
+    expect(link).toHaveTextContent('10:00')
+    expect(link).toHaveTextContent('45 minutos planificados')
+    expect(link).toHaveTextContent('Finalizada')
+    expect(link).toHaveTextContent('Resultado: Parcial')
+  })
+  it('renders mixed items in Backend order when timestamps and IDs tie', async () => {
+    calendarSetup({ calendar:async () => jsonResponse({ items:[calendarItem,calendarSession],next_cursor:null }) })
+    const activity = await screen.findByRole('link', { name:/Preparar ensayo/ })
+    const session = screen.getByRole('link', { name:'Abrir detalle: Sesión de Álgebra' })
+    expect(screen.getByText('2 elementos en el periodo.')).toBeVisible()
+    expect(activity).toHaveAttribute('href','/app/activities/1')
+    expect(session).toHaveAttribute('href','/app/sessions/1')
+    const links = screen.getByRole('region', { name:'Vista mensual' }).querySelectorAll('a')
+    expect([...links].map(link => link.getAttribute('href'))).toEqual(['/app/activities/1','/app/sessions/1'])
+  })
+  it('opens a Study Session detail from its calendar link with the keyboard', async () => {
+    calendarSetup({ calendar:async () => jsonResponse({ items:[calendarSession],next_cursor:null }) })
+    const link = await screen.findByRole('link', { name:'Abrir detalle: Sesión de Álgebra' })
+    link.focus(); await userEvent.keyboard('{Enter}')
+    expect(await screen.findByRole('heading', { name:'Sesión de Álgebra' })).toBeVisible()
+    expect(screen.getByRole('region', { name:'Detalles de la sesión' })).toHaveTextContent('45 minutos')
+  })
   it('loads all pages before reporting the complete period', async () => {
     let resolve!: (response:Response) => void
-    calendarSetup({ calendar:async url => url.searchParams.has('after_id') ? new Promise(r => { resolve=r }) : jsonResponse({ items:[calendarItem],next_cursor:{ after_deadline:calendarItem.deadline,after_id:1 } }) })
+    calendarSetup({ calendar:async url => url.searchParams.has('after_id') ? new Promise(r => { resolve=r }) : jsonResponse({ items:[calendarItem],next_cursor:{ after_deadline:calendarItem.deadline,after_type:'activity',after_id:1 } }) })
     await waitFor(() => expect(resolve).toBeTypeOf('function'))
     expect(screen.getByText('Cargando calendario completo…')).toBeVisible()
     expect(screen.queryByRole('link', { name:/Preparar ensayo/ })).not.toBeInTheDocument()
     await act(async () => resolve(jsonResponse({ items:[{ ...calendarItem,id:2,title:'Segundo ensayo' }],next_cursor:null })))
-    expect(await screen.findByText('2 actividades en el periodo.')).toBeVisible()
+    expect(await screen.findByText('2 elementos en el periodo.')).toBeVisible()
   })
   it('aborts stale requests on navigation and ignores late responses', async () => {
     let resolveOld!: (response:Response) => void
@@ -38,7 +64,7 @@ describe('Calendar protected screen', () => {
     } })
     await waitFor(() => expect(resolveOld).toBeTypeOf('function'))
     fireEvent.click(screen.getByRole('button', { name:'Periodo siguiente' }))
-    expect(await screen.findByText('No hay actividades en este periodo')).toBeVisible()
+    expect(await screen.findByText('No hay elementos en este periodo')).toBeVisible()
     expect(oldSignals.every(signal => signal.aborted)).toBe(true)
     await act(async () => resolveOld(jsonResponse({ items:[calendarItem],next_cursor:null })))
     expect(screen.queryByRole('link', { name:/Preparar ensayo/ })).not.toBeInTheDocument()
@@ -61,7 +87,7 @@ describe('Calendar protected screen', () => {
     calendarSetup({ calendar:async () => failed ? jsonResponse({ error:{ code:'SERVICE_UNAVAILABLE' } },503) : jsonResponse({ items:[],next_cursor:null }) })
     expect(await screen.findByRole('alert')).toHaveTextContent('temporalmente')
     failed = false; fireEvent.click(screen.getByRole('button', { name:'Reintentar calendario' }))
-    expect(await screen.findByText('No hay actividades en este periodo')).toBeVisible()
+    expect(await screen.findByText('No hay elementos en este periodo')).toBeVisible()
     expect(screen.getByRole('region', { name:'Vista mensual' })).toBeVisible()
   })
 })

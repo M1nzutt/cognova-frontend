@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { ApiClient } from '../api/client'
 import { CalendarService } from './CalendarService'
-import { calendarItem as item, calendarQuery as query } from '../test/calendarFixtures'
+import { calendarItem as item, calendarQuery as query, calendarSession as session } from '../test/calendarFixtures'
 import { jsonResponse } from '../test/authFixtures'
 const service = () => new CalendarService(new ApiClient('/api/v1', () => 'memory', vi.fn()))
 describe('Calendar API', () => {
@@ -58,5 +58,44 @@ describe('Calendar API', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse({ error: { code: 'ERROR', message: 'private SQL' } }, status)))
     await expect(service().page(query)).rejects.toMatchObject({ status })
     await expect(service().page(query)).rejects.not.toThrow('private SQL')
+  })
+  it('loads Activity and Study Session pages in the stable same-instant order', async () => {
+    const cursor = { after_deadline: item.deadline, after_type: 'activity' as const, after_id: item.id }
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(jsonResponse({ items:[item], next_cursor:cursor }))
+      .mockResolvedValueOnce(jsonResponse({ items:[session], next_cursor:null }))
+    vi.stubGlobal('fetch', fetch)
+    expect(await service().allItems(query, new AbortController().signal)).toEqual([item,session])
+    const next = new URL(fetch.mock.calls[1][0], 'https://test').searchParams
+    expect(next.get('after_type')).toBe('activity')
+    expect(next.get('after_id')).toBe(String(item.id))
+  })
+  it('sends a session-only type filter and strips Activity-only status and priority', async () => {
+    const fetch = vi.fn().mockResolvedValue(jsonResponse({ items:[session], next_cursor:null }))
+    vi.stubGlobal('fetch', fetch)
+    const queryWithInvalidFilters = { ...query, type:'study_session' as const, subject_id:1, status:'pending' as const, priority:'high' as const }
+    expect(await service().allItems(queryWithInvalidFilters, new AbortController().signal)).toEqual([session])
+    const params = new URL(fetch.mock.calls[0][0], 'https://test').searchParams
+    expect(params.get('type')).toBe('study_session')
+    expect(params.get('subject_id')).toBe('1')
+    expect(params.has('status')).toBe(false)
+    expect(params.has('priority')).toBe(false)
+  })
+  it('validates lifecycle, result, timestamps, global order and session range bounds', async () => {
+    const queryWithType = { ...query, type:'study_session' as const }
+    const invalidBodies = [
+      { items:[{ ...session, lifecycle:'secret' }], next_cursor:null },
+      { items:[{ ...session, result:'secret' }], next_cursor:null },
+      { items:[{ ...session, planned_start_at:query.deadline_to }], next_cursor:null },
+      { items:[session,item], next_cursor:null },
+    ]
+    for (const body of invalidBodies) {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(body)))
+      await expect(service().allItems(queryWithType, new AbortController().signal)).rejects.toMatchObject({ code:'INVALID_RESPONSE' })
+    }
+  })
+  it('keeps the previous Activity-only response contract readable', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse({ items:[item], next_cursor:null })))
+    expect(await service().all(query, new AbortController().signal)).toEqual([item])
   })
 })
