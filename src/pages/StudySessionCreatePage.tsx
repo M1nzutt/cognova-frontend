@@ -1,4 +1,3 @@
-import { useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { StudySessionPlanForm } from '../components/StudySessionPlanForm'
 import { useStudySessionMutation } from '../hooks/useStudySessionMutation'
@@ -11,7 +10,7 @@ export function StudySessionCreatePage() {
   const options = useStudySessionPlanOptions()
   const mutation = useStudySessionMutation()
   const navigate = useNavigate()
-  const selectSubject = useCallback((id: number) => options.selectSubject(id), [options.selectSubject])
+  const selectSubject = options.selectSubject
   return <section className={styles.page}>
     <Link to="/app/sessions">← Sesiones</Link><h1>Planificar sesión</h1>
     <p>Elige cuándo estudiar y la materia. El tiempo real se registra al iniciar el temporizador.</p>

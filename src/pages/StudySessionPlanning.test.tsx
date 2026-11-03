@@ -21,6 +21,7 @@ describe('study session planning routes', () => {
   it('clears an incompatible activity when the selected subject changes', async () => {
     studySessionSetup({ path: '/app/sessions/new', sessions: [] })
     await screen.findByRole('form', { name: 'Planificar sesión' })
+    await screen.findByRole('option', { name: 'Leer capítulo' })
     await userEvent.selectOptions(screen.getByLabelText('Actividad (opcional)'), '1')
     await userEvent.selectOptions(screen.getByLabelText('Materia'), '2')
     await waitFor(() => expect(screen.getByLabelText('Actividad (opcional)')).not.toBeDisabled())

@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components -- test-only API fixture harness */
 import { StrictMode } from 'react'
 import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
@@ -14,10 +13,7 @@ const subject = { id: 1, name: 'Biología', status: 'active', difficulty: 'mediu
 const otherSubject = { ...subject, id: 2, name: 'Historia' }
 const response = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } })
 const initialSession: StudySession = { ...sessionSummary, intervals: [], other_text: null }
-const summary = (item: StudySession): StudySessionSummary => {
-  const { intervals: _intervals, other_text: _otherText, ...value } = item
-  return value
-}
+const summary = (item: StudySession): StudySessionSummary => item
 
 export function studySessionSetup(options: {
   path?: string; anonymous?: boolean; incomplete?: boolean; sessions?: StudySession[]; startStatus?: number; deleteStatus?: number; listStatus?: number
@@ -28,7 +24,7 @@ export function studySessionSetup(options: {
   const fetch = vi.fn(async (input: string | URL, request: RequestInit = {}) => {
     const url = new URL(String(input), 'https://test')
     const method = request.method ?? 'GET'
-    if (url.pathname.endsWith('/refresh')) return response({ access_token: makeToken(), token_type: 'bearer' })
+    if (url.pathname.endsWith('/refresh')) return options.anonymous ? response({ error: { code: 'INVALID_REFRESH_TOKEN' } }, 401) : response({ access_token: makeToken(), token_type: 'bearer' })
     if (url.pathname.endsWith('/me')) return response(options.incomplete ? { ...user, onboarding: { ...user.onboarding, status: 'incomplete', next_step: 'academic_profile' } } : user)
     if (url.pathname.endsWith('/subjects')) return response({ items: [subject, otherSubject], next_after_id: null })
     if (url.pathname.endsWith('/activities')) return response({ items: [{ ...activity, subject_id: 1 }], next_after_id: null })
@@ -73,23 +69,27 @@ export function studySessionSetup(options: {
       }
       if (method === 'POST' && action === 'pause') {
         if (item.execution_state !== 'running') return response({ error: { code: 'STUDY_SESSION_CONFLICT' } }, 409)
-        item.execution_state = 'paused'; item.intervals.at(-1)!.ended_at = '2030-01-15T15:15:00Z'; item.actual_duration = '600.000000'; item.updated_at = '2030-01-15T15:15:00Z'
+        const ended = item.intervals.length === 1 ? '2030-01-15T15:15:00Z' : '2030-01-15T15:25:00Z'
+        item.execution_state = 'paused'; item.intervals.at(-1)!.ended_at = ended
+        item.actual_duration = (item.intervals.reduce((sum, interval) => sum + (Date.parse(interval.ended_at ?? ended) - Date.parse(interval.started_at)), 0) / 1000).toFixed(6); item.updated_at = ended
         return response(item)
       }
       if (method === 'POST' && action === 'resume') {
         if (item.execution_state !== 'paused') return response({ error: { code: 'STUDY_SESSION_CONFLICT' } }, 409)
-        item.execution_state = 'running'; item.intervals.push({ id: 22, started_at: '2030-01-15T15:20:00Z', ended_at: null }); item.updated_at = '2030-01-15T15:20:00Z'
+        const started = item.intervals.length === 1 ? '2030-01-15T15:20:00Z' : '2030-01-15T15:27:00Z'
+        item.execution_state = 'running'; item.intervals.push({ id: 21 + item.intervals.length, started_at: started, ended_at: null }); item.updated_at = started
         return response(item)
       }
       if (method === 'POST' && action === 'finish') {
         if (item.execution_state === 'finished') return response({ error: { code: 'STUDY_SESSION_CONFLICT' } }, 409)
         const body = JSON.parse(String(request.body))
         const open = item.intervals.at(-1)
-        if (open && !open.ended_at) open.ended_at = '2030-01-15T15:30:00Z'
+        const ended = item.intervals.length > 1 ? '2030-01-15T15:32:00Z' : '2030-01-15T15:30:00Z'
+        if (open && !open.ended_at) open.ended_at = ended
         item.execution_state = 'finished'; item.status = body.status; item.context = body.context; item.other_text = body.other_text
-        item.end_at = item.start_at ? '2030-01-15T15:30:00Z' : null
-        item.actual_duration = item.start_at ? '1500.000000' : '0.000000'
-        item.updated_at = '2030-01-15T15:30:00Z'
+        item.end_at = item.start_at ? ended : null
+        item.actual_duration = item.start_at ? (item.intervals.reduce((sum, interval) => sum + (Date.parse(interval.ended_at ?? ended) - Date.parse(interval.started_at)), 0) / 1000).toFixed(6) : '0.000000'
+        item.updated_at = ended
         return response(item)
       }
     }

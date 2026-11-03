@@ -5,6 +5,9 @@ import { ActivityDetailPage } from '../pages/ActivityDetailPage'
 import { SubjectsPage } from '../pages/SubjectsPage'
 import { SubjectCreatePage } from '../pages/SubjectCreatePage'
 import { SubjectDetailPage } from '../pages/SubjectDetailPage'
+import { StudySessionsPage } from '../pages/StudySessionsPage'
+import { StudySessionCreatePage } from '../pages/StudySessionCreatePage'
+import { StudySessionDetailPage } from '../pages/StudySessionDetailPage'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AcademicProfilePage } from '../pages/AcademicProfilePage'
 import { OnboardingRoute } from './OnboardingRoute'
@@ -44,6 +47,9 @@ export function AppRoutes() {
         <Route element={<ProtectedRoute />}>
           <Route element={<CompletedRoute />}>
             <Route path="app/calendar" element={<CalendarPage />} />
+            <Route path="app/sessions" element={<StudySessionsPage />} />
+            <Route path="app/sessions/new" element={<StudySessionCreatePage />} />
+            <Route path="app/sessions/:sessionId" element={<StudySessionDetailPage />} />
             <Route path="app/activities" element={<ActivitiesPage />} />
             <Route path="app/activities/new" element={<ActivityCreatePage />} />
             <Route path="app/activities/:activityId" element={<ActivityDetailPage />} />

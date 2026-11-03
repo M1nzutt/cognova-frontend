@@ -5,6 +5,18 @@ import { studySessionSetup } from '../test/studySessionSetup'
 import { sessionSummary, studySession } from '../test/studySessionFixtures'
 
 describe('protected study sessions list', () => {
+  it('requires an authenticated session before requesting sessions', async () => {
+    const { fetch } = studySessionSetup({ path: '/app/sessions', anonymous: true })
+    expect(await screen.findByRole('heading', { name: /Inicia sesión/i })).toBeVisible()
+    expect(fetch.mock.calls.some(([url]) => String(url).includes('/api/v1/sessions'))).toBe(false)
+  })
+
+  it('requires completed onboarding before requesting sessions', async () => {
+    const { fetch } = studySessionSetup({ path: '/app/sessions', incomplete: true })
+    expect(await screen.findByRole('heading', { name: 'Tu perfil académico' })).toBeVisible()
+    expect(fetch.mock.calls.some(([url]) => String(url).includes('/api/v1/sessions'))).toBe(false)
+  })
+
   it('lists plans and restores an active or paused session after refresh', async () => {
     const paused = { ...studySession, execution_state: 'paused' as const, intervals: [{ id: 21, started_at: studySession.start_at!, ended_at: '2030-01-15T15:15:00Z' }], actual_duration: '600.000000' }
     studySessionSetup({ sessions: [paused] })
