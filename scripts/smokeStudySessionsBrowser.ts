@@ -120,8 +120,8 @@ try {
   check((await updateResponse).status() === 200, 'UI planning update HTTP 200')
   await expect(page.getByText('60 minutos', { exact: true })).toBeVisible()
   const mismatch = inputFor(3); mismatch.subject_id = otherSubject.id; mismatch.activity_id = activity.id
-  await api.request('reject_activity_for_other_subject', 'sessions', 422, 'POST', mismatch)
-  checks.push('create with compatible activity; edit plan; reject mismatched subject/activity with 422')
+  await api.request('reject_activity_for_other_subject', 'sessions', 404, 'POST', mismatch)
+  checks.push('create with compatible activity; edit plan; mismatched subject/activity is hidden with 404')
 
   stage = 'activity optional and safe delete'
   const noActivityPlan = await createThroughForm(subject.id, null, 3)
