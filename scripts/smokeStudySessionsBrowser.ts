@@ -73,7 +73,7 @@ async function finishThroughDialog(result: 'completed' | 'partial' | 'postponed'
   await results.selectOption(result)
   if (context) await dialog.getByLabel(/¿C\u00f3mo termin\u00f3\?/).selectOption(context)
   if (context === 'other') await dialog.getByLabel('Cu\u00e9ntanos brevemente (opcional)').fill(otherText ?? '')
-  await dialog.getByRole('checkbox', { name: /Confirmo que deseo cerrar/ }).check()
+  await dialog.getByRole('checkbox', { name: /Confirmo que deseo finalizar/ }).check()
   const received = await actWithResponse(
     () => dialog.getByRole('button', { name: 'Confirmar resultado', exact: true }).click(),
     item => new URL(item.url()).pathname.endsWith('/finish') && item.request().method() === 'POST',
