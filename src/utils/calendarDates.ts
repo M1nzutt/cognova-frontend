@@ -1,4 +1,4 @@
-import type { CalendarActivity, CalendarView } from '../types/calendar'
+import type { CalendarActivity, CalendarItem, CalendarView } from '../types/calendar'
 
 export const dayKey = (d: Date) => [d.getFullYear(), String(d.getMonth()+1).padStart(2,'0'), String(d.getDate()).padStart(2,'0')].join('-')
 export function parseDay(value: string | null, fallback = new Date()) {
@@ -25,10 +25,13 @@ export function periodLabel(date: Date, view: CalendarView) {
   const start = monday(date), end = addDays(start, 6)
   return new Intl.DateTimeFormat('es', { day: 'numeric', month: 'short', year: 'numeric' }).formatRange(start, end)
 }
-export function groupCalendar(items: CalendarActivity[]) {
-  const groups = new Map<string, CalendarActivity[]>()
+export function calendarItemDate(item: CalendarItem) {
+  return item.type === 'activity' ? item.deadline : item.planned_start_at
+}
+export function groupCalendar<T extends CalendarItem>(items: T[]) {
+  const groups = new Map<string, T[]>()
   for (const item of items) {
-    const key = dayKey(new Date(item.deadline))
+    const key = dayKey(new Date(calendarItemDate(item)))
     groups.set(key, [...(groups.get(key) ?? []), item])
   }
   return groups
