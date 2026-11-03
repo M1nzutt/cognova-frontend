@@ -13,7 +13,7 @@ import { CalendarWeek } from '../components/CalendarWeek'
 import { CalendarEmpty, CalendarError, CalendarLoading } from '../components/CalendarFeedback'
 import { groupCalendar, period } from '../utils/calendarDates'
 import { localZone } from '../utils/activityPresentation'
-import type { CalendarQuery, CalendarView } from '../types/calendar'
+import type { CalendarItemsQuery, CalendarView } from '../types/calendar'
 import type { Subject } from '../types/subject'
 import styles from './CalendarPage.module.css'
 
@@ -21,7 +21,9 @@ export function CalendarPage() {
   const { session } = useAuth(), q = useCalendarQuery()
   const service = useMemo(() => new CalendarService(session.api), [session])
   const { loadSubjects } = useActivityServices(), subjects = useActivityResource(loadSubjects)
-  const range = period(q.date, q.view), query = { ...range.query, ...q.filters }
+  const range = period(q.date, q.view), { type, ...filters } = q.filters
+  const query: CalendarItemsQuery = { ...range.query, ...filters, ...(type && type !== 'all' ? { type } : {}) }
+  const filtered = Boolean(q.filters.subject_id || q.filters.status || q.filters.priority || (type && type !== 'all'))
   return <section className={styles.page} aria-labelledby="calendar-title">
     <p className="eyebrow">TU RECORRIDO ACADÉMICO</p><h1 id="calendar-title">Calendario</h1>
     <p>Tus actividades y sesiones, en perspectiva. Abre cada recurso para ver su detalle.</p>
@@ -31,10 +33,10 @@ export function CalendarPage() {
     {subjects.loading && <p role="status">Cargando materias…</p>}
     {subjects.error && <div role="alert"><p>No pudimos cargar tus materias.</p><button className="button" onClick={subjects.retry}>Reintentar materias</button></div>}
     <CalendarFilters value={q.filters} subjects={subjects.data ?? []} onChange={q.onFilters} />
-    <CalendarResults key={JSON.stringify(query)} service={service} query={query} date={q.date} view={q.view} subjects={subjects.data ?? []} filtered={Object.keys(q.filters).length > 0} />
+    <CalendarResults key={JSON.stringify(query)} service={service} query={query} date={q.date} view={q.view} subjects={subjects.data ?? []} filtered={filtered} />
   </section>
 }
-function CalendarResults({ service, query, date, view, subjects, filtered }: { service: CalendarService; query: CalendarQuery; date: Date; view: CalendarView; subjects: Subject[]; filtered: boolean }) {
+function CalendarResults({ service, query, date, view, subjects, filtered }: { service: CalendarService; query: CalendarItemsQuery; date: Date; view: CalendarView; subjects: Subject[]; filtered: boolean }) {
   const { items, error, retry } = useCalendarData(service, query)
   if (error) return <CalendarError message={error} onRetry={retry} />
   if (!items) return <CalendarLoading />

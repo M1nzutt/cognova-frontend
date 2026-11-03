@@ -31,8 +31,8 @@ export interface CalendarCursor { after_deadline: string; after_type: CalendarIt
 export interface CalendarLegacyCursor { after_deadline: string; after_id: number }
 export interface CalendarPage { items: CalendarActivity[]; next_cursor: CalendarLegacyCursor | null }
 export interface CalendarMixedPage { items: CalendarItem[]; next_cursor: CalendarCursor | null }
-export interface CalendarFilters { subject_id?: number; status?: ActivityStatus; priority?: ActivityPriority }
-export interface CalendarQuery extends CalendarFilters { deadline_from: string; deadline_to: string }
+export interface CalendarFilters { type?: CalendarFilterType; subject_id?: number; status?: ActivityStatus; priority?: ActivityPriority }
+export interface CalendarQuery extends Omit<CalendarFilters, 'type'> { deadline_from: string; deadline_to: string }
 export interface CalendarItemsQuery {
   deadline_from: string
   deadline_to: string
