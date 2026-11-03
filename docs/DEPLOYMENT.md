@@ -1,3 +1,12 @@
+# Estado vigente — Calendario mixto pendiente de publicación, 2026-11-03
+
+Los deploys Netlify `6ae94430accf5d38748ba0b0` (`a21858d`) y
+`6ae9457e4679e8950a9e3f7b` (`f2c103a`) fallaron en build con código 2. El último
+deploy `ready` sigue sirviendo `8623a1c5dfb2fd6b53c00af8833fee1c883a0c19` y no
+incluye Sesiones en Calendario. Ver la sección detallada inferior y
+`INTEGRATION_VALIDATION.md`; no declarar cierre hasta que Netlify publique y pase
+el smoke mixto.
+
 ## Histórico — Calendario publicado y cerrado, 2026-10-26
 
 Sitio existente: https://cognova-frontend.netlify.app
@@ -201,3 +210,37 @@ sus materias. Conserva cuentas/perfil/cuestionario, revoca sesiones. Credenciale
 en memoria; capturas/evidencias sin secretos en .local ignorado.
 Smoke HTTP adicional: scripts/smokeSubjectsApi.ts. No accede a PostgreSQL.
 Vite actualizado de 8.3.2 a 8.3.4 por npm audit; cero vulnerabilidades.
+## Calendario mixto — build de producción fallido, 2026-11-03
+
+Sitio `https://cognova-frontend.netlify.app`, ID
+`bf6ef7b1-c280-4de9-8ea1-f70630cc14c1`; producción sigue en `main`. La integración
+de Calendario mixto se mergeó con `--no-ff` (`a21858de6624f6b8e0f289ce454619566bed55a3`)
+y el código de aplicación quedó en `f2c103a663118a0e24af49bfcdfa9743f1c74344`.
+
+Netlify intentó desplegar ambos SHA y terminó en `error` durante `building site`:
+
+| Commit | Deploy | Resultado |
+| --- | --- | --- |
+| `a21858de6624f6b8e0f289ce454619566bed55a3` | `6ae94430accf5d38748ba0b0` | `error`, script de build con código 2 |
+| `f2c103a663118a0e24af49bfcdfa9743f1c74344` | `6ae9457e4679e8950a9e3f7b` | `error`, script de build con código 2 |
+
+Netlify no devolvió `error_message` específico en el recurso de Deploy/Build. El
+último deploy publicado sigue siendo `6ae92b488d942822e102cae8`, que sirve
+`8623a1c5dfb2fd6b53c00af8833fee1c883a0c19`; la página productiva aún no incluye
+Sesiones en Calendario. El smoke mixto no se ejecutó contra esa release anterior.
+
+Validación local con el comando exacto configurado en `netlify.toml`:
+`RENDER_API_ORIGIN=https://cognova-backend-lpsi.onrender.com npm run build:netlify`;
+preflight, lint, 302 tests, TypeScript, Vite y generación de redirects pasaron. La
+auditoría `npm audit --omit=dev` reporta cero vulnerabilidades; `npm audit` completo
+reporta 12 moderadas transitivas en tooling ESLint/TypeScript-ESLint (`minimatch`),
+sin arreglo compatible. No se modificaron variables ni configuración del sitio.
+
+El auto-review rechazó ejecutar un paquete externo descargado dinámicamente junto
+con `NETLIFY_AUTH_TOKEN` para consultar los logs, por el riesgo de exponer la
+credencial a una dependencia no verificada. Los logs deben revisarse desde Netlify
+con un método autorizado antes de corregir/reintentar el build. No afirmar deploy,
+smoke productivo ni cierre de Calendario mixto hasta que haya un deploy `ready` con
+el SHA de aplicación y pase `INTEGRATION_VALIDATION.md`.
+
+## Histórico — Calendario publicado y cerrado, 2026-10-26

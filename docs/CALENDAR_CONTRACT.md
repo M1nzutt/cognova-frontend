@@ -5,6 +5,12 @@ Backend productivo `4735a697aed69f66f3055c902a00507b66a556e0`, schema
 de Actividades y Sesiones de Estudio. No crea ni modifica recursos, no sintetiza ni
 duplica eventos y no requiere migración ni tabla propia.
 
+La implementación de este contrato está integrada en `main` y pasa la suite local.
+Los deploys Netlify asociados a `a21858d` y `f2c103a` fallaron en build; la UI mixta
+aún no está en producción ni se ha ejecutado su smoke productivo. Estado actual en
+`PROJECT_STATE.md`, diagnóstico de publicación en `DEPLOYMENT.md` y matriz de
+validación en `INTEGRATION_VALIDATION.md`.
+
 ## Lectura del API
 
 `GET /api/v1/calendar` requiere Bearer y onboarding completo; todas las respuestas

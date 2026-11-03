@@ -1,9 +1,13 @@
 # Cognova — Contrato API v1
 
-Materias, Actividades, Calendario y Sesiones están publicados en el frontend.
 Backend productivo `4735a697aed69f66f3055c902a00507b66a556e0`, schema
-`0006_study_sessions`. Calendario incluye Actividades y Sesiones como una vista
-transversal de solo lectura. Contratos:
+`0006_study_sessions`. `GET /calendar` devuelve Actividades y Sesiones como una
+vista transversal de solo lectura. El contrato mixto está implementado en el
+Frontend `main`, aunque todavía no se publica: Netlify falló durante el build de
+los SHA `a21858de6624f6b8e0f289ce454619566bed55a3` y
+`f2c103a663118a0e24af49bfcdfa9743f1c74344`. La UI productiva actual conserva el
+contrato anterior de Calendario de Actividades hasta que el build se resuelva.
+Contratos:
 [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md) y
 [STUDY_SESSIONS_CONTRACT](STUDY_SESSIONS_CONTRACT.md).
 

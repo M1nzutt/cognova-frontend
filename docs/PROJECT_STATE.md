@@ -1,13 +1,41 @@
-# Frontend Sesiones de Estudio — publicado, 2026-11-02 (America/Bogota)
+# Frontend Calendario mixto — integración lista, publicación bloqueada, 2026-11-03
 
-Estado vigente: Materias, Actividades, Calendario y Sesiones están publicados.
+Backend productivo `4735a697aed69f66f3055c902a00507b66a556e0` sobre
+`0006_study_sessions` ya ofrece `activity` y `study_session`. La UI de Calendario
+mixto se integró en `main` mediante merge `--no-ff` `a21858de6624f6b8e0f289ce454619566bed55a3`;
+la release de aplicación validada localmente está en `f2c103a663118a0e24af49bfcdfa9743f1c74344`.
+
+Netlify registró ambos SHA en producción, pero ambos deploys terminaron `error` en
+la etapa de build: `6ae94430accf5d38748ba0b0` (`a21858d`) y
+`6ae9457e4679e8950a9e3f7b` (`f2c103a`). El sitio
+https://cognova-frontend.netlify.app sigue sirviendo la release anterior de Sesiones,
+`8623a1c5dfb2fd6b53c00af8833fee1c883a0c19`, deploy `6ae92b488d942822e102cae8`;
+Calendario productivo todavía muestra solo Actividades. Smoke productivo mixto aún
+no ejecutado. Ver `DEPLOYMENT.md` e `INTEGRATION_VALIDATION.md`.
+
+`npm run build:netlify` local pasó con 302 pruebas, lint, TypeScript, Vite y preflight.
+`npm audit --omit=dev`: cero vulnerabilidades; auditoría completa: 12 moderadas en
+dependencias transitivas de desarrollo (`minimatch` bajo ESLint/TypeScript-ESLint),
+sin arreglo compatible disponible. El warning previo de PostCSS `from` persiste.
+El helper de smoke está preparado en `scripts/smokeCalendarStudySessionsBrowser.ts`;
+no se crearon fixtures productivos al no estar publicada la UI objetivo.
+
+El código Backend y Database no se modificó. La integración frontend mixta está
+implementada, pero **Calendario no queda cerrado de punta a punta ni listo para que
+Frontend siguiente continúe desde producción** hasta publicar y pasar el smoke.
+
+Git: 107 commits iniciales y 17 commits creados en este cierre (13 de feature,
+merge `--no-ff`, dos correcciones de verificación y documentación), 124 totales;
+faltan 377 para la referencia 501. Sin commits vacíos ni squash.
+
+## Histórico — Frontend Sesiones de Estudio publicado, 2026-11-02
+
+Materias, Actividades, Calendario de Actividades y Sesiones estaban publicados.
 Sesiones consume Backend `56e7caccb247776ed93c63e949faf9b76202ebcf` sobre
-`0006_study_sessions`. El bundle servido es merge SHA
+`0006_study_sessions`. El bundle servido era merge SHA
 `8623a1c5dfb2fd6b53c00af8833fee1c883a0c19`, Netlify deploy
-`6ae92b488d942822e102cae8`, URL https://cognova-frontend.netlify.app.
-El smoke y sus límites están documentados en `INTEGRATION_VALIDATION.md`; el
-reporte sanitizado está en `evidence/study-sessions-release-2026-11-02.json`.
-Calendario continúa siendo solo Actividades: incluir Sesiones depende de Backend.
+`6ae92b488d942822e102cae8`. El reporte histórico de smoke está en
+`evidence/study-sessions-release-2026-11-02.json`.
 
 ## Histórico — Frontend Calendario cerrado, 2026-10-26 (America/Bogota)
 
