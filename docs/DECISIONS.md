@@ -121,3 +121,11 @@ El backend fijado históricamente en `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94` 
 Vista académica transversal, sin eventos libres ni edición directa. Solo Actividades
 en esta fase; mes/semana en zona local. Sesiones, Planes y Retos quedan futuros.
 Contrato: CALENDAR_CONTRACT.md. No migraciones ni cambios externos.
+
+## Sesiones de estudio — decisión vigente 2026-11-02
+
+La interfaz de Sesiones consume el contrato productivo de Backend sobre
+`0006_study_sessions`. Backend es la fuente de verdad del ciclo, intervalos y
+tiempo efectivo; el contador visual abierto es provisional y se resincroniza tras
+cambios y al restaurar la página. El contrato de Calendario sigue siendo solo
+Actividades; mostrar Sesiones requiere una ampliación coordinada de Backend.

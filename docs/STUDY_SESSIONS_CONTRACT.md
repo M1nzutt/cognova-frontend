@@ -100,3 +100,12 @@ persisten items de sesión desde Frontend. `DEPENDENCY` para fase posterior:
   puede inventar ni derivar eventos de calendario.
 
 No bloquea el release independiente de la interfaz de Sesiones.
+
+## Estado del release — 2026-11-02
+
+La interfaz está publicada en `https://cognova-frontend.netlify.app` desde
+`main` SHA `8623a1c5dfb2fd6b53c00af8833fee1c883a0c19` (deploy
+`6ae92b488d942822e102cae8`). Smoke productivo autenticado aprobado; evidencia y
+límites de limpieza están en `INTEGRATION_VALIDATION.md` y
+`evidence/study-sessions-release-2026-11-02.json`. La fecha efectiva de esta
+documentación es 2026-11-02 America/Bogota.

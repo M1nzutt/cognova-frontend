@@ -1,9 +1,11 @@
 # Cognova — Contrato API v1
 
-Materias y Actividades están cerrados en el frontend productivo.
-Backend: `61a2f98668f0d3452f0582d7a074f1290dbae43d`; schema `0005_activities`.
-Calendario cerrado y publicado desde feat/calendar-ui, integrado a main sin squash.
-Contrato vigente de solo lectura: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md).
+Materias, Actividades, Calendario y Sesiones están publicados en el frontend.
+Backend de Sesiones: `56e7caccb247776ed93c63e949faf9b76202ebcf`, schema
+`0006_study_sessions`. Calendario sigue mostrando Actividades; añadir Sesiones
+requiere ampliar `GET /api/v1/calendar` en Backend. Contratos:
+[CALENDAR_CONTRACT](CALENDAR_CONTRACT.md) y
+[STUDY_SESSIONS_CONTRACT](STUDY_SESSIONS_CONTRACT.md).
 
 Fuente productiva vigente indicada arriba; ver [INTEGRATION_VALIDATION](INTEGRATION_VALIDATION.md).
 Procedencia histórica de auth/onboarding: backend `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94`
@@ -61,8 +63,9 @@ Contrato vigente de onboarding y cuestionario: [ONBOARDING_CONTRACT.md](ONBOARDI
 Incluye GET `/questionnaire/catalog`, GET `/questionnaire/history` y
 PUT `/onboarding/academic-profile`. Los tres endpoints existentes se conservan.
 Todas estas rutas requieren Bearer; permiten onboarding incompleto y solo operan
-sobre el usuario autenticado. No reciben user_id. Materias y Actividades ya están implementados y cerrados;
-los restantes módulos son planificación futura.
+sobre el usuario autenticado. No reciben user_id. Materias, Actividades,
+Calendario y Sesiones están implementados; otros módulos continúan como
+planificación futura.
 
 ## Subjects — contrato productivo verificado 2026-10-20
 
@@ -193,6 +196,11 @@ no muestra mensajes arbitrarios del servidor ni reintenta mutaciones en conflict
 Calendario vigente sigue siendo lectura de Actividades. La aparición de sesiones
 en Calendario requiere ampliar contrato/backend en un bloque posterior; esta
 interfaz no crea ni persiste eventos de calendario.
+
+La interfaz de Sesiones está publicada y cerrada de forma independiente sobre
+Backend `56e7caccb247776ed93c63e949faf9b76202ebcf` / `0006_study_sessions`.
+La dependencia pendiente afecta únicamente a su aparición en Calendario: ampliar
+`GET /api/v1/calendar` en `cognova-backend`. No sintetizar eventos en frontend.
 
 ## Analytics
 

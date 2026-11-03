@@ -28,10 +28,12 @@ DEPENDENCY:
 - motivo.
 ```
 
-Materias y Actividades están cerrados en el frontend productivo.
-Backend: `61a2f98668f0d3452f0582d7a074f1290dbae43d`; schema `0005_activities`.
-Calendario cerrado y publicado desde feat/calendar-ui, integrado a main sin squash.
-Contrato vigente de solo lectura: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md).
+Materias, Actividades, Calendario y Sesiones están implementados y publicados en
+el frontend productivo. Sesiones consume Backend `56e7caccb247776ed93c63e949faf9b76202ebcf`
+con schema `0006_study_sessions`. Calendario sigue mostrando Actividades; su
+integración con Sesiones depende de ampliar `GET /api/v1/calendar` en Backend.
+Contratos: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md) y
+[STUDY_SESSIONS_CONTRACT](STUDY_SESSIONS_CONTRACT.md).
 
 El bloqueo histórico de publicación del onboarding está resuelto; ver PROJECT_STATE
 e INTEGRATION_VALIDATION. Preservar auth y proxy. Histórico: la tarea del 2026-10-25 autorizó

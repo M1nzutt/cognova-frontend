@@ -1,11 +1,13 @@
 # Cognova — Contexto Funcional y Conceptual de la Aplicación
 
-## Estado implementado — 2026-10-25
+## Estado implementado — 2026-11-02
 
-Materias y Actividades están cerrados en el frontend productivo.
-Backend: `61a2f98668f0d3452f0582d7a074f1290dbae43d`; schema `0005_activities`.
-Calendario cerrado y publicado desde feat/calendar-ui, integrado a main sin squash.
-Contrato vigente de solo lectura: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md).
+Materias, Actividades, Calendario y Sesiones están cerrados en el frontend
+productivo. Sesiones consume Backend `56e7caccb247776ed93c63e949faf9b76202ebcf`
+con schema `0006_study_sessions`. Calendario v1 presenta Actividades; mostrar
+Sesiones allí requiere ampliar `GET /api/v1/calendar` en Backend. Ver
+[PROJECT_STATE](PROJECT_STATE.md), [DEPLOYMENT](DEPLOYMENT.md) y
+[STUDY_SESSIONS_CONTRACT](STUDY_SESSIONS_CONTRACT.md).
 
 Las secciones conceptuales siguientes expresan la visión de producto, no acreditan
 implementación ni fijan por sí solas el contrato del próximo módulo.

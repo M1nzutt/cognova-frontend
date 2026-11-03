@@ -1,4 +1,4 @@
-# Calendario — integración productiva aprobada, 2026-10-26
+## Histórico — Calendario, integración productiva aprobada, 2026-10-26
 
 URL https://cognova-frontend.netlify.app; SHA 0541a59ab048cbc2687400a68eab53d1d85716a9.
 Deploy Netlify 6ae010bbf41b67a5e8c44bfa ready. Backend 61a2f98668f0d3452f0582d7a074f1290dbae43d
@@ -48,6 +48,46 @@ Warning PostCSS from previo, sin fallo de build ni visual.
 
 **Frontend Calendario cerrado.** Sin eventos libres, sin edición directa ni nuevos
 módulos. La historia inferior conserva sus fechas y no expresa bloqueos vigentes.
+
+## Sesiones de estudio — smoke productivo final, 2026-11-02
+
+Producción `https://cognova-frontend.netlify.app`, Netlify deploy
+`6ae92b488d942822e102cae8` (`ready`), commit servido
+`8623a1c5dfb2fd6b53c00af8833fee1c883a0c19`. Backend
+`56e7caccb247776ed93c63e949faf9b76202ebcf` / `0006_study_sessions`.
+Chrome 155; corrida final `2026-11-03T00:51:34.055Z` (19:51:34 Bogota).
+
+| Control | Resultado |
+| --- | --- |
+| Planificación | Crear, editar, materia requerida, actividad compatible opcional; actividad ajena/incompatible protegida con 404 |
+| Ciclo y timer | Start, pause, resume, finish; running/paused sobreviven refresh; conflicto de segunda sesión activa 409 con mensaje seguro |
+| Intervalos | Tres intervalos cerrados; `actual_duration` coincide con su suma y excluye pausas |
+| Resultados/contexto | `partial` + `other`/texto; `completed` + `finished_early`; `postponed` y `cancelled` sin ejecución |
+| DELETE | Plan sin ejecución 204 y desaparece; sesión con historial 409, permanece; dependencia protegida |
+| Autenticación | Ruta privada redirige a login anónimo; CSRF presente en mutaciones; logout 204 y token de acceso posterior 401 |
+| Caché | Respuestas autenticadas comprobadas con `Cache-Control: no-store` |
+| Refresh/rutas | Lista y detalle directos restauran datos/ciclo desde API; sin storage de tokens o borradores |
+| Teclado/responsive | Diálogos operables y foco; escritorio 1440 px y móvil 375 px sin overflow horizontal |
+| JavaScript | 0 errores no controlados; 12 avisos CSP en consola, sin fallo funcional |
+
+Smoke permitió escrituras sintéticas. Corrida final creó user 36; plan/sesiones
+sin historia (IDs 30/31) y materia 60 se eliminaron; materia 59 se archivó porque
+conserva sesiones históricas 29/32/33/34; actividad 32 se retuvo como dependencia.
+La cuenta sintética, perfil y cuestionario quedan porque no existe endpoint de
+borrado de cuenta. Logout final fue 204 y el access token quedó revocado (401).
+
+Límite de una corrida previa: para el usuario sintético 35 no se confirmó logout,
+porque falló el refresh/CSRF durante cleanup. Sus recursos son sintéticos y se
+retiraron las dependencias eliminables; las sesiones ejecutadas se conservaron
+por historial. No se almacenaron credenciales, por lo que no se pudo reautenticar
+para repetir la revocación. El smoke final sí confirmó revocación completa del
+usuario 36. No se usaron cuentas reales ni se modificaron datos ajenos.
+
+Validación local final: 281 tests en 40 archivos, lint, TypeScript, `npm run build`,
+`npm run build:netlify` y auditoría de producción (0 vulnerabilidades). La
+auditoría completa mantiene 12 moderadas transitivas de herramientas de desarrollo;
+ver `DEPLOYMENT.md`. Calendario no muestra Sesiones todavía: su única dependencia
+pendiente es ampliar `GET /api/v1/calendar` en Backend.
 
 ## Histórico — validaciones previas
 

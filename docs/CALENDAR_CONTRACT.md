@@ -36,7 +36,11 @@ En móvil los días se apilan sin perder actividades.
 Calendario es una vista académica transversal de solo lectura. No eventos libres,
 creación, arrastre ni edición directa. Cada item abre /app/activities/:id y utiliza
 el flujo normal de detalle/edición, fecha original e historial de Actividades.
-Futuros tipos (Sesiones, Planes, Retos) requieren ampliar contrato; no implementados.
+La interfaz independiente de Sesiones ya está publicada, pero este contrato y el
+endpoint productivo siguen siendo solo Actividades. Integrar Sesiones en
+Calendario requiere que `cognova-backend` amplíe `GET /api/v1/calendar` y su
+contrato de tipos, filtros, ownership, rango y paginación. Planes y Retos siguen
+fuera de alcance.
 
 
 ## Evidencia local previa a publicación

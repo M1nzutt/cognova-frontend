@@ -37,7 +37,11 @@ Ya existe:
 - cliente Fetch/AuthService inicial;
 - tests iniciales de auth service.
 
-El trabajo de autenticación interrumpido se reconcilió. `PROJECT_STATE.md` registra Materias/Actividades cerrados y el siguiente módulo, Calendario.
+Materias, Actividades, Calendario y Sesiones están implementados en producción.
+El frontend de Sesiones consume el backend `56e7caccb247776ed93c63e949faf9b76202ebcf`
+en schema `0006_study_sessions`; el backend confirma ciclo, intervalos y duración
+efectiva. Calendario continúa como vista de Actividades hasta que Backend amplíe
+su endpoint para incluir Sesiones. El detalle vigente está en `PROJECT_STATE.md`.
 
 ## Capas sugeridas
 

@@ -1,0 +1,52 @@
+{
+  "release": "Frontend Study Sessions",
+  "recorded_at": "2026-11-02T19:51:34-05:00",
+  "branch": "main",
+  "deployed_commit": "8623a1c5dfb2fd6b53c00af8833fee1c883a0c19",
+  "netlify_deploy_id": "6ae92b488d942822e102cae8",
+  "production_url": "https://cognova-frontend.netlify.app",
+  "backend_commit": "56e7caccb247776ed93c63e949faf9b76202ebcf",
+  "schema_revision": "0006_study_sessions",
+  "build": {
+    "tests": 281,
+    "test_files": 40,
+    "lint": "passed",
+    "typescript": "passed",
+    "build": "passed",
+    "netlify_preflight": "passed",
+    "production_dependency_audit": "0 vulnerabilities",
+    "full_audit": "12 moderate transitive development-tool findings"
+  },
+  "browser_smoke": {
+    "browser": "Chrome 155",
+    "passed": true,
+    "checks": [
+      "synthetic registration and onboarding",
+      "plan create/edit/list/detail",
+      "optional compatible activity",
+      "incompatible activity rejected",
+      "start/pause/resume/finish",
+      "running and paused refresh recovery",
+      "multiple execution intervals and effective duration excluding pauses",
+      "partial/other context, completed/finished_early, postponed, cancelled",
+      "single-active-session conflict 409",
+      "delete unstarted plan and preserve session with history",
+      "ownership and protected routes",
+      "CSRF and no-store",
+      "keyboard dialogs",
+      "desktop 1440px and mobile 375px",
+      "zero uncaught JavaScript errors",
+      "logout and access-token revocation"
+    ],
+    "uncaught_javascript_errors": 0,
+    "csp_console_warnings": 12,
+    "synthetic_user_id": 36,
+    "retained_synthetic_session_ids": [29, 32, 33, 34],
+    "deleted_synthetic_session_ids": [30, 31],
+    "retained_synthetic_activity_id": 32,
+    "retained_archived_subject_id": 59,
+    "deleted_synthetic_subject_id": 60,
+    "synthetic_account_retained_reason": "No account deletion endpoint; session was revoked."
+  },
+  "prior_attempt_cleanup_note": "A prior synthetic QA user (id 35) did not have logout revocation confirmed after refresh/CSRF cleanup failed. No credentials were persisted; executable history was retained and deletable dependencies were removed."
+}

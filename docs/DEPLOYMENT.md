@@ -1,4 +1,4 @@
-# Calendario — release publicado y cerrado, 2026-10-26
+## Histórico — Calendario publicado y cerrado, 2026-10-26
 
 Sitio existente: https://cognova-frontend.netlify.app
 ID bf6ef7b1-c280-4de9-8ea1-f70630cc14c1; producción main.
@@ -22,6 +22,25 @@ Smoke final aprobado: mes/semana, filtros, fecha/año/hoy, detalle, refresh/ruta
 escritorio/móvil/claro/oscuro, teclado, guards y no-store. Sin excepciones JS.
 Correcciones posteriores solo del smoke/documentación usan [skip ci] [skip netlify].
 No disparar otro deploy para este cierre. Ver INTEGRATION_VALIDATION y CALENDAR_CONTRACT.
+
+## Sesiones de estudio — release publicado, 2026-11-02
+
+URL `https://cognova-frontend.netlify.app`. Main integra `feat/study-sessions-ui`
+con merge `--no-ff` SHA `8623a1c5dfb2fd6b53c00af8833fee1c883a0c19`. Deploy Netlify
+`6ae92b488d942822e102cae8` está `ready` y sirve ese commit. Backend productivo
+`56e7caccb247776ed93c63e949faf9b76202ebcf`, schema `0006_study_sessions`.
+
+`npm run build:netlify`: lint, 281 tests/40 archivos, TypeScript, Vite y preflight
+verdes. Auditoría de dependencias de producción: 0 vulnerabilidades. La auditoría
+completa reporta 12 moderadas transitivas en herramientas de desarrollo bajo
+ESLint/TypeScript-ESLint (`minimatch <11.0.1`); npm no ofrece arreglo compatible.
+No se forzó actualización mayor. Persiste el warning no fatal de PostCSS `from`.
+
+Smoke Chrome productivo final aprobado el 2026-11-02 19:51:34 America/Bogota;
+detalle y cleanup en `INTEGRATION_VALIDATION.md` y la evidencia sanitizada.
+Los commits posteriores de scripts/documentación usan `[skip ci] [skip netlify]`;
+no requieren redeploy. Calendario sigue siendo solo Actividades y requiere una
+ampliación backend separada para mostrar Sesiones.
 
 ## Histórico — releases previos y preparación, no estado vigente
 

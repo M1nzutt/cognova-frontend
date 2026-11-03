@@ -1,4 +1,15 @@
-# Frontend Calendario — cerrado, 2026-10-26 (America/Bogota)
+# Frontend Sesiones de Estudio — publicado, 2026-11-02 (America/Bogota)
+
+Estado vigente: Materias, Actividades, Calendario y Sesiones están publicados.
+Sesiones consume Backend `56e7caccb247776ed93c63e949faf9b76202ebcf` sobre
+`0006_study_sessions`. El bundle servido es merge SHA
+`8623a1c5dfb2fd6b53c00af8833fee1c883a0c19`, Netlify deploy
+`6ae92b488d942822e102cae8`, URL https://cognova-frontend.netlify.app.
+El smoke y sus límites están documentados en `INTEGRATION_VALIDATION.md`; el
+reporte sanitizado está en `evidence/study-sessions-release-2026-11-02.json`.
+Calendario continúa siendo solo Actividades: incluir Sesiones depende de Backend.
+
+## Histórico — Frontend Calendario cerrado, 2026-10-26 (America/Bogota)
 
 Main integra feat/calendar-ui con --no-ff, sin squash. Netlify ready:
 0541a59ab048cbc2687400a68eab53d1d85716a9, deploy 6ae010bbf41b67a5e8c44bfa,
@@ -221,3 +232,47 @@ El destino está fijado al sitio existente. Passwords/tokens/cookies permanecen 
 Rama feat/calendar-ui desde main 3b4c057, 54 commits iniciales, árbol limpio.
 Implementación y release autorizados; sustituye el alcance documental anterior.
 Contrato productivo verificado; ver CALENDAR_CONTRACT.md. Validación y deploy pendientes.
+# Frontend Sesiones de Estudio — publicado, 2026-11-02 (America/Bogota)
+
+`feat/study-sessions-ui` se integró en `main` con merge `--no-ff` y sin squash.
+SHA de merge y bundle publicado: `8623a1c5dfb2fd6b53c00af8833fee1c883a0c19`.
+Netlify deploy `6ae92b488d942822e102cae8` está `ready` en
+https://cognova-frontend.netlify.app. Commits posteriores de smoke/documentación
+usan `[skip ci] [skip netlify]` y no alteran el bundle servido.
+
+Backend consumido: `56e7caccb247776ed93c63e949faf9b76202ebcf`, producción en
+`0006_study_sessions`. Se implementaron listado/creación/edición/detalle/borrado
+seguro, ciclo start/pause/resume/finish, tiempo efectivo confirmado por servidor,
+intervalos, resultados/contextos, filtros, conflictos y recuperación tras refresh.
+Calendario permanece en v1 solo Actividades. Integrarlo con Sesiones requiere
+ampliación del backend en `GET /api/v1/calendar`; ver `CALENDAR_CONTRACT.md`.
+
+Validación final: 281 tests en 40 archivos, lint, TypeScript, build y
+`build:netlify` verdes; `npm audit --omit=dev` sin vulnerabilidades. La auditoría
+completa reporta 12 hallazgos moderados transitivos de `minimatch` (<11.0.1) en
+ESLint/TypeScript-ESLint, dependencias de desarrollo; npm reporta que no hay fix
+compatible disponible. No se forzó una versión mayor. Build conserva el warning
+PostCSS `from` previo.
+
+Smoke Chrome final el 2026-11-02 19:51:34 America/Bogota
+(2026-11-03T00:51:34Z): Auth/CSRF/no-store, recuperación running/paused, teclado,
+1440/375 px, 0 errores JS no controlados; 12 avisos CSP de consola. Una cuenta
+sintética de esta corrida (user_id 36) mantiene perfil/cuestionario porque no hay
+endpoint de borrado de cuenta. Materia 59 archivada, materia 60 eliminada,
+actividad 32 y sesiones 29/32/33/34 conservadas como historia sintética; planes
+30/31 eliminados. Logout 204 y access revocado 401.
+
+Límite de limpieza de intentos: un intento anterior con cuenta sintética
+`user_id=35` no confirmó logout tras fallar el refresh al final. Sus recursos de
+Sesiones se cerraron/retuvieron como historia sintética y se retiraron las
+dependencias eliminables, pero la revocación de esa sesión no quedó acreditada.
+No se guardaron credenciales/tokens, así que ese intento no puede reautenticarse
+desde frontend. Ningún dato de cuentas reales fue usado o modificado.
+
+Git: 81 commits iniciales; 26 commits creados en esta tarea, 107 totales; faltan
+394 para 501. La evidencia sanitizada está en
+[`evidence/study-sessions-release-2026-11-02.json`](evidence/study-sessions-release-2026-11-02.json).
+
+**Sesiones queda implementada y publicada.** La integración de Sesiones en
+Calendario y la auditoría moderada de herramientas de desarrollo son pendientes
+separados; no bloquean el flujo independiente de Sesiones.
