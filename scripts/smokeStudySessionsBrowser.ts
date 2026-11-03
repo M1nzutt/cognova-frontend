@@ -39,9 +39,17 @@ async function actWithResponse(action: () => Promise<unknown>, predicate: Respon
   const [response] = await Promise.all([page.waitForResponse(predicate), action()])
   return response
 }
+async function openSessionsList() {
+  if (new URL(page.url()).pathname !== '/app/sessions') await page.getByRole('link', { name: 'Sesiones', exact: true }).click()
+}
+async function openSessionFromList(id: number) {
+  await openSessionsList()
+  await page.locator(`a[href="/app/sessions/${id}"]`).click()
+}
 async function createThroughForm(subjectId: number, activityId: number | null, hoursAhead = 1) {
   await pace()
-  await page.goto(production + '/app/sessions/new')
+  await openSessionsList()
+  await page.getByRole('link', { name: 'Planificar sesi\u00f3n', exact: true }).click()
   await page.getByLabel('Materia', { exact: true }).waitFor()
   await page.getByLabel('Materia', { exact: true }).selectOption(String(subjectId))
   const activity = page.getByLabel('Actividad (opcional)', { exact: true })
@@ -82,8 +90,6 @@ async function finishThroughDialog(result: 'completed' | 'partial' | 'postponed'
   return await received.json() as StudySession
 }
 async function deleteUnstartedThroughUi(plan: StudySession) {
-  await pace()
-  await page.goto(production + `/app/sessions/${plan.id}`)
   const trigger = page.getByRole('button', { name: 'Eliminar plan sin iniciar', exact: true })
   await trigger.click()
   const dialog = page.getByRole('dialog')
@@ -141,7 +147,7 @@ try {
   checks.push('activity omitted; confirmed UI delete of unstarted plan')
 
   stage = 'start and running recovery'
-  await pace(); await page.goto(production + `/app/sessions/${mainPlan.id}`)
+  await openSessionFromList(mainPlan.id)
   const startButton = page.getByRole('button', { name: 'Iniciar sesi\u00f3n', exact: true })
   const startResponse = await actWithResponse(async () => { await startButton.focus(); await page.keyboard.press('Enter') }, item => new URL(item.url()).pathname.endsWith(`/sessions/${mainPlan.id}/start`))
   check(startResponse.status() === 200, 'keyboard start HTTP 200')
@@ -157,7 +163,7 @@ try {
   const pauseResponse = await actWithResponse(async () => { await page.getByRole('button', { name: 'Pausar', exact: true }).focus(); await page.keyboard.press('Enter') }, item => new URL(item.url()).pathname.endsWith(`/sessions/${mainPlan.id}/pause`))
   check(pauseResponse.status() === 200, 'keyboard pause HTTP 200')
   const competitor = await api.createSession({ ...inputFor(4), subject_id: subject.id, activity_id: null })
-  await pace(); await page.goto(production + `/app/sessions/${competitor.id}`)
+  await openSessionFromList(competitor.id)
   const conflictResponse = await actWithResponse(() => page.getByRole('button', { name: 'Iniciar sesi\u00f3n', exact: true }).click(), item => new URL(item.url()).pathname.endsWith(`/sessions/${competitor.id}/start`))
   check(conflictResponse.status() === 409, 'second active session is rejected with 409')
   await expect(page.getByRole('alert')).toContainText('ya hay otra en curso')
@@ -166,13 +172,13 @@ try {
   checks.push('one active session per user; conflict 409 rendered safely; plan preserved then deleted')
 
   stage = 'paused refresh and multiple intervals'
-  await pace(); await page.goto(production + `/app/sessions/${mainPlan.id}`)
+  await page.getByRole('link', { name: 'Volver a la sesi\u00f3n activa', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Reanudar', exact: true })).toBeVisible()
-  await page.goto(production + '/app/sessions')
+  await openSessionsList()
   await expect(page.getByRole('heading', { name: 'Tu temporizador est\u00e1 en pausa', exact: true })).toBeVisible()
   await page.reload()
   await expect(page.getByRole('heading', { name: 'Tu temporizador est\u00e1 en pausa', exact: true })).toBeVisible()
-  await pace(); await page.goto(production + `/app/sessions/${mainPlan.id}`)
+  await page.getByRole('link', { name: 'Volver a la sesi\u00f3n activa', exact: true }).click()
   const firstResume = await actWithResponse(() => page.getByRole('button', { name: 'Reanudar', exact: true }).click(), item => new URL(item.url()).pathname.endsWith(`/sessions/${mainPlan.id}/resume`))
   check(firstResume.status() === 200, 'resume HTTP 200')
   await page.waitForTimeout(1_300)
@@ -203,7 +209,7 @@ try {
 
   stage = 'completed result and context'
   const completedPlan = await api.createSession({ ...inputFor(5), subject_id: subject.id, activity_id: null })
-  await pace(); await page.goto(production + `/app/sessions/${completedPlan.id}`)
+  await openSessionFromList(completedPlan.id)
   const completedStart = await actWithResponse(() => page.getByRole('button', { name: 'Iniciar sesi\u00f3n', exact: true }).click(), item => new URL(item.url()).pathname.endsWith(`/sessions/${completedPlan.id}/start`))
   check(completedStart.status() === 200, 'completed session start HTTP 200')
   await page.waitForTimeout(1_100)
@@ -214,21 +220,21 @@ try {
   stage = 'postponed and cancelled without execution'
   for (const result of ['postponed', 'cancelled'] as const) {
     const plan = await api.createSession({ ...inputFor(6), subject_id: subject.id, activity_id: null })
-    await pace(); await page.goto(production + `/app/sessions/${plan.id}`)
+    await openSessionFromList(plan.id)
     const finished = await finishThroughDialog(result)
     check(finished.status === result && finished.start_at === null && finished.intervals.length === 0, result + ' without execution')
   }
   checks.push('postponed and cancelled plans finalized without start or intervals')
 
   stage = 'list, detail, refresh, responsive, security'
-  await pace(); await page.goto(production + `/app/sessions/${mainPlan.id}`); await page.reload()
+  await openSessionFromList(mainPlan.id); await page.reload()
   await expect(page.getByRole('heading', { name: /Sesi\u00f3n de Sesiones UI uno/ })).toBeVisible()
   await expect(page.getByText('Parcial', { exact: true })).toBeVisible()
   await page.screenshot({ path: '.local/study-session-detail-desktop.png', fullPage: true })
   await page.setViewportSize({ width: 375, height: 812 })
   check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'mobile session detail has no horizontal overflow')
   await page.screenshot({ path: '.local/study-session-detail-mobile.png', fullPage: true })
-  await pace(); await page.goto(production + '/app/sessions')
+  await openSessionsList()
   const sessionsList = page.getByRole('list', { name: 'Lista de sesiones' })
   await expect(sessionsList).toBeVisible()
   await expect(sessionsList.getByText('Parcial', { exact: true })).toBeVisible()
@@ -255,14 +261,18 @@ try {
   await expect(page).toHaveURL(/\/login$/)
   checks.push('all synthetic sessions closed or retained as history; deletable fixtures removed; auth session revoked')
 } catch (error) {
-  const safeDiagnostic = error instanceof Error ? `${error.name}: ${error.message.split(/\r?\n/, 1)[0].slice(0, 180)}` : 'unexpected failure'
+  const safeDiagnostic = error instanceof Error ? `${error.name}: ${error.message.split(/\r?\n/).slice(0, 3).join(' | ').slice(0, 300)}` : 'unexpected failure'
   console.error('Study Sessions browser smoke stopped at: ' + stage + '; API operation: ' + api.operation + '; diagnostic: ' + safeDiagnostic + (api.lastFailure ? '; safe API diagnostic: ' + api.lastFailure : ''))
   await page.screenshot({ path: '.local/study-sessions-failure.png', fullPage: true }).catch(() => undefined)
   process.exitCode = 1
 } finally {
   if (!cleaned && api.userId) {
     try { await api.cleanupSessionsAndLogout(); cleaned = true }
-    catch { console.error('Synthetic session cleanup needs follow-up'); process.exitCode = 1 }
+    catch (error) {
+      const safeDiagnostic = api.lastFailure || (error instanceof Error ? `${error.name}: ${error.message.split(/\r?\n/, 1)[0].slice(0, 180)}` : 'cleanup failed')
+      console.error('Synthetic session cleanup needs follow-up: ' + safeDiagnostic)
+      process.exitCode = 1
+    }
   }
   await Promise.allSettled(responseTasks)
   const evidence = { date: new Date().toISOString(), passed: !process.exitCode, stage, userId: api.userId, sessionIds: [...api.sessions], deletedSessionIds: [...api.deletedSessions], retainedSessionIds: api.retainedSessions, subjectIds: [...api.subjects], activityIds: [...api.activities], cleaned, pageErrors, cspWarnings, checks, responses, api: api.evidence }
