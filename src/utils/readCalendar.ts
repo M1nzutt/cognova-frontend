@@ -84,7 +84,7 @@ export function readMixedCalendar(value: unknown): CalendarMixedPage {
   if (afterType !== 'activity' && afterType !== 'study_session') return calendarInvalid()
   const cursor: CalendarCursor = {
     after_deadline: cursorValue.after_deadline as string,
-    after_type,
+    after_type: afterType,
     after_id: cursorValue.after_id,
   }
   if (compareCalendarItemCursor(last, cursor) !== 0) return calendarInvalid()

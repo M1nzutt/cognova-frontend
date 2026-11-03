@@ -1,4 +1,4 @@
-import type { CalendarActivity, CalendarItem, CalendarView } from '../types/calendar'
+import type { CalendarItem, CalendarView } from '../types/calendar'
 
 export const dayKey = (d: Date) => [d.getFullYear(), String(d.getMonth()+1).padStart(2,'0'), String(d.getDate()).padStart(2,'0')].join('-')
 export function parseDay(value: string | null, fallback = new Date()) {
