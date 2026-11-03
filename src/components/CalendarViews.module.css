@@ -12,11 +12,14 @@
   .week .day { min-height: 0; }
   .week .day ul { grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); }
 }
-@media (max-width: 800px) {
+@media (max-width: 900px) {
   .month { grid-template-columns: 1fr; gap: .65rem; border: 0; overflow: visible; }
   .month .day { border-radius: .7rem; padding: .75rem; }
   .month .day h3, .week .day h3 { font-size: .9rem; }
   .month .day ul { grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); }
+}
+@media (max-width: 480px) {
+  .month .day ul, .week .day ul { grid-template-columns: minmax(0, 1fr); }
 }
 @media (forced-colors: active) {
   .day[data-today] { outline: 2px solid Highlight; outline-offset: -2px; }

@@ -6,7 +6,7 @@ import { vi } from 'vitest'
 import { AuthProvider } from '../auth/AuthProvider'
 import { AppRoutes } from '../routes/AppRoutes'
 import { jsonResponse, makeToken, user } from './authFixtures'
-import { calendarItem } from './calendarFixtures'
+import { calendarItem, calendarSessionDetail } from './calendarFixtures'
 import { activity } from './activityFixtures'
 const subject = { id:1,name:'Álgebra',status:'archived',difficulty:'medium',color_base:'blue',color_shade:200,created_at:activity.created_at,updated_at:activity.updated_at }
 function Location() { return <output data-testid="location">{useLocation().search}</output> }
@@ -19,6 +19,7 @@ export function calendarSetup(options: { path?: string; anonymous?: boolean; inc
     if (parsed.pathname.endsWith('/subjects')) return jsonResponse({ items:[subject],next_after_id:null })
     if (parsed.pathname.endsWith('/calendar')) return options.calendar ? options.calendar(parsed,request) : jsonResponse({ items:[calendarItem],next_cursor:null })
     if (parsed.pathname.endsWith('/activities/1')) return jsonResponse({ ...activity,...calendarItem })
+    if (parsed.pathname.endsWith('/sessions/1')) return jsonResponse(calendarSessionDetail)
     if (parsed.pathname.endsWith('/deadline-history')) return jsonResponse({ items:[],next_after_revision:null })
     throw new Error('Unexpected test endpoint')
   })

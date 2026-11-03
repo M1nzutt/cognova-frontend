@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { addDays, dayKey, groupCalendar, movePeriod, parseDay, period } from './calendarDates'
-import { calendarItem } from '../test/calendarFixtures'
+import { calendarItem, calendarSession } from '../test/calendarFixtures'
 describe('Calendar local dates', () => {
   it('covers complete Monday weeks for month and week', () => {
     const month = period(new Date(2030,0,15), 'month'), week = period(new Date(2030,0,15), 'week')
@@ -31,5 +31,9 @@ describe('Calendar local dates', () => {
     const local = new Date(2030,0,15,23,59)
     const item = { ...calendarItem, deadline: local.toISOString() }
     expect(groupCalendar([item]).get('2030-01-15')).toEqual([item])
+  })
+  it('uses planned_start_at to group Study Sessions and preserves incoming order', () => {
+    const groups = groupCalendar([calendarItem,calendarSession])
+    expect(groups.get('2030-01-15')).toEqual([calendarItem,calendarSession])
   })
 })
