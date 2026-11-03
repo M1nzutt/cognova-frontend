@@ -229,8 +229,9 @@ try {
   check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'mobile session detail has no horizontal overflow')
   await page.screenshot({ path: '.local/study-session-detail-mobile.png', fullPage: true })
   await pace(); await page.goto(production + '/app/sessions')
-  await expect(page.getByRole('list', { name: 'Lista de sesiones' })).toBeVisible()
-  await expect(page.getByText('Parcial', { exact: true })).toBeVisible()
+  const sessionsList = page.getByRole('list', { name: 'Lista de sesiones' })
+  await expect(sessionsList).toBeVisible()
+  await expect(sessionsList.getByText('Parcial', { exact: true })).toBeVisible()
   await page.screenshot({ path: '.local/study-sessions-list-mobile.png', fullPage: true })
   await page.setViewportSize({ width: 1440, height: 1000 })
   await page.screenshot({ path: '.local/study-sessions-list-desktop.png', fullPage: true })
@@ -253,8 +254,9 @@ try {
   await page.goto(production + '/app/sessions')
   await expect(page).toHaveURL(/\/login$/)
   checks.push('all synthetic sessions closed or retained as history; deletable fixtures removed; auth session revoked')
-} catch {
-  console.error('Study Sessions browser smoke stopped at: ' + stage + '; API operation: ' + api.operation + (api.lastFailure ? '; safe diagnostic: ' + api.lastFailure : ''))
+} catch (error) {
+  const safeDiagnostic = error instanceof Error ? `${error.name}: ${error.message.split(/\r?\n/, 1)[0].slice(0, 180)}` : 'unexpected failure'
+  console.error('Study Sessions browser smoke stopped at: ' + stage + '; API operation: ' + api.operation + '; diagnostic: ' + safeDiagnostic + (api.lastFailure ? '; safe API diagnostic: ' + api.lastFailure : ''))
   await page.screenshot({ path: '.local/study-sessions-failure.png', fullPage: true }).catch(() => undefined)
   process.exitCode = 1
 } finally {
