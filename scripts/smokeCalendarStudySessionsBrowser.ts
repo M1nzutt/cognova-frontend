@@ -19,10 +19,13 @@ const checks: string[] = []
 const responses: { path: string; search: string; method: string; status: number; noStore: boolean }[] = []
 const responseTasks: Promise<void>[] = []
 const activityIds: number[] = [], sessionIds: number[] = [], subjectIds: number[] = []
-let stage = 'anonymous route', cleaned = false, pageErrors = 0, consoleErrors = 0
+let stage = 'anonymous route', cleaned = false, pageErrors = 0, consoleErrors = 0, cspWarnings = 0
 let beforeHash = '', afterHash = ''
 page.on('pageerror', () => { pageErrors++ })
-page.on('console', message => { if (message.type() === 'error') consoleErrors++ })
+page.on('console', message => {
+  if (message.text().includes('Content Security Policy')) cspWarnings++
+  else if (message.type() === 'error') consoleErrors++
+})
 page.on('response', response => {
   if (!response.url().includes('/api/v1/')) return
   responseTasks.push((async () => {
@@ -215,8 +218,8 @@ try {
     }
   }
   await Promise.allSettled(responseTasks)
-  const evidence = { date: new Date().toISOString(), passed: !process.exitCode, stage, userId: api.userId, activityIds, sessionIds, subjectIds, cleaned, pageErrors, consoleErrors, beforeHash, afterHash, checks, responses, api: api.evidence }
+  const evidence = { date: new Date().toISOString(), passed: !process.exitCode, stage, userId: api.userId, activityIds, sessionIds, subjectIds, cleaned, pageErrors, consoleErrors, cspWarnings, beforeHash, afterHash, checks, responses, api: api.evidence }
   await writeFile('.local/calendar-mixed-browser-smoke.json', JSON.stringify(evidence, null, 2))
-  console.log(JSON.stringify({ passed: !process.exitCode, stage, cleaned, pageErrors, consoleErrors, checks }))
+  console.log(JSON.stringify({ passed: !process.exitCode, stage, cleaned, pageErrors, consoleErrors, cspWarnings, checks }))
   await browser.close()
 }
