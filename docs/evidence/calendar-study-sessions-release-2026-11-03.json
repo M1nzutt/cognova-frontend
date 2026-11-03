@@ -1,0 +1,61 @@
+{
+  "validated_at": "2026-11-03T02:51:03.156Z",
+  "production_url": "https://cognova-frontend.netlify.app",
+  "frontend_sha": "c2edfd29912354100bb54ff2373aeaa1ee138723",
+  "netlify_deploy": {
+    "id": "6ae94b7544b5e9672d6466e0",
+    "state": "ready",
+    "published_at": "2026-11-03T02:49:07.249Z"
+  },
+  "backend_sha": "4735a697aed69f66f3055c902a00507b66a556e0",
+  "database_revision": "0006_study_sessions",
+  "browser": "Chrome Headless 156",
+  "smoke": {
+    "passed": true,
+    "synthetic_user_id": 39,
+    "subject_ids": [63, 64],
+    "activity_ids": [36, 37],
+    "study_session_ids": [40, 41],
+    "resources_cleaned": true,
+    "auth_session_revoked": true,
+    "browser_api_responses": 36,
+    "browser_api_http_200": 36,
+    "browser_api_no_store": 36,
+    "calendar_requests_only_get": true,
+    "snapshot_sha256_before": "cfb37bfb4fc956b8780c7847160fff8074f9583801f4d04582def312ad5484ba",
+    "snapshot_sha256_after": "cfb37bfb4fc956b8780c7847160fff8074f9583801f4d04582def312ad5484ba",
+    "page_errors": 0,
+    "console_errors": 0,
+    "csp_warnings": 14,
+    "checks": [
+      "Anonymous direct calendar route redirects to login.",
+      "Mixed API response, discriminated types, type filters and stable Activity-before-Session tie ordering.",
+      "Monthly view groups Activity by deadline and Session by planned_start_at; Session details are visible.",
+      "Subject filter applies to both types; type filter works; session-only clears/hides status and priority; status/priority filter Activities.",
+      "Weekly view, URL state, refresh and direct route work.",
+      "Keyboard Enter opens original Activity and Study Session detail routes.",
+      "Desktop 1440 px and mobile 375 px month/week layouts have no horizontal overflow; keyboard focus works.",
+      "Resource snapshots remain unchanged; auth/storage policy, no-store and zero JavaScript errors verified.",
+      "Synthetic plans, activities and subjects deleted; auth session revoked; protected route returns to login."
+    ],
+    "readiness_first_attempt": "Timed out before synthetic account creation; retry returned 200/no-store via Render and Netlify proxy."
+  },
+  "screenshots": [
+    {
+      "file": ".local/calendar-mixed-1440-mes.png",
+      "sha256": "3326a840e18348afe4cb51f45e5c552cb017561d73ee62eab170844408406be2"
+    },
+    {
+      "file": ".local/calendar-mixed-1440-semana.png",
+      "sha256": "053b29f93974cf5b16fd5360dcf1391b0384c219cc176ca53c939db8f3e9ba89"
+    },
+    {
+      "file": ".local/calendar-mixed-375-mes.png",
+      "sha256": "53d9771f37db2f27bf96b8431fd11d8d438355aafd8da885f0e4983b49f023d7"
+    },
+    {
+      "file": ".local/calendar-mixed-375-semana.png",
+      "sha256": "c2c6049027012bcc18b8adb76ae39d0e63235b87504c9e11e0ad31334ab837c8"
+    }
+  ]
+}

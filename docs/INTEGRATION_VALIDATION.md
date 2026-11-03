@@ -1,11 +1,11 @@
-# Estado vigente — Calendario mixto sin smoke productivo, 2026-11-03
+# Estado vigente — Calendario mixto publicado y validado, 2026-11-03
 
-El contrato y la implementación frontend están integrados y validados localmente,
-pero los dos deploys nuevos fallaron en build. La producción sigue en la release
-previa de Actividades/Sesiones; no se creó cuenta sintética y el smoke mixto no se
-ejecutó. La suite cubre la matriz solicitada con 302 pruebas. Ver la sección
-`Calendario mixto — estado de validación` y `DEPLOYMENT.md` para SHAs y pasos
-pendientes.
+Netlify deploy `6ae94b7544b5e9672d6466e0` (`ready`) sirve
+`c2edfd29912354100bb54ff2373aeaa1ee138723` en
+https://cognova-frontend.netlify.app. Suite 302/302; build:netlify pasó en UTC.
+Smoke Chrome productivo mixto aprobado, con cleanup completo y cero errores JS.
+Detalle, límites y evidencia en la sección `Calendario mixto — smoke productivo
+aprobado` y `docs/evidence/calendar-study-sessions-release-2026-11-03.json`.
 
 ## Histórico — Calendario, integración productiva aprobada, 2026-10-26
 
@@ -319,55 +319,53 @@ en listado. Se eliminaron las seis materias sintéticas y se revocó la sesión;
 refresh/logout sin CSRF403, válido200/204, access revocado401, no-store en todo.
 Primer intento agotó timeout en readiness antes de registrar datos; segundo aprobado.
 La evidencia HTTP no sustituye la validación visual, todavía pendiente de publicación.
-## Calendario mixto — estado de validación, 2026-11-03
+## Calendario mixto — smoke productivo aprobado, 2026-11-03
 
-Backend productivo `4735a697aed69f66f3055c902a00507b66a556e0` / `0006_study_sessions`.
-La implementación frontend está integrada en `main` con merge `--no-ff`
-`a21858de6624f6b8e0f289ce454619566bed55a3`; SHA de aplicación validado localmente
-`f2c103a663118a0e24af49bfcdfa9743f1c74344`. Sitio esperado:
-https://cognova-frontend.netlify.app.
+Backend `4735a697aed69f66f3055c902a00507b66a556e0` / `0006_study_sessions`.
+Netlify deploy `6ae94b7544b5e9672d6466e0`, `ready`, sirve SHA
+`c2edfd29912354100bb54ff2373aeaa1ee138723`; URL
+https://cognova-frontend.netlify.app. Chrome Headless 156; smoke final
+`2026-11-03T02:51:03.156Z`.
 
-### Validación local aprobada
+### Validación local
 
-`npm run build:netlify` con el `RENDER_API_ORIGIN` de producción pasó: preflight,
-lint, 302 pruebas en 41 archivos, TypeScript y Vite. La suite cubre Actividades,
-Sesiones y mezcla; filtro por tipo/materia, estado/prioridad compatibles, URL y
-refresh, mes/semana, navegación, links a ambos detalles, empates de instante y cursor
-mixto, límites del rango, ownership, lifecycle planned/running/paused/finished,
-teclado, responsive y regresión del contrato anterior. El smoke de navegador tiene
-typecheck y lint aprobados; quedó preparado en
-`scripts/smokeCalendarStudySessionsBrowser.ts`.
+`npm test`: 302/302 en 41 archivos. También pasaron `npm run lint`, TypeScript,
+`npm run build` y `npm run build:netlify` con `TZ=UTC` y el `RENDER_API_ORIGIN`
+productivo. El test de sesión ahora deriva el valor de hora de la zona local del
+runner, comprueba `planned_start_at` y distingue el `start_at` desplazado dos
+minutos. El caso pasa con `TZ=UTC` y `TZ=America/Bogota`; no hubo cambio al
+formateador de producción.
 
-`npm audit --omit=dev`: cero vulnerabilidades. `npm audit` completo: 12 moderadas
-transitivas en dependencias de desarrollo, sin arreglo compatible. Persiste el
-warning no fatal de PostCSS `from`.
+`npm audit --omit=dev`: cero vulnerabilidades. La auditoría completa muestra 12
+moderadas transitivas de desarrollo bajo ESLint/TypeScript-ESLint (`minimatch`), sin
+arreglo compatible. Persiste el warning no fatal de PostCSS `from`.
 
-### Producción pendiente
+### Smoke Chrome productivo
 
-| Deploy | SHA | Estado |
-| --- | --- | --- |
-| `6ae94430accf5d38748ba0b0` | `a21858de6624f6b8e0f289ce454619566bed55a3` | Error durante build, salida 2 |
-| `6ae9457e4679e8950a9e3f7b` | `f2c103a663118a0e24af49bfcdfa9743f1c74344` | Error durante build, salida 2 |
-| Último deploy publicado `6ae92b488d942822e102cae8` | `8623a1c5dfb2fd6b53c00af8833fee1c883a0c19` | Ready; Calendario aún solo Actividades |
+| Control | Resultado |
+| --- | --- |
+| Actividad + Sesión | Ambos aparecen; Actividad se ubica por `deadline` y Sesión por `planned_start_at`; la sesión muestra materia, hora, duración y lifecycle |
+| Mismo instante / orden | API y UI conservan Actividad antes que Sesión según orden Backend |
+| Tipos y filtros | Todos/Actividades/Sesiones; materia aplica a ambos; estado/prioridad filtran Actividades y no se envían en `type=study_session` |
+| Vistas y navegación | Mensual y semanal correctas; navegación de calendario y fechas del smoke aprobadas |
+| URL / refresh / ruta directa | Fecha/vista/filtro persisten en URL, refresh y apertura directa |
+| Detalles originales | Enter desde links abre detalle de Actividad y de Sesión |
+| Responsive / teclado | 1440 px y 375 px, mes y semana; sin overflow horizontal, filtros y links operables por teclado |
+| Auth | Ruta anónima redirige a login; logout revoca la sesión y la ruta protegida vuelve a login |
+| Caché / solo lectura | 36/36 respuestas de navegador HTTP 200 con `no-store`; `/calendar` solo GET; snapshots pre/post idénticos |
+| Errores | 0 excepciones JS, 0 errores de consola; 14 avisos CSP observados y no bloqueantes |
 
-La API de deploy no expone un detalle concreto del fallo. El auto-review rechazó
-consultar los logs usando un paquete externo descargado dinámicamente con el token
-Netlify del `.env`, por posible exposición de la credencial a una dependencia no
-verificada. Se requiere revisar esos logs con un método autorizado y corregir el
-build. No se creó cuenta sintética ni fixture productivo, y no se ejecutó smoke
-contra la UI anterior.
+Hash de snapshots Actividades/Sesiones antes y después: `cfb37bfb4fc956b8780c7847160fff8074f9583801f4d04582def312ad5484ba`.
+Fixtures sintéticos de user 39: subjects 63/64, activities 36/37, sessions 40/41.
+Planes, actividades y materias fueron eliminados; sesión de auth revocada. La cuenta,
+perfil y cuestionario iniciales permanecen porque no hay endpoint de borrado de
+cuenta. No se alteraron recursos de otros usuarios.
 
-### Smoke productivo mixto
+El primer intento de readiness agotó 25 s antes de crear la cuenta; no dejó fixtures.
+Readiness directo y por proxy devolvió después 200/no-store y el segundo smoke pasó.
+Las cuatro capturas revisadas y sus hashes están en
+[`evidence/calendar-study-sessions-release-2026-11-03.json`](evidence/calendar-study-sessions-release-2026-11-03.json); PNG locales ignorados por Git en `.local/`.
 
-**No ejecutado** porque aún no existe deploy `ready` con la integración. Cuando se
-publique, correr `SMOKE_ALLOW_PRODUCTION_WRITE=1 npm run smoke:calendar`. El smoke
-crea una cuenta sintética, dos materias, dos actividades y dos planes de sesión;
-comprueba GET mixto/tipos/orden, filtros, mes/semana, rutas directas, refresh, ambos
-detalles por teclado, escritorio/móvil, no-store, snapshots sin cambios y logout;
-elimina sus planes/recursos y revoca la sesión. Evidencia sanitaria local en
-`.local/calendar-mixed-browser-smoke.json` y capturas `.local/calendar-mixed-*.png`.
-
-**Calendario mixto no está cerrado en producción.** No entregar al frontend como
-release productiva hasta resolver el build, confirmar SHA Netlify y completar smoke.
+**Frontend Calendario mixto queda cerrado de punta a punta y puede continuar la siguiente fase.**
 
 ## Historial — Calendario, integración productiva aprobada, 2026-10-26

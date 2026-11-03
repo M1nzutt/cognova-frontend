@@ -38,10 +38,11 @@ Ya existe:
 - tests iniciales de auth service.
 
 Materias, Actividades, Calendario y Sesiones están implementados en producción.
-El frontend de Sesiones consume el backend `56e7caccb247776ed93c63e949faf9b76202ebcf`
+El frontend de Sesiones consume Backend `4735a697aed69f66f3055c902a00507b66a556e0`
 en schema `0006_study_sessions`; el backend confirma ciclo, intervalos y duración
-efectiva. Calendario continúa como vista de Actividades hasta que Backend amplíe
-su endpoint para incluir Sesiones. El detalle vigente está en `PROJECT_STATE.md`.
+efectiva. Calendario consume el endpoint transversal `GET /api/v1/calendar` para
+Actividades y Sesiones y no persiste eventos propios. El detalle vigente está en
+`PROJECT_STATE.md` y los contratos en `CALENDAR_CONTRACT.md` y `API_CONTRACT.md`.
 
 ## Capas sugeridas
 

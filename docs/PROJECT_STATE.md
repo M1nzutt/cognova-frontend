@@ -1,32 +1,35 @@
-# Frontend Calendario mixto — integración lista, publicación bloqueada, 2026-11-03
+# Frontend Calendario mixto — publicado y cerrado, 2026-11-03
 
-Backend productivo `4735a697aed69f66f3055c902a00507b66a556e0` sobre
-`0006_study_sessions` ya ofrece `activity` y `study_session`. La UI de Calendario
-mixto se integró en `main` mediante merge `--no-ff` `a21858de6624f6b8e0f289ce454619566bed55a3`;
-la release de aplicación validada localmente está en `f2c103a663118a0e24af49bfcdfa9743f1c74344`.
+Backend productivo `4735a697aed69f66f3055c902a00507b66a556e0`, schema
+`0006_study_sessions`. El merge `--no-ff` `a21858de6624f6b8e0f289ce454619566bed55a3`
+y el fix de timezone `c2edfd29912354100bb54ff2373aeaa1ee138723` están publicados.
+Netlify deploy `6ae94b7544b5e9672d6466e0` está `ready`; sirve ese SHA en
+https://cognova-frontend.netlify.app. Contrato mixto y matriz en
+`CALENDAR_CONTRACT.md` e `INTEGRATION_VALIDATION.md`.
 
-Netlify registró ambos SHA en producción, pero ambos deploys terminaron `error` en
-la etapa de build: `6ae94430accf5d38748ba0b0` (`a21858d`) y
-`6ae9457e4679e8950a9e3f7b` (`f2c103a`). El sitio
-https://cognova-frontend.netlify.app sigue sirviendo la release anterior de Sesiones,
-`8623a1c5dfb2fd6b53c00af8833fee1c883a0c19`, deploy `6ae92b488d942822e102cae8`;
-Calendario productivo todavía muestra solo Actividades. Smoke productivo mixto aún
-no ejecutado. Ver `DEPLOYMENT.md` e `INTEGRATION_VALIDATION.md`.
+El smoke Chrome productivo pasó el 2026-11-03T02:51:03Z (21:51 Bogota): Actividad
+y Sesión en la misma hora, orden Backend, filtros, mes/semana, rutas/refresh,
+detalles por teclado, desktop/móvil, auth, 36 respuestas `no-store`, snapshots
+idénticos, cero errores JS y cleanup completo. Hubo 14 avisos CSP preexistentes.
+Evidencia sanitizada: `evidence/calendar-study-sessions-release-2026-11-03.json`.
 
-`npm run build:netlify` local pasó con 302 pruebas, lint, TypeScript, Vite y preflight.
-`npm audit --omit=dev`: cero vulnerabilidades; auditoría completa: 12 moderadas en
-dependencias transitivas de desarrollo (`minimatch` bajo ESLint/TypeScript-ESLint),
-sin arreglo compatible disponible. El warning previo de PostCSS `from` persiste.
-El helper de smoke está preparado en `scripts/smokeCalendarStudySessionsBrowser.ts`;
-no se crearon fixtures productivos al no estar publicada la UI objetivo.
+`npm test`: 302/302; lint, TypeScript, `npm run build` y `npm run build:netlify`
+verdes, incluyendo build en UTC. La expectativa horaria de prueba ahora deriva la
+zona local y valida `planned_start_at`; no cambió el render de aplicación. Auditoría
+de producción: cero vulnerabilidades; auditoría completa: 12 moderadas transitivas
+de desarrollo bajo ESLint/TypeScript-ESLint, sin arreglo compatible. Persiste el
+warning previo de PostCSS `from`.
 
-El código Backend y Database no se modificó. La integración frontend mixta está
-implementada, pero **Calendario no queda cerrado de punta a punta ni listo para que
-Frontend siguiente continúe desde producción** hasta publicar y pasar el smoke.
+El primer readiness del smoke agotó 25 s antes de crear una cuenta; readiness
+directo y por proxy respondió después 200/no-store y el segundo smoke pasó. Cuenta
+sintética 39 quedó como registro sin datos de estudio (no hay endpoint de borrado
+de cuenta); materias 63/64, actividades 36/37 y sesiones 40/41 se eliminaron y la
+sesión de autenticación se revocó. No se modificó Backend ni Database.
 
-Git: 107 commits iniciales y 17 commits creados en este cierre (13 de feature,
-merge `--no-ff`, dos correcciones de verificación y documentación), 124 totales;
-faltan 377 para la referencia 501. Sin commits vacíos ni squash.
+Git: 107 commits iniciales, 19 creados en este cierre (13 feature, merge `--no-ff`,
+3 fixes/verificación y 2 commits documentales), 126 totales; faltan 375 para 501.
+Sin commits vacíos ni squash. **Calendario mixto está cerrado de punta a punta y
+Frontend puede continuar.**
 
 ## Histórico — Frontend Sesiones de Estudio publicado, 2026-11-02
 

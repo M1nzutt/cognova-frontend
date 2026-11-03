@@ -29,9 +29,12 @@ DEPENDENCY:
 ```
 
 Materias, Actividades, Calendario y Sesiones están implementados y publicados en
-el frontend productivo. Sesiones consume Backend `56e7caccb247776ed93c63e949faf9b76202ebcf`
-con schema `0006_study_sessions`. Calendario sigue mostrando Actividades; su
-integración con Sesiones depende de ampliar `GET /api/v1/calendar` en Backend.
+el frontend productivo. Calendario muestra `activity` y `study_session` desde
+`GET /api/v1/calendar`; Actividades se ubican por `deadline` y Sesiones por
+`planned_start_at`. Backend productivo `4735a697aed69f66f3055c902a00507b66a556e0`,
+schema `0006_study_sessions`; Frontend SHA `c2edfd29912354100bb54ff2373aeaa1ee138723`,
+Netlify deploy `6ae94b7544b5e9672d6466e0`. Calendario es solo lectura y enlaza a
+cada recurso original. Contratos:
 Contratos: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md) y
 [STUDY_SESSIONS_CONTRACT](STUDY_SESSIONS_CONTRACT.md).
 

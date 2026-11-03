@@ -116,7 +116,7 @@ El backend fijado históricamente en `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94` 
   compatible/0003 ni iniciar Subjects. Materias y Actividades ya están cerrados
   sobre fe5989b / 0005; siguiente módulo Calendario, con contrato por definir.
 
-## Calendario — decisión vigente 2026-10-26
+## Calendario — decisión inicial histórica, 2026-10-26
 
 Vista académica transversal, sin eventos libres ni edición directa. Solo Actividades
 en esta fase; mes/semana en zona local. Sesiones, Planes y Retos quedan futuros.
@@ -127,5 +127,12 @@ Contrato: CALENDAR_CONTRACT.md. No migraciones ni cambios externos.
 La interfaz de Sesiones consume el contrato productivo de Backend sobre
 `0006_study_sessions`. Backend es la fuente de verdad del ciclo, intervalos y
 tiempo efectivo; el contador visual abierto es provisional y se resincroniza tras
-cambios y al restaurar la página. El contrato de Calendario sigue siendo solo
-Actividades; mostrar Sesiones requiere una ampliación coordinada de Backend.
+cambios y al restaurar la página.
+
+## Calendario mixto — decisión vigente, 2026-11-03
+
+Calendario es una vista académica transversal, de solo lectura y sin eventos libres.
+Renderiza Actividades por `deadline` y Sesiones por `planned_start_at`, con filtros
+compatibles y paginación en el orden Backend. Cada elemento abre su recurso original.
+No hay tabla ni migración de Calendario. La publicación validada está en
+`PROJECT_STATE.md`; el contrato técnico está en `CALENDAR_CONTRACT.md`.

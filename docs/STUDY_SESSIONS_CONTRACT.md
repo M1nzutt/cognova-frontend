@@ -89,15 +89,12 @@ por usuario; errores de concurrencia se presentan como conflicto recuperable.
 
 ## Calendario
 
-Calendario productivo v1 sigue consultando solo Actividades. No se sintetizan ni
-persisten items de sesión desde Frontend. `DEPENDENCY` para fase posterior:
-
-- repo afectado: `cognova-backend`;
-- contrato relacionado: `CALENDAR_CONTRACT.md` en backend;
-- cambio requerido: ampliar `GET /api/v1/calendar` para devolver sesiones con
-  esquema, filtros, ownership y reglas de rango/paginación explícitos;
-- motivo: el contrato vigente solo declara `type: activity`; el frontend no
-  puede inventar ni derivar eventos de calendario.
+El Calendario productivo es una vista mixta de solo lectura. Backend
+`4735a697aed69f66f3055c902a00507b66a556e0` / `0006_study_sessions` devuelve
+`activity` por `deadline` y `study_session` por `planned_start_at`; el Frontend
+publicado los enlaza a sus recursos originales. No sintetiza ni persiste items de
+sesión. La dependencia anterior para ampliar `GET /api/v1/calendar` está resuelta;
+ver `CALENDAR_CONTRACT.md` y `INTEGRATION_VALIDATION.md`.
 
 No bloquea el release independiente de la interfaz de Sesiones.
 

@@ -5,11 +5,10 @@ Backend productivo `4735a697aed69f66f3055c902a00507b66a556e0`, schema
 de Actividades y Sesiones de Estudio. No crea ni modifica recursos, no sintetiza ni
 duplica eventos y no requiere migración ni tabla propia.
 
-La implementación de este contrato está integrada en `main` y pasa la suite local.
-Los deploys Netlify asociados a `a21858d` y `f2c103a` fallaron en build; la UI mixta
-aún no está en producción ni se ha ejecutado su smoke productivo. Estado actual en
-`PROJECT_STATE.md`, diagnóstico de publicación en `DEPLOYMENT.md` y matriz de
-validación en `INTEGRATION_VALIDATION.md`.
+La implementación está integrada en `main` y publicada con SHA
+`c2edfd29912354100bb54ff2373aeaa1ee138723`, Netlify deploy
+`6ae94b7544b5e9672d6466e0` (`ready`). El smoke productivo mixto está aprobado.
+Estado y evidencia en `PROJECT_STATE.md` e `INTEGRATION_VALIDATION.md`.
 
 ## Lectura del API
 

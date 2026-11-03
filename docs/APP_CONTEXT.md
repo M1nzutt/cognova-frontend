@@ -1,12 +1,15 @@
 # Cognova — Contexto Funcional y Conceptual de la Aplicación
 
-## Estado implementado — 2026-11-02
+## Estado implementado — 2026-11-03
 
-Materias, Actividades, Calendario y Sesiones están cerrados en el frontend
-productivo. Sesiones consume Backend `56e7caccb247776ed93c63e949faf9b76202ebcf`
-con schema `0006_study_sessions`. Calendario v1 presenta Actividades; mostrar
-Sesiones allí requiere ampliar `GET /api/v1/calendar` en Backend. Ver
-[PROJECT_STATE](PROJECT_STATE.md), [DEPLOYMENT](DEPLOYMENT.md) y
+Materias, Actividades, Calendario mixto y Sesiones están cerrados en el frontend
+productivo. Backend `4735a697aed69f66f3055c902a00507b66a556e0` con schema
+`0006_study_sessions`; Netlify sirve Frontend SHA
+`c2edfd29912354100bb54ff2373aeaa1ee138723` en deploy `6ae94b7544b5e9672d6466e0`.
+Calendario es una vista transversal de solo lectura: Actividades por `deadline`,
+Sesiones por `planned_start_at`, ambas abren sus recursos originales. Ver
+[PROJECT_STATE](PROJECT_STATE.md), [DEPLOYMENT](DEPLOYMENT.md),
+[CALENDAR_CONTRACT](CALENDAR_CONTRACT.md) y
 [STUDY_SESSIONS_CONTRACT](STUDY_SESSIONS_CONTRACT.md).
 
 Las secciones conceptuales siguientes expresan la visión de producto, no acreditan
