@@ -22,6 +22,7 @@ describe('study session response validation', () => {
     { ...sessionSummary, execution_state: 'finished', status: null },
     { ...studySession, context: 'other', other_text: null },
     { ...studySession, context: 'tired', other_text: 'texto incompatible' },
+    { ...studySession, execution_state: 'finished', status: 'partial', end_at: '2030-01-15T15:30:00Z' },
     { ...studySession, intervals: [{ id: 12, started_at: studySession.start_at, ended_at: null }, { id: 13, started_at: '2030-01-15T15:10:00Z', ended_at: null }] },
   ])('rejects malformed response fields', value => {
     expect(() => readStudySession(value)).toThrow()

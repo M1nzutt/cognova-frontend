@@ -39,6 +39,7 @@ export function readStudySession(value: unknown): StudySession {
   const intervals = item.intervals.map(interval)
   if (intervals.filter(row => row.ended_at === null).length > 1
     || intervals.some((row, index) => row.ended_at === null && index !== intervals.length - 1)
+    || summary.execution_state === 'finished' && intervals.some(row => row.ended_at === null)
     || intervals.some((row, index) => index > 0 && Date.parse(row.started_at) < Date.parse(intervals[index - 1].ended_at ?? intervals[index - 1].started_at))
     || item.context === 'other' && typeof item.other_text !== 'string'
     || item.context !== 'other' && item.other_text !== null
