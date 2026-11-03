@@ -8,9 +8,8 @@ export class CalendarService {
   async itemPage(query: CalendarItemsQuery, cursor?: CalendarCursor, signal?: AbortSignal): Promise<CalendarMixedPage> {
     const from = instantMicros(query.deadline_from), to = instantMicros(query.deadline_to)
     if (to <= from || to - from > 366n * 86400000000n) throw new ApiError('Selecciona un periodo de hasta un año.', 422)
-    const safeQuery = query.type === 'study_session'
-      ? { deadline_from: query.deadline_from, deadline_to: query.deadline_to, type: query.type, subject_id: query.subject_id }
-      : query
+    const safeQuery = Object.fromEntries(Object.entries(query).filter(([key, value]) =>
+      value !== undefined && !(query.type === 'study_session' && (key === 'status' || key === 'priority'))))
     const page = readMixedCalendar(await this.client.request('/calendar', {
       signal, query: { ...safeQuery, limit: 50, ...(cursor ?? {}) },
     }))
