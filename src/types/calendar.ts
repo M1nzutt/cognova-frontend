@@ -33,4 +33,12 @@ export interface CalendarPage { items: CalendarActivity[]; next_cursor: Calendar
 export interface CalendarMixedPage { items: CalendarItem[]; next_cursor: CalendarCursor | null }
 export interface CalendarFilters { subject_id?: number; status?: ActivityStatus; priority?: ActivityPriority }
 export interface CalendarQuery extends CalendarFilters { deadline_from: string; deadline_to: string }
+export interface CalendarItemsQuery {
+  deadline_from: string
+  deadline_to: string
+  type?: CalendarItemType
+  subject_id?: number
+  status?: ActivityStatus
+  priority?: ActivityPriority
+}
 export type CalendarView = 'month' | 'week'
