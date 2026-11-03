@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { Activity } from '../types/activity'
 import type { StudySession, StudySessionWrite } from '../types/studySession'
 import type { Subject } from '../types/subject'
@@ -25,17 +25,8 @@ export function StudySessionPlanForm({ subjects, activities, activitiesLoading, 
   const [duration, setDuration] = useState(String(initial?.planned_duration ?? 45))
   const [validation, setValidation] = useState('')
 
-  useEffect(() => {
-    if (!activitiesLoading && activityId && !activities.some(item => item.id === Number(activityId) && item.subject_id === subjectId)) setActivityId('')
-  }, [activities, activitiesLoading, activityId, subjectId])
-
-  useEffect(() => {
-    if (!subjectId && subjects.length) {
-      const preferred = subjects.find(subject => subject.status === 'active') ?? subjects[0]
-      setSubjectId(preferred.id)
-      onSubjectChange(preferred.id)
-    }
-  }, [onSubjectChange, subjectId, subjects])
+  const availableActivity = activities.find(item => item.id === Number(activityId) && item.subject_id === subjectId)
+  const visibleActivityId = activitiesLoading || !activityId || availableActivity ? activityId : ''
 
   function changeSubject(value: number) {
     setSubjectId(value)
@@ -48,8 +39,8 @@ export function StudySessionPlanForm({ subjects, activities, activitiesLoading, 
     if (!subjects.some(subject => subject.id === subjectId)) { setValidation('Selecciona una de tus materias.'); return }
     const minutes = Number(duration)
     if (!Number.isInteger(minutes) || minutes < 10 || minutes > 180) { setValidation('La duración debe estar entre 10 y 180 minutos.'); return }
-    const activity = activityId ? activities.find(item => item.id === Number(activityId) && item.subject_id === subjectId) : null
-    if (activityId && !activity) { setValidation('Selecciona una actividad de la materia elegida.'); return }
+    const activity = visibleActivityId ? activities.find(item => item.id === Number(visibleActivityId) && item.subject_id === subjectId) : null
+    if (visibleActivityId && !activity) { setValidation('Selecciona una actividad de la materia elegida.'); return }
     let planned_start_at: string
     try { planned_start_at = toInstant(plannedStart) } catch { setValidation('Selecciona una fecha y hora local válidas.'); return }
     setValidation('')
@@ -64,7 +55,7 @@ export function StudySessionPlanForm({ subjects, activities, activitiesLoading, 
         {subjects.map(subject => <option key={subject.id} value={subject.id}>{subject.name}{subject.status === 'archived' ? ' (archivada)' : ''}</option>)}
       </select>
       <label htmlFor="session-activity">Actividad (opcional)</label>
-      <select id="session-activity" value={activityId} onChange={event => setActivityId(event.target.value)} disabled={!subjectId || activitiesLoading}>
+      <select id="session-activity" value={visibleActivityId} onChange={event => setActivityId(event.target.value)} disabled={!subjectId || activitiesLoading}>
         <option value="">Sin actividad asociada</option>
         {activities.filter(activity => activity.subject_id === subjectId).map(activity => <option key={activity.id} value={activity.id}>{activity.title}</option>)}
       </select>

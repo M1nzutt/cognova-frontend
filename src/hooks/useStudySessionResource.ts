@@ -1,25 +1,29 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { studySessionError } from '../utils/studySessionPresentation'
 
 export function useStudySessionResource<T>(load: (signal: AbortSignal) => Promise<T>) {
-  const [data, setData] = useState<T | null>(null)
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [snapshot, setSnapshot] = useState<{ revision: number; data: T | null; error: string } | null>(null)
   const [revision, setRevision] = useState(0)
   useEffect(() => {
     const controller = new AbortController()
-    setLoading(true)
-    setError('')
-    load(controller.signal).then(value => { if (!controller.signal.aborted) setData(value) })
-      .catch(reason => { if (!controller.signal.aborted) setError(studySessionError(reason)) })
-      .finally(() => { if (!controller.signal.aborted) setLoading(false) })
+    load(controller.signal).then(value => { if (!controller.signal.aborted) setSnapshot({ revision, data: value, error: '' }) })
+      .catch(reason => { if (!controller.signal.aborted) setSnapshot({ revision, data: null, error: studySessionError(reason) }) })
     return () => controller.abort()
   }, [load, revision])
+  const current = snapshot?.revision === revision ? snapshot : null
+  const setData = useCallback((next: T | null | ((previous: T | null) => T | null)) => {
+    setSnapshot(previous => {
+      const old = previous?.revision === revision ? previous.data : null
+      const value = typeof next === 'function' ? (next as (previous: T | null) => T | null)(old) : next
+      return value === null ? null : { revision, data: value, error: '' }
+    })
+  }, [revision])
+  const retry = useCallback(() => setRevision(value => value + 1), [])
   return {
-    data,
+    data: current?.data ?? null,
     setData,
-    error,
-    loading,
-    retry: () => setRevision(value => value + 1),
+    error: current?.error ?? '',
+    loading: current === null,
+    retry,
   }
 }

@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { useStudySessionResource } from './useStudySessionResource'
 
 function Harness({ load }: { load: (signal: AbortSignal) => Promise<string> }) {
-  const stableLoad = useCallback(load, [load])
+  const stableLoad = useCallback((signal: AbortSignal) => load(signal), [load])
   const resource = useStudySessionResource(stableLoad)
   return <div>{resource.loading && <span role="status">Cargando</span>}{resource.error && <p role="alert">{resource.error}</p>}{resource.data && <p>{resource.data}</p>}<button onClick={resource.retry}>Reintentar</button></div>
 }
