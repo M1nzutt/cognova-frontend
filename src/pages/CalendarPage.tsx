@@ -24,7 +24,7 @@ export function CalendarPage() {
   const range = period(q.date, q.view), query = { ...range.query, ...q.filters }
   return <section className={styles.page} aria-labelledby="calendar-title">
     <p className="eyebrow">TU RECORRIDO ACADÉMICO</p><h1 id="calendar-title">Calendario</h1>
-    <p>Tus actividades, en perspectiva. Consulta y edita cada una desde su detalle.</p>
+    <p>Tus actividades y sesiones, en perspectiva. Abre cada recurso para ver su detalle.</p>
     <p className={styles.zone}>Fechas y horas en {localZone()}. Semanas de lunes a domingo.</p>
     <Link to="/app/activities" className="button">Ir a Actividades</Link>
     <CalendarToolbar date={q.date} view={q.view} onDate={q.onDate} onView={q.onView} />
@@ -39,6 +39,6 @@ function CalendarResults({ service, query, date, view, subjects, filtered }: { s
   if (error) return <CalendarError message={error} onRetry={retry} />
   if (!items) return <CalendarLoading />
   const props = { days:period(date,view).days, date, subjects, groups:groupCalendar(items) }
-  return <>{items.length ? <p role="status">{items.length} actividades en el periodo.</p> : <CalendarEmpty filtered={filtered} />}
+  return <>{items.length ? <p role="status">{items.length} elementos en el periodo.</p> : <CalendarEmpty filtered={filtered} />}
     {view === 'month' ? <CalendarMonth {...props} /> : <CalendarWeek {...props} />}</>
 }
