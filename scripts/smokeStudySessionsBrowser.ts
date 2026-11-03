@@ -147,7 +147,7 @@ try {
   check(startResponse.status() === 200, 'keyboard start HTTP 200')
   await expect(page.getByRole('button', { name: 'Pausar', exact: true })).toBeVisible()
   await page.waitForTimeout(1_300)
-  await expect(page.getByLabel(/Tiempo efectivo/)).toBeVisible()
+  await expect(page.locator('output[aria-label^="Tiempo efectivo"]')).toBeVisible()
   await pace(); await page.reload()
   await expect(page.getByRole('button', { name: 'Pausar', exact: true })).toBeVisible()
   check(await page.getByText(/Estimaci\u00f3n en curso/).count() === 1, 'running timer recovers from API after refresh')
