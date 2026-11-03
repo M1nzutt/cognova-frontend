@@ -34,6 +34,11 @@ function localInput(hoursAhead: number) {
 }
 const inputFor = (hours: number): StudySessionWrite => ({ subject_id: 0, activity_id: null, planned_start_at: new Date(Date.now() + hours * 3_600_000).toISOString(), planned_duration: 45 })
 async function pace() { await page.waitForTimeout(2_000) }
+type ResponsePredicate = Parameters<typeof page.waitForResponse>[0]
+async function actWithResponse(action: () => Promise<unknown>, predicate: ResponsePredicate) {
+  const [response] = await Promise.all([page.waitForResponse(predicate), action()])
+  return response
+}
 async function createThroughForm(subjectId: number, activityId: number | null, hoursAhead = 1) {
   await pace()
   await page.goto(production + '/app/sessions/new')
@@ -45,9 +50,10 @@ async function createThroughForm(subjectId: number, activityId: number | null, h
     await activity.selectOption(String(activityId))
   } else await activity.selectOption('')
   await page.getByLabel('Fecha y hora planificadas', { exact: true }).fill(localInput(hoursAhead))
-  const response = page.waitForResponse(item => new URL(item.url()).pathname.endsWith('/sessions') && item.request().method() === 'POST')
-  await page.getByRole('button', { name: 'Crear sesi\u00f3n planificada', exact: true }).click()
-  const result = await response
+  const result = await actWithResponse(
+    () => page.getByRole('button', { name: 'Crear sesi\u00f3n planificada', exact: true }).click(),
+    item => new URL(item.url()).pathname.endsWith('/sessions') && item.request().method() === 'POST',
+  )
   check(result.status() === 201, 'UI create session HTTP 201')
   const item = await result.json() as StudySession
   api.sessions.add(item.id)
@@ -68,9 +74,10 @@ async function finishThroughDialog(result: 'completed' | 'partial' | 'postponed'
   if (context) await dialog.getByLabel(/¿C\u00f3mo termin\u00f3\?/).selectOption(context)
   if (context === 'other') await dialog.getByLabel('Cu\u00e9ntanos brevemente (opcional)').fill(otherText ?? '')
   await dialog.getByRole('checkbox', { name: /Confirmo que deseo cerrar/ }).check()
-  const response = page.waitForResponse(item => new URL(item.url()).pathname.endsWith('/finish') && item.request().method() === 'POST')
-  await dialog.getByRole('button', { name: 'Confirmar resultado', exact: true }).click()
-  const received = await response
+  const received = await actWithResponse(
+    () => dialog.getByRole('button', { name: 'Confirmar resultado', exact: true }).click(),
+    item => new URL(item.url()).pathname.endsWith('/finish') && item.request().method() === 'POST',
+  )
   check(received.status() === 200, 'UI finish HTTP 200')
   return await received.json() as StudySession
 }
@@ -86,9 +93,11 @@ async function deleteUnstartedThroughUi(plan: StudySession) {
   await expect(trigger).toBeFocused()
   await trigger.click()
   await dialog.getByRole('checkbox').check()
-  const response = page.waitForResponse(received => received.request().method() === 'DELETE' && new URL(received.url()).pathname.endsWith(`/sessions/${plan.id}`))
-  await dialog.getByRole('button', { name: 'Eliminar plan', exact: true }).click()
-  check((await response).status() === 204, 'UI delete unstarted plan HTTP 204')
+  const response = await actWithResponse(
+    () => dialog.getByRole('button', { name: 'Eliminar plan', exact: true }).click(),
+    received => received.request().method() === 'DELETE' && new URL(received.url()).pathname.endsWith(`/sessions/${plan.id}`),
+  )
+  check(response.status() === 204, 'UI delete unstarted plan HTTP 204')
   api.deletedSessions.add(plan.id)
   await api.request('deleted_plan_not_found', `sessions/${plan.id}`, 404)
 }
@@ -115,9 +124,11 @@ try {
   await page.getByRole('button', { name: 'Editar planificaci\u00f3n', exact: true }).click()
   await page.getByLabel('Duraci\u00f3n planificada (minutos)', { exact: true }).fill('60')
   await page.getByLabel('Fecha y hora planificadas', { exact: true }).fill(localInput(2))
-  const updateResponse = page.waitForResponse(item => new URL(item.url()).pathname.endsWith(`/sessions/${mainPlan.id}`) && item.request().method() === 'PUT')
-  await page.getByRole('button', { name: 'Guardar planificaci\u00f3n', exact: true }).click()
-  check((await updateResponse).status() === 200, 'UI planning update HTTP 200')
+  const updateResponse = await actWithResponse(
+    () => page.getByRole('button', { name: 'Guardar planificaci\u00f3n', exact: true }).click(),
+    item => new URL(item.url()).pathname.endsWith(`/sessions/${mainPlan.id}`) && item.request().method() === 'PUT',
+  )
+  check(updateResponse.status() === 200, 'UI planning update HTTP 200')
   await expect(page.getByText('60 minutos', { exact: true })).toBeVisible()
   const mismatch = inputFor(3); mismatch.subject_id = otherSubject.id; mismatch.activity_id = activity.id
   await api.request('reject_activity_for_other_subject', 'sessions', 404, 'POST', mismatch)
@@ -130,10 +141,10 @@ try {
   checks.push('activity omitted; confirmed UI delete of unstarted plan')
 
   stage = 'start and running recovery'
+  await pace(); await page.goto(production + `/app/sessions/${mainPlan.id}`)
   const startButton = page.getByRole('button', { name: 'Iniciar sesi\u00f3n', exact: true })
-  const startResponse = page.waitForResponse(item => new URL(item.url()).pathname.endsWith(`/sessions/${mainPlan.id}/start`))
-  await startButton.focus(); await page.keyboard.press('Enter')
-  check((await startResponse).status() === 200, 'keyboard start HTTP 200')
+  const startResponse = await actWithResponse(async () => { await startButton.focus(); await page.keyboard.press('Enter') }, item => new URL(item.url()).pathname.endsWith(`/sessions/${mainPlan.id}/start`))
+  check(startResponse.status() === 200, 'keyboard start HTTP 200')
   await expect(page.getByRole('button', { name: 'Pausar', exact: true })).toBeVisible()
   await page.waitForTimeout(1_300)
   await expect(page.getByLabel(/Tiempo efectivo/)).toBeVisible()
@@ -143,14 +154,12 @@ try {
   checks.push('start and refresh recovery while running; provisional timer visible')
 
   stage = 'first pause and competing-session conflict'
-  const pauseResponse = page.waitForResponse(item => new URL(item.url()).pathname.endsWith(`/sessions/${mainPlan.id}/pause`))
-  await page.getByRole('button', { name: 'Pausar', exact: true }).focus(); await page.keyboard.press('Enter')
-  check((await pauseResponse).status() === 200, 'keyboard pause HTTP 200')
+  const pauseResponse = await actWithResponse(async () => { await page.getByRole('button', { name: 'Pausar', exact: true }).focus(); await page.keyboard.press('Enter') }, item => new URL(item.url()).pathname.endsWith(`/sessions/${mainPlan.id}/pause`))
+  check(pauseResponse.status() === 200, 'keyboard pause HTTP 200')
   const competitor = await api.createSession({ ...inputFor(4), subject_id: subject.id, activity_id: null })
   await pace(); await page.goto(production + `/app/sessions/${competitor.id}`)
-  const conflictResponse = page.waitForResponse(item => new URL(item.url()).pathname.endsWith(`/sessions/${competitor.id}/start`))
-  await page.getByRole('button', { name: 'Iniciar sesi\u00f3n', exact: true }).click()
-  check((await conflictResponse).status() === 409, 'second active session is rejected with 409')
+  const conflictResponse = await actWithResponse(() => page.getByRole('button', { name: 'Iniciar sesi\u00f3n', exact: true }).click(), item => new URL(item.url()).pathname.endsWith(`/sessions/${competitor.id}/start`))
+  check(conflictResponse.status() === 409, 'second active session is rejected with 409')
   await expect(page.getByRole('alert')).toContainText('ya hay otra en curso')
   await expect(page.getByText('Planificada', { exact: true })).toBeVisible()
   await deleteUnstartedThroughUi(competitor)
@@ -164,21 +173,18 @@ try {
   await page.reload()
   await expect(page.getByRole('heading', { name: 'Tu temporizador est\u00e1 en pausa', exact: true })).toBeVisible()
   await pace(); await page.goto(production + `/app/sessions/${mainPlan.id}`)
-  const firstResume = page.waitForResponse(item => new URL(item.url()).pathname.endsWith(`/sessions/${mainPlan.id}/resume`))
-  await page.getByRole('button', { name: 'Reanudar', exact: true }).click()
-  check((await firstResume).status() === 200, 'resume HTTP 200')
+  const firstResume = await actWithResponse(() => page.getByRole('button', { name: 'Reanudar', exact: true }).click(), item => new URL(item.url()).pathname.endsWith(`/sessions/${mainPlan.id}/resume`))
+  check(firstResume.status() === 200, 'resume HTTP 200')
   await page.waitForTimeout(1_300)
-  const secondPause = page.waitForResponse(item => new URL(item.url()).pathname.endsWith(`/sessions/${mainPlan.id}/pause`))
-  await page.getByRole('button', { name: 'Pausar', exact: true }).click()
-  check((await secondPause).status() === 200, 'second pause HTTP 200')
+  const secondPause = await actWithResponse(() => page.getByRole('button', { name: 'Pausar', exact: true }).click(), item => new URL(item.url()).pathname.endsWith(`/sessions/${mainPlan.id}/pause`))
+  check(secondPause.status() === 200, 'second pause HTTP 200')
   await expect(page.getByRole('heading', { name: 'Intervalos de ejecuci\u00f3n', exact: true })).toBeVisible()
   check(await page.getByRole('list').filter({ has: page.getByText(/Tramo/) }).count() >= 1, 'interval history displayed')
   checks.push('paused session recovered after route change and refresh; multiple execution intervals visible')
 
   stage = 'finish partial with other context'
-  const secondResume = page.waitForResponse(item => new URL(item.url()).pathname.endsWith(`/sessions/${mainPlan.id}/resume`))
-  await page.getByRole('button', { name: 'Reanudar', exact: true }).click()
-  check((await secondResume).status() === 200, 'second resume HTTP 200')
+  const secondResume = await actWithResponse(() => page.getByRole('button', { name: 'Reanudar', exact: true }).click(), item => new URL(item.url()).pathname.endsWith(`/sessions/${mainPlan.id}/resume`))
+  check(secondResume.status() === 200, 'second resume HTTP 200')
   await page.waitForTimeout(1_300)
   const partial = await finishThroughDialog('partial', 'other', 'Interrupci\u00f3n sint\u00e9tica de validaci\u00f3n')
   check(partial.status === 'partial' && partial.context === 'other' && partial.other_text === 'Interrupci\u00f3n sint\u00e9tica de validaci\u00f3n', 'partial result and other context stored')
@@ -198,9 +204,8 @@ try {
   stage = 'completed result and context'
   const completedPlan = await api.createSession({ ...inputFor(5), subject_id: subject.id, activity_id: null })
   await pace(); await page.goto(production + `/app/sessions/${completedPlan.id}`)
-  const completedStart = page.waitForResponse(item => new URL(item.url()).pathname.endsWith(`/sessions/${completedPlan.id}/start`))
-  await page.getByRole('button', { name: 'Iniciar sesi\u00f3n', exact: true }).click()
-  check((await completedStart).status() === 200, 'completed session start HTTP 200')
+  const completedStart = await actWithResponse(() => page.getByRole('button', { name: 'Iniciar sesi\u00f3n', exact: true }).click(), item => new URL(item.url()).pathname.endsWith(`/sessions/${completedPlan.id}/start`))
+  check(completedStart.status() === 200, 'completed session start HTTP 200')
   await page.waitForTimeout(1_100)
   const completed = await finishThroughDialog('completed', 'finished_early')
   check(completed.status === 'completed' && completed.context === 'finished_early', 'completed result and context stored')
