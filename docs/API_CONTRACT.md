@@ -1,9 +1,9 @@
 # Cognova — Contrato API v1
 
 Materias, Actividades, Calendario y Sesiones están publicados en el frontend.
-Backend de Sesiones: `56e7caccb247776ed93c63e949faf9b76202ebcf`, schema
-`0006_study_sessions`. Calendario sigue mostrando Actividades; añadir Sesiones
-requiere ampliar `GET /api/v1/calendar` en Backend. Contratos:
+Backend productivo `4735a697aed69f66f3055c902a00507b66a556e0`, schema
+`0006_study_sessions`. Calendario incluye Actividades y Sesiones como una vista
+transversal de solo lectura. Contratos:
 [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md) y
 [STUDY_SESSIONS_CONTRACT](STUDY_SESSIONS_CONTRACT.md).
 
@@ -151,7 +151,7 @@ Representan dependencias reales entre actividades.
 
 Contrato productivo consultado en OpenAPI el 2026-11-02; detalle de interfaz:
 [STUDY_SESSIONS_CONTRACT](STUDY_SESSIONS_CONTRACT.md). Backend productivo
-`56e7caccb247776ed93c63e949faf9b76202ebcf`, schema `0006_study_sessions`.
+`4735a697aed69f66f3055c902a00507b66a556e0`, schema `0006_study_sessions`.
 Bearer y onboarding completo son obligatorios; las respuestas privadas son
 `no-store`. Identidad y ownership se derivan de la sesión autenticada.
 
@@ -193,14 +193,18 @@ precondiciones incompatibles producen 409; ajena/inexistente 404; validación
 422; falta de sesión 401; onboarding incompleto 403; indisponibilidad 503. La UI
 no muestra mensajes arbitrarios del servidor ni reintenta mutaciones en conflicto.
 
-Calendario vigente sigue siendo lectura de Actividades. La aparición de sesiones
-en Calendario requiere ampliar contrato/backend en un bloque posterior; esta
-interfaz no crea ni persiste eventos de calendario.
+Calendario consume `GET /calendar` y recibe `type=activity` por `deadline` y
+`type=study_session` por `planned_start_at`, además de `subject_id`, `activity_id`,
+`planned_duration`, `lifecycle`, `result`, `start_at` y `end_at` para Sesiones.
+Ambos tipos comparten rango semiabierto, ownership y paginación cronológica. El orden
+estable en empate es Actividad antes de Sesión y luego ID. Filtro de materia aplica a
+ambos; estado/prioridad solo a Actividades y no se envían al seleccionar solo Sesiones.
+Calendario no crea ni edita datos; cada item enlaza a su recurso original. Contrato
+detallado: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md).
 
-La interfaz de Sesiones está publicada y cerrada de forma independiente sobre
-Backend `56e7caccb247776ed93c63e949faf9b76202ebcf` / `0006_study_sessions`.
-La dependencia pendiente afecta únicamente a su aparición en Calendario: ampliar
-`GET /api/v1/calendar` en `cognova-backend`. No sintetizar eventos en frontend.
+La interfaz de Sesiones y la vista transversal están publicadas sobre Backend
+`4735a697aed69f66f3055c902a00507b66a556e0` / `0006_study_sessions`. No sintetizar
+items ni alterar recursos desde Calendario.
 
 ## Analytics
 
@@ -294,8 +298,9 @@ SUBJECT_REACTIVATION_LIMIT (reactivar sin cupo). 404 SUBJECT_NOT_FOUND para
 inexistente/segunda eliminación. DELETE sin confirmación:422 VALIDATION_ERROR.
 Smoke por Netlify con cuenta sintética 8, materias eliminadas y sesión revocada.
 
-## Calendario — contrato vigente 2026-10-26
+## Calendario — contrato productivo mixto 2026-11-02
 
-GET /calendar de solo lectura: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md).
-Backend vigente 61a2f98668f0d3452f0582d7a074f1290dbae43d, schema 0005_activities.
-Esta decisión sustituye las referencias anteriores a contrato pendiente.
+GET `/api/v1/calendar` de solo lectura consume backend
+`4735a697aed69f66f3055c902a00507b66a556e0` / `0006_study_sessions`. Devuelve
+Actividades por deadline y Sesiones por planned_start_at como unión discriminada.
+Tipos, filtros, cursor, empate, ownership y presentación: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md).
