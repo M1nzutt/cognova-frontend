@@ -34,6 +34,18 @@ describe('study session confirmations and results', () => {
     expect(onConfirm).toHaveBeenCalledWith({ status: 'partial', context: 'other', other_text: 'Me cambié de espacio' })
   })
 
+  it.each([
+    ['finished_early', 'Terminé antes'], ['distracted', 'Me distraje'], ['tired', 'Me cansé'],
+    ['interrupted', 'Tuve una interrupción'], ['changed_activity', 'Cambié de actividad'], ['other', 'Otro'],
+  ])('maps final context %s to the Spanish label', async (value, label) => {
+    render(<StudySessionFinishDialog session={studySession} busy={false} error="" onCancel={vi.fn()} onConfirm={vi.fn()} />)
+    await userEvent.selectOptions(screen.getByLabelText('¿Cómo terminó? (opcional)'), value)
+    expect(screen.getByLabelText('¿Cómo terminó? (opcional)')).toHaveValue(value)
+    if (value === 'other') expect(screen.getByLabelText('Cuéntanos brevemente (opcional)')).toBeVisible()
+    else expect(screen.queryByLabelText('Cuéntanos brevemente (opcional)')).not.toBeInTheDocument()
+    expect(screen.getByRole('option', { name: label })).toBeInTheDocument()
+  })
+
   it('requires an explicit checkbox before deleting an unstarted plan', async () => {
     const onConfirm = vi.fn()
     render(<StudySessionDeleteConfirmation busy={false} error="" onCancel={vi.fn()} onConfirm={onConfirm} />)
