@@ -19,7 +19,7 @@ interface Props {
 }
 
 export function StudySessionPlanForm({ subjects, activities, activitiesLoading, initial, busy, error, onSubjectChange, onSave, onCancel }: Props) {
-  const [subjectId, setSubjectId] = useState(initial?.subject_id ?? subjects[0]?.id ?? 0)
+  const [subjectId, setSubjectId] = useState(initial?.subject_id ?? subjects.find(subject => subject.status === 'active')?.id ?? subjects[0]?.id ?? 0)
   const [activityId, setActivityId] = useState(initial?.activity_id ? String(initial.activity_id) : '')
   const [plannedStart, setPlannedStart] = useState(initial ? localDate(initial.planned_start_at) : '')
   const [duration, setDuration] = useState(String(initial?.planned_duration ?? 45))
@@ -28,6 +28,14 @@ export function StudySessionPlanForm({ subjects, activities, activitiesLoading, 
   useEffect(() => {
     if (!activitiesLoading && activityId && !activities.some(item => item.id === Number(activityId) && item.subject_id === subjectId)) setActivityId('')
   }, [activities, activitiesLoading, activityId, subjectId])
+
+  useEffect(() => {
+    if (!subjectId && subjects.length) {
+      const preferred = subjects.find(subject => subject.status === 'active') ?? subjects[0]
+      setSubjectId(preferred.id)
+      onSubjectChange(preferred.id)
+    }
+  }, [onSubjectChange, subjectId, subjects])
 
   function changeSubject(value: number) {
     setSubjectId(value)
