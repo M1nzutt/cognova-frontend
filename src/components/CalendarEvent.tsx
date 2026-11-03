@@ -8,7 +8,8 @@ import styles from './CalendarEvent.module.css'
 
 export function CalendarEvent({ item, subject }: { item: CalendarItem; subject?: Subject }) {
   if (item.type === 'study_session') {
-    return <article className={styles.event} data-type={item.type}>
+    return <Link className={styles.event} to={'/app/sessions/' + item.id} data-type={item.type}
+      aria-label={`Abrir detalle: Sesión de ${subject?.name ?? `Materia ${item.subject_id}`}`}>
       <span className={styles.type}>Sesión de estudio</span>
       <strong>Estudio · {subject?.name ?? `Materia ${item.subject_id}`}</strong>
       <time dateTime={item.planned_start_at}>{new Intl.DateTimeFormat('es', { hour: '2-digit', minute: '2-digit' }).format(new Date(item.planned_start_at))}</time>
@@ -16,7 +17,7 @@ export function CalendarEvent({ item, subject }: { item: CalendarItem; subject?:
       <span>{item.planned_duration} minutos planificados</span>
       <span>Estado: {executionStateLabels[item.lifecycle]}</span>
       {item.result && <span>Resultado: {sessionResultLabels[item.result]}</span>}
-    </article>
+    </Link>
   }
   return <Link className={styles.event} to={'/app/activities/' + item.id} data-type={item.type} data-priority={item.priority}>
     <span className={styles.type}>Actividad</span>
