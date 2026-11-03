@@ -101,8 +101,8 @@ try {
 
   stage = 'synthetic account and fixtures'
   await api.bootstrap()
-  const subject = await api.create('Smoke sesiones activo')
-  const otherSubject = await api.create('Smoke sesiones otro')
+  const subject = await api.create('Sesiones UI uno')
+  const otherSubject = await api.create('Sesiones UI dos')
   const activity = await api.createActivity(subject.id)
   await page.goto(production + '/app/sessions')
   await expect(page.getByRole('heading', { name: 'Sesiones de estudio', exact: true })).toBeVisible()
@@ -217,7 +217,7 @@ try {
 
   stage = 'list, detail, refresh, responsive, security'
   await pace(); await page.goto(production + `/app/sessions/${mainPlan.id}`); await page.reload()
-  await expect(page.getByRole('heading', { name: /Sesi\u00f3n de Smoke sesiones activo/ })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Sesi\u00f3n de Sesiones UI uno/ })).toBeVisible()
   await expect(page.getByText('Parcial', { exact: true })).toBeVisible()
   await page.screenshot({ path: '.local/study-session-detail-desktop.png', fullPage: true })
   await page.setViewportSize({ width: 375, height: 812 })
