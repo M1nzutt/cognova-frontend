@@ -22,7 +22,7 @@ it('restores a session-only direct URL, drops invalid Activity filters and survi
     path:'/app/calendar?date=2030-01-15&view=month&type=study_session&status=pending&priority=high',
     calendar:async () => jsonResponse({ items:[calendarSession],next_cursor:null }),
   })
-  expect(await screen.findByRole('link', { name:'Abrir detalle: Sesión de Álgebra' })).toBeVisible()
+  expect(await screen.findByRole('link', { name:/Sesión de estudio.*Álgebra/ })).toBeVisible()
   expect(screen.getByLabelText('Filtrar por tipo')).toHaveValue('study_session')
   expect(screen.queryByLabelText('Filtrar por estado')).not.toBeInTheDocument()
   expect(screen.queryByLabelText('Filtrar por prioridad')).not.toBeInTheDocument()
@@ -39,7 +39,7 @@ it('restores a session-only direct URL, drops invalid Activity filters and survi
   first.unmount()
   calendarSetup({ path,calendar:async () => jsonResponse({ items:[calendarSession],next_cursor:null }) })
   expect(await screen.findByRole('region', { name:'Vista semanal' })).toBeVisible()
-  expect(screen.getByRole('link', { name:'Abrir detalle: Sesión de Álgebra' })).toBeVisible()
+  expect(screen.getByRole('link', { name:/Sesión de estudio.*Álgebra/ })).toBeVisible()
 })
 it('applies all three filters to HTTP and clears to full results', async () => {
   const { fetch } = calendarSetup({ calendar:async url => jsonResponse({ items:url.searchParams.has('priority') ? [] : [calendarItem],next_cursor:null }) })
@@ -60,7 +60,7 @@ it('applies subject to sessions and omits Activity filters in session-only mode'
   fireEvent.change(screen.getByLabelText('Filtrar por estado'), { target:{ value:'pending' } })
   fireEvent.change(screen.getByLabelText('Filtrar por prioridad'), { target:{ value:'high' } })
   fireEvent.change(screen.getByLabelText('Filtrar por tipo'), { target:{ value:'study_session' } })
-  expect(await screen.findByRole('link', { name:'Abrir detalle: Sesión de Álgebra' })).toBeVisible()
+  expect(await screen.findByRole('link', { name:/Sesión de estudio.*Álgebra/ })).toBeVisible()
   expect(screen.queryByRole('link', { name:/Preparar ensayo/ })).not.toBeInTheDocument()
   fireEvent.change(screen.getByLabelText('Filtrar por materia'), { target:{ value:'1' } })
   const query = fetch.mock.calls.filter(([url]) => url.includes('/calendar')).map(([url]) => new URL(url,'https://test').searchParams).at(-1)!

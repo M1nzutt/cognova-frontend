@@ -16,5 +16,5 @@ it('renders Activities and Sessions in the same weekly day without changing Back
   render(<MemoryRouter><CalendarWeek days={period(date,'week').days} date={date} subjects={[calendarSubject]} groups={groupCalendar([calendarItem,calendarSession])} /></MemoryRouter>)
   const day = screen.getByRole('region', { name: fullDay(new Date(calendarItem.deadline)) })
   expect(within(day).getAllByRole('link').map(link => link.getAttribute('href'))).toEqual(['/app/activities/1','/app/sessions/1'])
-  expect(within(day).getByText('Estudio · Álgebra')).toBeVisible()
+  expect(within(day).getByRole('link', { name:/Sesión de estudio.*Álgebra/ })).toHaveTextContent('Estudio · Álgebra')
 })

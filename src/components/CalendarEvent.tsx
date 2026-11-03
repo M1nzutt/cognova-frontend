@@ -8,13 +8,12 @@ import styles from './CalendarEvent.module.css'
 
 export function CalendarEvent({ item, subject }: { item: CalendarItem; subject?: Subject }) {
   if (item.type === 'study_session') {
-    return <Link className={styles.event} to={'/app/sessions/' + item.id} data-type={item.type}
-      aria-label={`Abrir detalle: Sesión de ${subject?.name ?? `Materia ${item.subject_id}`}`}>
+    return <Link className={styles.event} to={'/app/sessions/' + item.id} data-type={item.type}>
       <span className={styles.type}>Sesión de estudio</span>
       <strong>Estudio · {subject?.name ?? `Materia ${item.subject_id}`}</strong>
-      <time dateTime={item.planned_start_at}>{new Intl.DateTimeFormat('es', { hour: '2-digit', minute: '2-digit' }).format(new Date(item.planned_start_at))}</time>
-      <span className={styles.subject}><span aria-hidden="true" className={subjectStyles.swatch} data-color={subject?.color_base} data-shade={subject?.color_shade} />{subject?.name ?? 'Materia no disponible'}{subject?.status === 'archived' ? ' (archivada)' : ''}</span>
-      <span>{item.planned_duration} minutos planificados</span>
+      <span>Hora planificada: <time dateTime={item.planned_start_at}>{new Intl.DateTimeFormat('es', { hour: '2-digit', minute: '2-digit' }).format(new Date(item.planned_start_at))}</time></span>
+      <span className={styles.subject}><span aria-hidden="true" className={subjectStyles.swatch} data-color={subject?.color_base} data-shade={subject?.color_shade} />Materia: {subject?.name ?? 'Materia no disponible'}{subject?.status === 'archived' ? ' (archivada)' : ''}</span>
+      <span>Duración planificada: {item.planned_duration} minutos</span>
       <span>Estado: {executionStateLabels[item.lifecycle]}</span>
       {item.result && <span>Resultado: {sessionResultLabels[item.result]}</span>}
     </Link>

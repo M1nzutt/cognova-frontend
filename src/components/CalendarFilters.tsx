@@ -6,7 +6,7 @@ import styles from './Activities.module.css'
 export function CalendarFilters({ value, subjects, onChange }: { value: Filters; subjects: Subject[]; onChange: (value: Filters) => void }) {
   return <form className={styles.filters} aria-label="Filtros del calendario" onSubmit={e => e.preventDefault()}>
     <div className={styles.form}><div className={styles.columns}>
-      <label>Tipo<select aria-label="Filtrar por tipo" value={value.type ?? 'all'} onChange={e => {
+      <label>Tipo<select aria-label="Filtrar por tipo" aria-describedby="calendar-type-help" value={value.type ?? 'all'} onChange={e => {
         const type = e.target.value as CalendarFilterType
         onChange({ ...value, type, ...(type === 'study_session' ? { status:undefined, priority:undefined } : {}) })
       }}>
@@ -22,6 +22,7 @@ export function CalendarFilters({ value, subjects, onChange }: { value: Filters;
         <label>Prioridad (solo Actividades)<select aria-label="Filtrar por prioridad" value={value.priority ?? ''} onChange={e => onChange({ ...value, priority: e.target.value as Filters['priority'] || undefined })}><option value="">Todas las prioridades</option>{activityPriorities.map(p => <option key={p} value={p}>{priorityLabels[p]}</option>)}</select></label>
       </>}
     </div></div>
+    <small id="calendar-type-help">Materia aplica a Actividades y Sesiones. Estado y prioridad aplican solo a Actividades.</small>
     {value.type !== 'study_session' && (value.status || value.priority) && <p>Estado y prioridad se aplican solo a Actividades; las Sesiones no aparecen mientras estén activos.</p>}
     <button className="button" type="button" onClick={() => onChange({})}>Limpiar filtros</button>
   </form>

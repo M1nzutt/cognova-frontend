@@ -16,7 +16,7 @@ it.each([
   ['planned','Planificada'], ['running','En curso'], ['paused','Pausada'], ['finished','Finalizada'],
 ] as const)('labels the %s session state without relying on color', async (lifecycle, label) => {
   render(<MemoryRouter><CalendarEvent item={{ ...calendarSession, lifecycle, result:lifecycle === 'finished' ? 'partial' : null }} /></MemoryRouter>)
-  const link = screen.getByRole('link', { name:'Abrir detalle: Sesión de Materia 1' })
+  const link = screen.getByRole('link', { name:/Sesión de estudio.*Materia 1/ })
   expect(link).toHaveAttribute('href','/app/sessions/1')
   expect(link).toHaveAttribute('data-type','study_session')
   expect(link).toHaveTextContent('Sesión de estudio')

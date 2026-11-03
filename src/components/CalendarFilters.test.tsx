@@ -15,6 +15,8 @@ it('offers all/activity/session types and hides Activity-only filters for sessio
   expect(screen.getByRole('option', { name:'Todos' })).toHaveValue('all')
   expect(screen.getByRole('option', { name:'Actividades' })).toHaveValue('activity')
   expect(screen.getByRole('option', { name:'Sesiones' })).toHaveValue('study_session')
+  expect(screen.getByLabelText('Filtrar por tipo')).toHaveAttribute('aria-describedby','calendar-type-help')
+  expect(screen.getByText(/Materia aplica a Actividades y Sesiones/)).toBeVisible()
   fireEvent.change(screen.getByLabelText('Filtrar por tipo'), { target:{ value:'study_session' } })
   expect(onChange).toHaveBeenLastCalledWith({ type:'study_session', status:undefined, priority:undefined })
   rerender(<CalendarFilters value={{ type:'study_session' }} subjects={[]} onChange={onChange} />)
