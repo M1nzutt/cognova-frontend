@@ -11,8 +11,18 @@ export class StudySessionSmokeApi extends SubjectSmokeApi {
   readonly sessions = new Set<number>()
   readonly deletedSessions = new Set<number>()
   readonly retainedSessions: number[] = []
+  lastFailure = ''
 
   constructor(context: BrowserContext) { super(context) }
+
+  override async request<T>(label: string, path: string, expected: number, method = 'GET', body?: unknown, csrf = false): Promise<T> {
+    try { return await super.request<T>(label, path, expected, method, body, csrf) }
+    catch (error) {
+      // The parent helper's messages include only the operation label and HTTP status/cache check.
+      this.lastFailure = error instanceof Error ? error.message : 'request failed'
+      throw error
+    }
+  }
 
   override async create(name: string, status: 'active' | 'archived' = 'active') {
     const subject = await super.create(name, status)

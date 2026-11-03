@@ -249,7 +249,7 @@ try {
   await expect(page).toHaveURL(/\/login$/)
   checks.push('all synthetic sessions closed or retained as history; deletable fixtures removed; auth session revoked')
 } catch {
-  console.error('Study Sessions browser smoke stopped at: ' + stage + '; API operation: ' + api.operation)
+  console.error('Study Sessions browser smoke stopped at: ' + stage + '; API operation: ' + api.operation + (api.lastFailure ? '; safe diagnostic: ' + api.lastFailure : ''))
   await page.screenshot({ path: '.local/study-sessions-failure.png', fullPage: true }).catch(() => undefined)
   process.exitCode = 1
 } finally {
