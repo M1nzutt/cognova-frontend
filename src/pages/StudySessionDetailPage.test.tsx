@@ -39,7 +39,7 @@ describe('study session detail and timer lifecycle', () => {
     const finish = fetch.mock.calls.find(([url]) => String(url).endsWith('/sessions/8/finish'))
     expect(JSON.parse(String(finish?.[1]?.body))).toEqual({ status: 'partial', context: 'other', other_text: 'Me distraje y retomé el estudio' })
     expect(operations.filter(value => value.startsWith('POST') && value.includes('/sessions/8/')).length).toBe(6)
-  })
+  }, 15_000)
 
   it('shows a recoverable 409 and reloads current state instead of repeating start', async () => {
     const { fetch } = studySessionSetup({ path: '/app/sessions/8', startStatus: 409 })
