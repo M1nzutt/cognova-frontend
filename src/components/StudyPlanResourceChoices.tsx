@@ -16,10 +16,11 @@ interface Props {
   activities: Activity[]
   sessions: StudySessionSummary[]
   value: PlanSelection
+  disabled?: boolean
   onChange: (value: PlanSelection) => void
 }
 
-export function StudyPlanResourceChoices({ subjects, activities, sessions, value, onChange }: Props) {
+export function StudyPlanResourceChoices({ subjects, activities, sessions, value, disabled, onChange }: Props) {
   const selectedSubjects = new Set(value.subject_ids)
   const selectedActivities = new Set(value.activity_ids)
   const visibleActivities = activities.filter(activity => selectedSubjects.has(activity.subject_id))
@@ -52,7 +53,7 @@ export function StudyPlanResourceChoices({ subjects, activities, sessions, value
     onChange({ ...value, study_session_ids: checked ? [...value.study_session_ids, id] : value.study_session_ids.filter(item => item !== id) })
   }
 
-  return <fieldset>
+  return <fieldset disabled={disabled}>
     <legend>Vincular lo que ya estudias</legend>
     <p className={styles.muted}>El plan reúne recursos existentes; no cambia tus materias, actividades ni sesiones.</p>
     <h3>Materias</h3>
