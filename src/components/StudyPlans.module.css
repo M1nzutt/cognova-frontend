@@ -33,6 +33,9 @@
 .rhythm strong { display: block; font-size: 1rem; }
 .hierarchy { list-style: none; padding-left: 1rem; border-left: 1px solid var(--border); }
 .hierarchy li { padding: .2rem 0; overflow-wrap: anywhere; }
+.summary { display: grid; grid-template-columns: minmax(90px, 160px) 1fr; gap: .35rem 1rem; }
+.summary dt { color: var(--muted); }
+.summary dd { margin: 0; overflow-wrap: anywhere; }
 .dialog { composes: dialog from './StudySessions.module.css'; }
 .confirm { composes: confirm from './StudySessions.module.css'; }
 @media (max-width: 650px) {
@@ -43,4 +46,5 @@
 @media (max-width: 390px) {
   .rhythm { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .actions > * { flex: 1 1 100%; }
+  .summary { grid-template-columns: 1fr; }
 }
