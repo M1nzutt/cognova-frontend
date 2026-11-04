@@ -1,11 +1,11 @@
 # Cognova — Contrato API v1
 
-Backend productivo `4735a697aed69f66f3055c902a00507b66a556e0`, schema
-`0006_study_sessions`. `GET /calendar` devuelve Actividades y Sesiones como una
-vista transversal de solo lectura. La UI mixta está publicada en Netlify desde el
-SHA `c2edfd29912354100bb54ff2373aeaa1ee138723`, deploy
-`6ae94b7544b5e9672d6466e0`; smoke productivo aprobado. Contratos:
-Contratos:
+Backend productivo `d9fff7c36e6a1c1c98079e9be225c1d273e0e9d0`, schema
+`0007_study_plans_and_challenges`. `GET /calendar` devuelve Actividades y Sesiones
+como vista de solo lectura. La UI mixta vigente está publicada en Netlify desde
+`c2edfd29912354100bb54ff2373aeaa1ee138723`, deploy
+`6ae94b7544b5e9672d6466e0`. Planes y Retos siguen el contrato
+[STUDY_PLANS_CONTRACT](STUDY_PLANS_CONTRACT.md). Otros contratos:
 [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md) y
 [STUDY_SESSIONS_CONTRACT](STUDY_SESSIONS_CONTRACT.md).
 
@@ -66,8 +66,8 @@ Incluye GET `/questionnaire/catalog`, GET `/questionnaire/history` y
 PUT `/onboarding/academic-profile`. Los tres endpoints existentes se conservan.
 Todas estas rutas requieren Bearer; permiten onboarding incompleto y solo operan
 sobre el usuario autenticado. No reciben user_id. Materias, Actividades,
-Calendario y Sesiones están implementados; otros módulos continúan como
-planificación futura.
+Calendario, Sesiones, Planes y Retos están implementados en Backend. El Frontend
+incorpora Planes y Retos según su contrato específico.
 
 ## Subjects — contrato productivo verificado 2026-10-20
 
