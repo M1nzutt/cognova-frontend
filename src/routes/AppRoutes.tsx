@@ -8,6 +8,10 @@ import { SubjectDetailPage } from '../pages/SubjectDetailPage'
 import { StudySessionsPage } from '../pages/StudySessionsPage'
 import { StudySessionCreatePage } from '../pages/StudySessionCreatePage'
 import { StudySessionDetailPage } from '../pages/StudySessionDetailPage'
+import { StudyPlansPage } from '../pages/StudyPlansPage'
+import { StudyPlanCreatePage } from '../pages/StudyPlanCreatePage'
+import { StudyPlanDetailPage } from '../pages/StudyPlanDetailPage'
+import { StudyChallengeDetailPage } from '../pages/StudyChallengeDetailPage'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AcademicProfilePage } from '../pages/AcademicProfilePage'
 import { OnboardingRoute } from './OnboardingRoute'
@@ -47,6 +51,10 @@ export function AppRoutes() {
         <Route element={<ProtectedRoute />}>
           <Route element={<CompletedRoute />}>
             <Route path="app/calendar" element={<CalendarPage />} />
+            <Route path="app/study-plans" element={<StudyPlansPage />} />
+            <Route path="app/study-plans/new" element={<StudyPlanCreatePage />} />
+            <Route path="app/study-plans/:planId" element={<StudyPlanDetailPage />} />
+            <Route path="app/study-plans/:planId/challenges/:challengeId" element={<StudyChallengeDetailPage />} />
             <Route path="app/sessions" element={<StudySessionsPage />} />
             <Route path="app/sessions/new" element={<StudySessionCreatePage />} />
             <Route path="app/sessions/:sessionId" element={<StudySessionDetailPage />} />
