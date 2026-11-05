@@ -1,0 +1,112 @@
+{
+  "at": "2026-11-05T05:22:51.910Z",
+  "url": "https://cognova-frontend.netlify.app",
+  "checks": [
+    "anonymous direct route redirects to login",
+    "authenticated empty plan list and existing academic resources",
+    "create, edit, related subject/activity/session, backend projections and decision evidence",
+    "draft mission create/edit/start/complete and direct route refresh",
+    "activation, complete plan, mission fail/cancel",
+    "abandon and confirmed safe draft delete",
+    "desktop/mobile layout, keyboard mission navigation and no horizontal overflow",
+    "manual regenerate rejected; AI 503 cannot be created through public API",
+    "synthetic auth revoked and protected API returns 401"
+  ],
+  "user_id": 44,
+  "retained_plans": [
+    9,
+    10
+  ],
+  "deleted_plans": [
+    11
+  ],
+  "retained_subjects": [
+    69
+  ],
+  "retained_activities": [
+    43
+  ],
+  "retained_sessions": [
+    46
+  ],
+  "response_count": 129,
+  "page_errors": 0,
+  "api": [
+    {
+      "label": "ready",
+      "status": 200
+    },
+    {
+      "label": "synthetic_register",
+      "status": 201
+    },
+    {
+      "label": "academic_profile",
+      "status": 200
+    },
+    {
+      "label": "questionnaire_catalog",
+      "status": 200
+    },
+    {
+      "label": "questionnaire",
+      "status": 201
+    },
+    {
+      "label": "csrf_rejected",
+      "status": 403,
+      "code": "CSRF_VALIDATION_FAILED"
+    },
+    {
+      "label": "csrf_refresh",
+      "status": 200
+    },
+    {
+      "label": "subjects_catalog",
+      "status": 200
+    },
+    {
+      "label": "create",
+      "status": 201
+    },
+    {
+      "label": "synthetic_activity",
+      "status": 201
+    },
+    {
+      "label": "synthetic_session",
+      "status": 201
+    },
+    {
+      "label": "deleted_plan_404",
+      "status": 404,
+      "code": "STUDY_PLAN_NOT_FOUND"
+    },
+    {
+      "label": "manual_regenerate_conflict",
+      "status": 409,
+      "code": "STUDY_PLAN_STATE_CONFLICT"
+    },
+    {
+      "label": "cleanup_plan_list",
+      "status": 200
+    },
+    {
+      "label": "cleanup_plan_detail",
+      "status": 200
+    },
+    {
+      "label": "cleanup_plan_detail",
+      "status": 200
+    },
+    {
+      "label": "logout",
+      "status": 204
+    },
+    {
+      "label": "revoked_auth",
+      "status": 401,
+      "code": "SESSION_REVOKED"
+    }
+  ]
+}

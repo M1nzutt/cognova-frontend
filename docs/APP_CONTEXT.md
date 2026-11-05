@@ -1,6 +1,17 @@
 # Cognova — Contexto Funcional y Conceptual de la Aplicación
 
-## Estado implementado — 2026-11-03
+## Estado implementado — 2026-11-05
+
+Planes de Estudio manuales y Retos anidados están publicados en Frontend
+`5baf625e14fbb543a9fd715dbfaaf3b43c2f8c6d`, Netlify
+`6aec118ff6c3ff162f7334de`, sobre Backend
+`d9fff7c36e6a1c1c98079e9be225c1d273e0e9d0` y Database 0007.
+El usuario controla el Plan; ninguna propuesta de IA se aplica sola. La
+generación Gemini real sigue pendiente. El detalle muestra proyecciones
+académicas del Backend sin recalcularlas en Frontend. Retos aún no forman
+parte de Calendario. Ver `STUDY_PLANS_CONTRACT.md` y `PROJECT_STATE.md`.
+
+## Estado histórico — 2026-11-03
 
 Materias, Actividades, Calendario mixto y Sesiones están cerrados en el frontend
 productivo. Backend `4735a697aed69f66f3055c902a00507b66a556e0` con schema

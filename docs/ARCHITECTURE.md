@@ -26,6 +26,12 @@ El repositorio database administra la persistencia; no es una API ni un destino 
 - No replica las estructuras académicas del backend.
 - El backend es fuente de verdad para auth, ownership, temporizador y datos académicos.
 
+Planes y Retos consumen `GET/POST/PUT` y acciones REST de `/api/v1/study-plans`
+y sus `challenges` anidados a través de `ApiClient`. `StudyPlanService` y
+`StudyChallengeService` validan respuestas y las páginas solo presentan las
+proyecciones del Backend: jerarquía, prioridad, dependencias, ritmo y huecos.
+El Frontend no replica sus estructuras de dominio ni accede a Gemini.
+
 ## Base existente
 
 Ya existe:

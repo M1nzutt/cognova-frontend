@@ -28,15 +28,15 @@ DEPENDENCY:
 - motivo.
 ```
 
-Materias, Actividades, Calendario y Sesiones están implementados y publicados en
+Materias, Actividades, Calendario, Sesiones, Planes y Retos están implementados y publicados en
 el frontend productivo. Calendario muestra `activity` y `study_session` desde
 `GET /api/v1/calendar`; Actividades se ubican por `deadline` y Sesiones por
-`planned_start_at`. Backend productivo `4735a697aed69f66f3055c902a00507b66a556e0`,
-schema `0006_study_sessions`; Frontend SHA `c2edfd29912354100bb54ff2373aeaa1ee138723`,
-Netlify deploy `6ae94b7544b5e9672d6466e0`. Calendario es solo lectura y enlaza a
-cada recurso original. Contratos:
-Contratos: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md) y
-[STUDY_SESSIONS_CONTRACT](STUDY_SESSIONS_CONTRACT.md).
+`planned_start_at`. Backend productivo `d9fff7c36e6a1c1c98079e9be225c1d273e0e9d0`,
+schema `0007_study_plans_and_challenges`; Frontend SHA `5baf625e14fbb543a9fd715dbfaaf3b43c2f8c6d`,
+Netlify deploy `6aec118ff6c3ff162f7334de`. Calendario es solo lectura y enlaza a
+cada recurso original. Contratos: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md),
+[STUDY_SESSIONS_CONTRACT](STUDY_SESSIONS_CONTRACT.md) y
+[STUDY_PLANS_CONTRACT](STUDY_PLANS_CONTRACT.md).
 
 El bloqueo histórico de publicación del onboarding está resuelto; ver PROJECT_STATE
 e INTEGRATION_VALIDATION. Preservar auth y proxy. Histórico: la tarea del 2026-10-25 autorizó

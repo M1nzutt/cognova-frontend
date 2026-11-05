@@ -1,3 +1,42 @@
+# Planes y Retos — validación productiva, 2026-11-05
+
+Netlify `https://cognova-frontend.netlify.app`, deploy
+`6aec118ff6c3ff162f7334de` `ready`, SHA servido
+`5baf625e14fbb543a9fd715dbfaaf3b43c2f8c6d`. Backend 0007 en
+producción. Pipeline `build:netlify` bajo UTC: 324/324 pruebas en el SHA
+productivo; suite final con prueba de rechazo IA: 325/325 en 42 archivos,
+lint, TypeScript y Vite verdes. Auditoría producción 0; completa 10 moderadas
+transitivas de desarrollo por `minimatch`.
+
+Chrome productivo final `2026-11-05T05:22:51Z`, 1440 y 375 px, zona Bogota.
+Se comprobó lista vacía, creación y edición de Plan, vínculos con Materia,
+Actividad y Sesión, jerarquía/prioridad/dependencias/ritmo/huecos del Backend,
+decisión `edited` con valores anterior y elegido, activación, completar y
+abandonar. Los Retos se crearon dentro del Plan, se editaron, iniciaron,
+completaron, fallaron y cancelaron. Se verificaron rutas directas, refresh,
+teclado, ausencia de desbordamiento horizontal, auth anónima redirigida,
+revocación 401, 129 respuestas API con `no-store` y cero errores JS.
+El borrador vacío 11 se eliminó con confirmación; consulta posterior 404.
+
+Cuenta sintética 44: Planes 9 y 10 retenidos por estado/historial y FK,
+Materia 69, Actividad 43 y Sesión 46 retenidas por vínculos; auth revocada.
+Intento inicial: timeout de readiness 25 s antes de registrar cuenta;
+comprobación posterior 200/no-store. Dos intentos de script posteriores
+fallaron por selectores de Sesión y misión, fueron corregidos; sus sesiones
+auth se revocaron en `finally`. Sus datos académicos vinculados no son
+eliminables por las reglas de historia del Backend.
+
+La creación pública de Planes `ai` aún no existe. Por ello el 503 de
+`regenerate`, las decisiones `accepted`/`rejected` y el flujo de propuesta
+se validaron en pruebas con fixtures del contrato, sin fingir un evento
+productivo. La llamada productiva a `regenerate` sobre Plan manual devolvió
+409 `STUDY_PLAN_STATE_CONFLICT`, como corresponde. Ownership 404, onboarding,
+errores 409 y 503 tienen cobertura de frontend; el Backend ya tiene su smoke
+productivo independiente. Retos en Calendario dependen de que Backend los
+exponga en `GET /calendar`.
+
+Evidencia sanitizada: `evidence/study-plans-release-2026-11-05.json`.
+
 # Estado vigente — Calendario mixto publicado y validado, 2026-11-03
 
 Netlify deploy `6ae94b7544b5e9672d6466e0` (`ready`) sirve

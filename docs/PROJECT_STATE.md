@@ -1,3 +1,47 @@
+# Frontend Planes de Estudio + Retos — publicado, 2026-11-05
+
+Netlify `https://cognova-frontend.netlify.app` publicó el merge `--no-ff`
+`5baf625e14fbb543a9fd715dbfaaf3b43c2f8c6d` (deploy
+`6aec118ff6c3ff162f7334de`, `ready`). Backend productivo
+`d9fff7c36e6a1c1c98079e9be225c1d273e0e9d0` usa
+`0007_study_plans_and_challenges`. Planes manuales y Retos anidados están
+operativos con auth/onboarding existentes, sin cambios en Backend ni Database.
+
+La interfaz ofrece lista, filtro, detalle, creación/edición de borrador,
+relaciones con Materias/Actividades/Sesiones, estados, decisiones y borrado
+seguro. Los Retos se muestran como misiones con objetivo contextual, enlaces a
+recursos y transiciones. Jerarquía, prioridad, dependencias, ritmo y huecos
+se consumen de las proyecciones del Backend. Calendario permanece en
+Actividades y Sesiones.
+
+`npm run build:netlify` pasó bajo UTC con 324 pruebas; tras añadir la aserción
+de rechazo de propuesta, la suite final tiene 325/325 en 42 archivos; lint,
+TypeScript y build también pasaron. `npm audit --omit=dev`: cero vulnerabilidades. Auditoría
+completa: diez moderadas transitivas de desarrollo en `minimatch` bajo ESLint;
+la corrección propuesta por npm exige un cambio mayor de ESLint. Warning de
+PostCSS `from` preexistente y no fatal.
+
+Smoke Chrome productivo aprobado `2026-11-05T05:22:51Z`: cuenta 44,
+Planes 9/10 retenidos por historia, borrador 11 eliminado, Materia 69,
+Actividad 43 y Sesión 46 retenidas por relaciones. Auth revocada, acceso
+posterior 401, 129 respuestas `no-store`, cero errores JS. Evidencia:
+`evidence/study-plans-release-2026-11-05.json`. Hubo tres intentos previos:
+uno agotó readiness antes de registrar; dos dejaron cuentas y recursos
+sintéticos con auth revocada tras fallos de selectores del script. La corrida
+final corrigió ambos selectores.
+
+Gemini real sigue pendiente. La creación pública produce solo Planes manuales:
+no hay ruta pública para generar una propuesta `ai` productiva. La UI de
+`regenerate` y su 503 se validaron con respuesta contractual en pruebas; en
+producción se comprobó el 409 correcto para un Plan manual. No se atribuye
+una respuesta de Gemini ni un 503 productivo que no pudieron observarse.
+**Frontend Planes + Retos queda cerrado para el contrato disponible; la
+generación IA depende de una entrega futura de Backend.**
+
+Git: 126 commits iniciales, 20 creados (17 en feature, merge `--no-ff`,
+smoke/prueba y cierre documental), 146 totales en main; faltan 355 para 501.
+El commit documental usa `[skip ci] [skip netlify]` y conserva el SHA servido.
+
 # Frontend Calendario mixto — publicado y cerrado, 2026-11-03
 
 Backend productivo `4735a697aed69f66f3055c902a00507b66a556e0`, schema

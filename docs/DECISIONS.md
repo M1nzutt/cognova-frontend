@@ -1,5 +1,16 @@
 # Cognova — Decisiones Congeladas
 
+## Decisión vigente de Planes y Retos — 2026-11-05
+
+Backend 0007 expone Planes manuales y propuestas `ai` cuando haya proveedor.
+El usuario acepta, edita o rechaza propuestas y conserva evidencia de sus
+decisiones; nada generado se aplica automáticamente. Retos viven dentro del
+Plan, pueden ser contextuales y usan los estados `pending`, `in_progress`,
+`completed`, `failed`, `cancelled`. Frontend consume proyecciones del Backend,
+no implementa estructuras de dominio. Gemini real y Retos en Calendario son
+dependencias futuras. Esta decisión sustituye la formulación conceptual
+anterior de Retos como propuesta IA aceptada e ineditable.
+
 ## Producto
 
 - Nombre: Cognova.

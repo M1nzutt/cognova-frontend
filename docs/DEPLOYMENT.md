@@ -1,3 +1,23 @@
+# Planes y Retos — publicación 2026-11-05
+
+Netlify sitio `https://cognova-frontend.netlify.app`, deploy
+`6aec118ff6c3ff162f7334de` `ready`, `branch=main`,
+`commit_ref=5baf625e14fbb543a9fd715dbfaaf3b43c2f8c6d`, publicado
+`2026-11-05T05:18:59.571Z`. La integración Git hizo el deploy del merge
+`--no-ff`, sin CLI ni token Netlify. `GET /app/study-plans/9` sirve la SPA por
+ruta directa. Backend `d9fff7c36e6a1c1c98079e9be225c1d273e0e9d0` /
+Database `0007_study_plans_and_challenges`; readiness por proxy 200/no-store.
+
+El pipeline local equivalente `npm run build:netlify` pasó bajo UTC con
+`RENDER_API_ORIGIN=https://cognova-backend-lpsi.onrender.com`: 324 pruebas en
+el deploy y 325 en la suite documental final. Lint, TypeScript y build pasaron.
+Auditoría de producción sin vulnerabilidades;
+auditoría completa con diez moderadas transitivas de tooling (`minimatch`).
+Smoke y limpieza: `INTEGRATION_VALIDATION.md` y
+`evidence/study-plans-release-2026-11-05.json`. El script reproducible es
+`scripts/smokeStudyPlansBrowser.ts`; requiere opt-in
+`SMOKE_ALLOW_PRODUCTION_WRITE=1` y usa cuenta sintética propia.
+
 # Calendario mixto — publicado y validado, 2026-11-03
 
 Sitio `https://cognova-frontend.netlify.app`, Netlify deploy

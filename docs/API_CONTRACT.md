@@ -3,8 +3,8 @@
 Backend productivo `d9fff7c36e6a1c1c98079e9be225c1d273e0e9d0`, schema
 `0007_study_plans_and_challenges`. `GET /calendar` devuelve Actividades y Sesiones
 como vista de solo lectura. La UI mixta vigente está publicada en Netlify desde
-`c2edfd29912354100bb54ff2373aeaa1ee138723`, deploy
-`6ae94b7544b5e9672d6466e0`. Planes y Retos siguen el contrato
+`5baf625e14fbb543a9fd715dbfaaf3b43c2f8c6d`, deploy
+`6aec118ff6c3ff162f7334de`. Planes y Retos siguen el contrato
 [STUDY_PLANS_CONTRACT](STUDY_PLANS_CONTRACT.md). Otros contratos:
 [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md) y
 [STUDY_SESSIONS_CONTRACT](STUDY_SESSIONS_CONTRACT.md).
