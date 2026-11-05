@@ -2,7 +2,7 @@ import { chromium, expect as baseExpect } from '@playwright/test'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { StudySessionSmokeApi, production } from './StudySessionSmokeApi.ts'
 import { check } from './SubjectSmokeApi.ts'
-import type { StudyPlan } from '../src/types/studyPlan.ts'
+import type { StudyPlan, StudyPlanList } from '../src/types/studyPlan.ts'
 
 check(process.env.SMOKE_ALLOW_PRODUCTION_WRITE === '1', 'Explicit production write opt-in required')
 const expect = baseExpect.configure({ timeout: 30_000 })
@@ -13,6 +13,7 @@ const api = new StudySessionSmokeApi(context)
 page.setDefaultTimeout(30_000)
 const checks: string[] = []
 const retainedPlans: number[] = [], deletedPlans: number[] = []
+const retainedSubjects: number[] = [], retainedActivities: number[] = [], retainedSessions: number[] = []
 const responses: { path: string; method: string; status: number; noStore: boolean }[] = []
 const responseTasks: Promise<void>[] = []
 let stage = 'anonymous route', pageErrors = 0, loggedOut = false
@@ -40,7 +41,7 @@ async function createPlan(name: string, withRelations: boolean, subjectId: numbe
   if (withRelations) {
     await page.getByRole('checkbox', { name: 'Plan smoke Biología' }).check()
     await page.getByRole('checkbox', { name: 'Smoke de sesión' }).check()
-    await page.locator('fieldset').filter({ hasText: 'Sesiones' }).getByRole('checkbox').first().check()
+    await page.locator('fieldset').filter({ hasText: 'Sesiones' }).getByRole('checkbox').last().check()
   }
   const response = await action('Crear plan', '/study-plans')
   const plan = await response.json() as StudyPlan
@@ -58,14 +59,43 @@ async function createMission(planId: number, title: string, subjectId: number) {
   const response = await action('Añadir misión', `/study-plans/${planId}/challenges`)
   const challenge = await response.json() as { id: number; title: string; status: string }
   check(challenge.title === title && challenge.status === 'pending', 'mission created inside plan')
-  await expect(page.getByRole('link', { name: title })).toBeVisible()
+  await expect(page.getByRole('list', { name: 'Misiones del plan' }).getByRole('link', { name: title })).toBeVisible()
   return challenge.id
 }
 async function missionTransition(planId: number, id: number, label: string, actionName: string) {
   await page.goto(`${planRoute(planId)}/challenges/${id}`)
-  await expect(page.getByRole('heading')).toBeVisible()
+  await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible()
   const response = await action(label, `/study-plans/${planId}/challenges/${id}/${actionName}`)
   return response.json() as Promise<{ status: string }>
+}
+async function cleanupAcademicResources() {
+  const list = await api.request<StudyPlanList>('cleanup_plan_list', 'study-plans?status=all&limit=100', 200)
+  const linkedSubjects = new Set<number>(), linkedActivities = new Set<number>(), linkedSessions = new Set<number>()
+  retainedPlans.length = 0
+  for (const summary of list.items) {
+    const plan = await api.request<StudyPlan>('cleanup_plan_detail', `study-plans/${summary.id}`, 200)
+    if (plan.source === 'manual' && plan.status === 'draft' && !plan.subjects.length && !plan.activities.length && !plan.study_sessions.length && !plan.decisions.length && !plan.challenge_count) {
+      await api.request('cleanup_empty_draft', `study-plans/${plan.id}?confirm=true`, 204, 'DELETE')
+      deletedPlans.push(plan.id)
+      continue
+    }
+    retainedPlans.push(plan.id)
+    plan.subjects.forEach(item => linkedSubjects.add(item.id))
+    plan.activities.forEach(item => linkedActivities.add(item.id))
+    plan.study_sessions.forEach(item => linkedSessions.add(item.id))
+  }
+  for (const id of api.sessions) {
+    if (linkedSessions.has(id)) retainedSessions.push(id)
+    else await api.request('cleanup_unlinked_session', `sessions/${id}?confirm=true`, 204, 'DELETE')
+  }
+  for (const id of api.activities) {
+    if (linkedActivities.has(id)) retainedActivities.push(id)
+    else await api.request('cleanup_unlinked_activity', `activities/${id}?confirm=true`, 204, 'DELETE')
+  }
+  for (const id of api.subjects) {
+    if (linkedSubjects.has(id)) retainedSubjects.push(id)
+    else await api.request('cleanup_unlinked_subject', `subjects/${id}?confirm=true`, 204, 'DELETE')
+  }
 }
 
 try {
@@ -78,7 +108,7 @@ try {
   await api.bootstrap()
   const subject = await api.create('Plan smoke Biología')
   const activity = await api.createActivity(subject.id)
-  const session = await api.createSession({ subject_id: subject.id, activity_id: activity.id, planned_start_at: new Date(Date.now() + 72 * 3_600_000).toISOString(), planned_duration: 40 })
+  await api.createSession({ subject_id: subject.id, activity_id: activity.id, planned_start_at: new Date(Date.now() + 72 * 3_600_000).toISOString(), planned_duration: 40 })
   await page.goto(`${production}/app/study-plans`)
   await expect(page.getByRole('heading', { name: 'Planes de estudio' })).toBeVisible()
   await expect(page.getByText('Tu primer plan empieza aquí')).toBeVisible()
@@ -155,14 +185,15 @@ try {
   await api.request('manual_regenerate_conflict', `study-plans/${main.id}/regenerate`, 409, 'POST')
   checks.push('manual regenerate rejected; AI 503 cannot be created through public API')
 
-  stage = 'auth revocation'
+  stage = 'synthetic cleanup and auth revocation'
+  await cleanupAcademicResources()
   await api.request('logout', 'auth/logout', 204, 'POST', undefined, true)
   loggedOut = true
   await api.request('revoked_auth', 'study-plans', 401)
   checks.push('synthetic auth revoked and protected API returns 401')
 
   const evidence = { at: new Date().toISOString(), url: production, checks, user_id: api.userId,
-    retained_plans: retainedPlans, deleted_plans: deletedPlans, retained_subjects: [subject.id], retained_activities: [activity.id], retained_sessions: [session.id],
+    retained_plans: retainedPlans, deleted_plans: deletedPlans, retained_subjects: retainedSubjects, retained_activities: retainedActivities, retained_sessions: retainedSessions,
     response_count: responses.length, page_errors: pageErrors, api: api.evidence }
   await writeFile('.local/study-plans-smoke.json', JSON.stringify(evidence, null, 2))
   console.log(JSON.stringify(evidence, null, 2))
@@ -171,6 +202,8 @@ try {
   process.exitCode = 1
 } finally {
   if (api.userId && !loggedOut) {
+    try { await cleanupAcademicResources() }
+    catch { console.error('Synthetic academic resource cleanup needs review') }
     try { await api.request('cleanup_logout', 'auth/logout', 204, 'POST', undefined, true); await api.request('cleanup_revoked_auth', 'study-plans', 401) }
     catch { console.error('Synthetic auth cleanup needs review') }
   }

@@ -87,6 +87,14 @@ describe('study plans', () => {
     expect(await screen.findByText(/Aceptaste Preparar examen/)).toBeVisible()
   })
 
+  it('shows that rejecting an AI proposal did not apply it', async () => {
+    const proposed = { ...structuredClone(planFixture), source: 'ai' as const }
+    studyPlanSetup({ path: '/app/study-plans/4', plans: [proposed] })
+    await screen.findByRole('heading', { name: 'Preparar examen' })
+    await userEvent.click(screen.getByRole('button', { name: 'Rechazar propuesta' }))
+    expect(await screen.findByText(/Rechazaste Preparar examen; no se aplicó/)).toBeVisible()
+  })
+
   it('requires confirmation for a safe empty draft deletion', async () => {
     const empty = { ...structuredClone(planFixture), subjects: [], activities: [], study_sessions: [], priority_order: [], activity_dependency_order: [] }
     const setup = studyPlanSetup({ path: '/app/study-plans/4', plans: [empty] })
@@ -107,13 +115,13 @@ describe('study plans', () => {
 
   it('shows decisions and a safe 503 for unavailable regeneration', async () => {
     const proposed = { ...structuredClone(planFixture), source: 'ai' as const, decisions: [{ id: 1, action: 'edited' as const, field_path: 'objective', proposed_value: 'Estudiar', chosen_value: 'Repasar', created_at: planFixture.created_at }] }
-    const { fetch } = studyPlanSetup({ path: '/app/study-plans/4', plans: [proposed] })
+    const setup = studyPlanSetup({ path: '/app/study-plans/4', plans: [proposed] })
     expect(await screen.findByText(/Editaste objetivo/)).toBeVisible()
     await userEvent.click(screen.getByRole('button', { name: 'Pedir otra propuesta' }))
     expect(await screen.findByRole('alert')).toHaveTextContent('todavía no está disponible')
     expect(screen.getByRole('alert')).not.toHaveTextContent('private detail')
-    expect(fetch.mock.calls.some(([url]) => String(url).endsWith('/regenerate'))).toBe(true)
-    expect(proposed.decisions).toHaveLength(1)
+    expect(setup.fetch.mock.calls.some(([url]) => String(url).endsWith('/regenerate'))).toBe(true)
+    expect(setup.plans[0].decisions).toHaveLength(1)
   })
 
   it('refreshes after a 409 transition', async () => {
