@@ -23,12 +23,14 @@ const localInput = (value: string | Date): string => {
   const date = new Date(value)
   return new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 16)
 }
+const defaultStart = new Date()
+const defaultEnd = new Date(defaultStart.getTime() + 7 * 86_400_000)
 
 export function StudyPlanForm({ subjects, activities, sessions, initial, busy, error, onSave, onCancel }: Props) {
   const [name, setName] = useState(initial?.name ?? '')
   const [objective, setObjective] = useState(initial?.objective ?? '')
-  const [start, setStart] = useState(localInput(initial?.start_at ?? new Date()))
-  const [end, setEnd] = useState(localInput(initial?.end_at ?? new Date(Date.now() + 7 * 86_400_000)))
+  const [start, setStart] = useState(localInput(initial?.start_at ?? defaultStart))
+  const [end, setEnd] = useState(localInput(initial?.end_at ?? defaultEnd))
   const [selection, setSelection] = useState<PlanSelection>({
     subject_ids: initial?.subjects.map(item => item.id) ?? [],
     activity_ids: initial?.activities.map(item => item.id) ?? [],
