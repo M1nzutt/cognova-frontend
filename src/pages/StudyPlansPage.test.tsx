@@ -10,6 +10,12 @@ describe('study plans', () => {
     expect(anonymous.fetch.mock.calls.some(([url]) => String(url).includes('/study-plans'))).toBe(false)
   })
 
+  it('requires completed onboarding before loading plans', async () => {
+    const setup = studyPlanSetup({ incomplete: true })
+    expect(await screen.findByRole('heading', { name: 'Tu perfil académico' })).toBeVisible()
+    expect(setup.fetch.mock.calls.some(([url]) => String(url).includes('/study-plans'))).toBe(false)
+  })
+
   it('lists, filters and opens a plan by keyboard', async () => {
     const { fetch } = studyPlanSetup()
     const link = await screen.findByRole('link', { name: /Preparar examen/ })
@@ -62,6 +68,23 @@ describe('study plans', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Completar plan' }))
     await waitFor(() => expect(setup.plans[0].status).toBe('completed'))
     expect(setup.plans[0].status).toBe('completed')
+  })
+
+  it('abandons an active plan without offering further transitions', async () => {
+    const active = { ...structuredClone(planFixture), status: 'active' as const }
+    studyPlanSetup({ path: '/app/study-plans/4', plans: [active] })
+    await screen.findByRole('heading', { name: 'Preparar examen' })
+    await userEvent.click(screen.getByRole('button', { name: 'Abandonar plan' }))
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Completar plan' })).not.toBeInTheDocument())
+    expect(screen.getAllByText('Abandonado').length).toBeGreaterThan(0)
+  })
+
+  it('accepts or rejects AI proposals with visible decision evidence', async () => {
+    const proposed = { ...structuredClone(planFixture), source: 'ai' as const }
+    studyPlanSetup({ path: '/app/study-plans/4', plans: [proposed] })
+    await screen.findByRole('heading', { name: 'Preparar examen' })
+    await userEvent.click(screen.getByRole('button', { name: 'Aceptar propuesta' }))
+    expect(await screen.findByText(/Aceptaste Preparar examen/)).toBeVisible()
   })
 
   it('requires confirmation for a safe empty draft deletion', async () => {
@@ -140,6 +163,28 @@ describe('missions inside plans', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Completar misión' }))
     await waitFor(() => expect(setup.challenges[0].status).toBe('completed'))
     expect(setup.challenges[0].status).toBe('completed')
+  })
+
+  it('cancels a pending mission and hides further actions', async () => {
+    const setup = studyPlanSetup({ path: '/app/study-plans/4/challenges/8', plans: [active], challenges: [challengeFixture] })
+    await screen.findByRole('heading', { name: 'Repasar células' })
+    await userEvent.click(screen.getByRole('button', { name: 'Cancelar misión' }))
+    await waitFor(() => expect(setup.challenges[0].status).toBe('cancelled'))
+    expect(screen.queryByRole('button', { name: 'Iniciar misión' })).not.toBeInTheDocument()
+  })
+
+  it('handles ownership 404 and a refreshable challenge conflict', async () => {
+    studyPlanSetup({ path: '/app/study-plans/4/challenges/999', plans: [active] })
+    expect(await screen.findByRole('alert')).toHaveTextContent('No encontramos este plan o esta misión')
+  })
+
+  it('refreshes a mission after a 409 without leaking server details', async () => {
+    const setup = studyPlanSetup({ path: '/app/study-plans/4/challenges/8', plans: [active], challenges: [challengeFixture], challengeStatus: 409 })
+    await screen.findByRole('heading', { name: 'Repasar células' })
+    await userEvent.click(screen.getByRole('button', { name: 'Iniciar misión' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('cambió')
+    expect(screen.getByRole('alert')).not.toHaveTextContent('private detail')
+    await waitFor(() => expect(setup.fetch.mock.calls.filter(([url]) => String(url).endsWith('/challenges/8')).length).toBeGreaterThan(1))
   })
 
   it('edits a pending mission and allows failure or cancellation', async () => {

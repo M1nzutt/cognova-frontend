@@ -27,7 +27,7 @@ export const challengeFixture: StudyChallenge = {
 }
 const response = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } })
 
-export function studyPlanSetup(options: { path?: string; plans?: StudyPlan[]; challenges?: StudyChallenge[]; anonymous?: boolean; incomplete?: boolean; regenerateStatus?: number; transitionStatus?: number } = {}) {
+export function studyPlanSetup(options: { path?: string; plans?: StudyPlan[]; challenges?: StudyChallenge[]; anonymous?: boolean; incomplete?: boolean; regenerateStatus?: number; transitionStatus?: number; challengeStatus?: number } = {}) {
   let plans = structuredClone(options.plans ?? [planFixture])
   const challenges = structuredClone(options.challenges ?? [])
   if (!options.anonymous) document.cookie = 'cognova_csrf=test-csrf; Path=/'
@@ -73,7 +73,10 @@ export function studyPlanSetup(options: { path?: string; plans?: StudyPlan[]; ch
       if (!challenge) return response({ error: { code: 'STUDY_CHALLENGE_NOT_FOUND', message: 'private detail' } }, 404)
       if (method === 'GET') return response(challenge)
       if (method === 'PUT') { Object.assign(challenge, JSON.parse(String(request.body))); return response(challenge) }
-      if (method === 'POST' && action) { challenge.status = action === 'start' ? 'in_progress' : action === 'complete' ? 'completed' : action === 'fail' ? 'failed' : 'cancelled'; return response(challenge) }
+      if (method === 'POST' && action) {
+        if (options.challengeStatus) return response({ error: { code: 'STUDY_CHALLENGE_CONFLICT', message: 'private detail' } }, options.challengeStatus)
+        challenge.status = action === 'start' ? 'in_progress' : action === 'complete' ? 'completed' : action === 'fail' ? 'failed' : 'cancelled'; return response(challenge)
+      }
     }
     throw new Error(`Unexpected endpoint ${method} ${path}`)
   })
