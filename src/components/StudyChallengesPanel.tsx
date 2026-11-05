@@ -18,7 +18,7 @@ export function StudyChallengesPanel({ plan, onChange }: { plan: StudyPlan; onCh
   const page = resource.data
   return <section className={styles.panel} aria-labelledby="missions-heading">
     <div className={styles.cardTop}><div><h2 id="missions-heading">Misiones del plan</h2><p>Pasos concretos para avanzar hacia tu objetivo.</p></div>
-      {!creating && plan.status === 'active' && <button className={styles.primary} type="button" onClick={() => setCreating(true)}>Añadir misión</button>}
+      {!creating && (plan.status === 'draft' || plan.status === 'active') && <button className={styles.primary} type="button" onClick={() => setCreating(true)}>Añadir misión</button>}
     </div>
     {creating && <StudyChallengeForm plan={plan} busy={mutation.busy} error={mutation.error} onCancel={() => { setCreating(false); mutation.clearError() }} onSave={value => void mutation.run(
       signal => services.challenges.create(plan.id, value, signal),

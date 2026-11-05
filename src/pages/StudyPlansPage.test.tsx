@@ -132,6 +132,13 @@ describe('study plans', () => {
 
 describe('missions inside plans', () => {
   const active = { ...structuredClone(planFixture), status: 'active' as const, challenge_count: 1 }
+  it('allows a mission in a draft as permitted by the backend', async () => {
+    studyPlanSetup({ path: '/app/study-plans/4', challenges: [challengeFixture] })
+    await screen.findByRole('heading', { name: 'Preparar examen' })
+    expect(screen.getByRole('button', { name: 'Añadir misión' })).toBeVisible()
+    await userEvent.click(await screen.findByRole('link', { name: 'Repasar células' }))
+    expect(await screen.findByRole('button', { name: 'Iniciar misión' })).toBeVisible()
+  })
   it('lists and opens a mission with its goal, deadline and related subject', async () => {
     studyPlanSetup({ path: '/app/study-plans/4', plans: [active], challenges: [challengeFixture] })
     const link = await screen.findByRole('link', { name: 'Repasar células' })

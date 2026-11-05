@@ -49,7 +49,7 @@ export function StudyChallengeDetailPage() {
             {mission.study_session_id && <><dt>Sesión</dt><dd><Link to={`/app/sessions/${mission.study_session_id}`}>Ver sesión relacionada</Link></dd></>}
           </dl>
         </section>
-        {plan.status === 'active' && <div className={styles.actions} aria-label="Acciones de la misión">
+        {(plan.status === 'draft' || plan.status === 'active') && <div className={styles.actions} aria-label="Acciones de la misión">
           {mission.status === 'pending' && <><button className="button" type="button" disabled={mutation.busy} onClick={() => setEditing(true)}>Editar misión</button><button className={styles.primary} type="button" disabled={mutation.busy} onClick={() => transition('start')}>Iniciar misión</button></>}
           {mission.status === 'in_progress' && <><button className={styles.primary} type="button" disabled={mutation.busy} onClick={() => transition('complete')}>Completar misión</button><button className="button" type="button" disabled={mutation.busy} onClick={() => transition('fail')}>Marcar como fallida</button></>}
           {(mission.status === 'pending' || mission.status === 'in_progress') && <button className="button" type="button" disabled={mutation.busy} onClick={() => transition('cancel')}>Cancelar misión</button>}

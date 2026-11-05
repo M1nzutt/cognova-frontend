@@ -44,7 +44,8 @@ opcionales y relaciones opcionales a Materia, Actividad y Sesión del Plan.
 Un Reto no existe fuera de su Plan. Estados: `pending`, `in_progress`,
 `completed`, `failed`, `cancelled`; origen `manual` o `ai`.
 `/start`, `/complete`, `/fail` y `/cancel` aplican las transiciones
-del Backend. Solo un pendiente se edita. No hay DELETE de Retos.
+del Backend. Se pueden crear y avanzar Retos con Plan en borrador o activo;
+solo un Reto pendiente se edita. No hay DELETE de Retos.
 
 Objetivos públicos: `study_minutes` (1–1440 con Materia/Sesión),
 `activity_completion` (Actividad), `session_completion` (Sesión),
