@@ -455,3 +455,22 @@ Chrome local y rutas con respuestas API sintéticas revisaron bienvenida, login,
 Los commits y merge usan `[skip netlify]`. No hubo deploy a Netlify, llamadas productivas, cambios de Backend/Database ni smoke con Gemini. La validación completa en Docker —incluida la revisión visual con servicios integrados— sigue pendiente y no bloquea otros desarrollos. No se modificó `API_CONTRACT.md` porque las rutas y contratos no cambiaron.
 
 # Frontend Analytics — integración y validación, 2026-11-12
+
+
+# Experiencia pública — validación local y CI, 2026-11-12
+
+Rama `feat/public-experience-redesign`, SHA `7922275a5ddc57a397e3e440efca9b4043bf9c7b`. GitHub Actions run [43274185714](https://github.com/M1nzutt/cognova-frontend/actions/runs/43274185714): Frontend checks y Gitleaks, ambos `success`. Ejecutó `npm ci`, lint, typecheck, tests UTC, build, build:netlify y auditoría de producción; sin deploy.
+
+Validación local: 385/385 tests en 49 archivos, lint, TypeScript, build, build:netlify y `npm audit --omit=dev` (0 vulnerabilidades). Build:netlify usó `RENDER_API_ORIGIN=https://cognova-backend-lpsi.onrender.com`, igual al workflow; solo genera redirects del artefacto local, sin conexión. Vite mantiene el warning no fatal de PostCSS `from`.
+
+Chrome local revisó `/`, `/login`, `/register` a 1440, 1280, 1024, 768, 430, 390 y 375 px. En los 21 casos, document/body width coincidió con viewport y main no tuvo overflow. Cero errores de consola y cero peticiones a `/api/v1`; cualquier API quedó interceptada. Primer Tab: skip-link con outline sólido; tests cubren teclado, labels y toggle de contraseña.
+
+Evidencia local ignorada por Git: `.local/public-redesign-2026-11-12/`:
+- `landing-desktop-1440.png`: `816750fe85d41dd984ad3fba21269da58357517c331e0876f7ca585183fe6d0c`
+- `landing-mobile-390.png`: `79625a0dac0bfe91d9e5c1ea4bc820e78d95b9192808a288d3724a360427f357`
+- `login-desktop-1440.png`: `c983966c91a3831a72e2f58093dc568a3fc2aad8a7c2003747f31875a9030ed3`
+- `login-mobile-390.png`: `36c25c2fdf6ae78974b87c7af3749098dc988c7acc264ad382a13150a9cc0a47`
+- `register-desktop-1440.png`: `49523b27f574983ffbadb338895dee73409b3b55f30f95f04b35fae8e7d5a752`
+- `register-mobile-390.png`: `6c3d449e2850dc707feb45069908fb1106ceb41a7e7f19a8fb7dcec75b180ef8`
+
+Revisión visual local; no smoke con Backend ni producción. Sin deploy Netlify ni cambios de API/auth/Backend/Database.

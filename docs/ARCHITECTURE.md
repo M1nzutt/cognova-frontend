@@ -178,3 +178,12 @@ El recurso de consulta se remonta con clave completa (rango y filtros), cancela 
 salir y descarta respuestas abortadas. Todas las páginas se validan antes de mostrar.
 La URL conserva solo fecha/vista/filtros, nunca respuestas ni secretos. Presentación
 en zona local, links al recurso original. Contrato: CALENDAR_CONTRACT.md.
+
+
+## Experiencia pública y rutas de autenticación — 2026-11-12
+
+`PublicShell` agrupa bienvenida, login, registro y 404 con marca, skip-link, navegación pública y pie. No monta `AppShell` ni navegación interna antes de autenticar.
+
+`GuestRoute` conserva el redirect existente para usuarios autenticados en bienvenida, login y registro. El 404 está fuera de ese guard para conservar las URLs desconocidas. `EntryShell` queda reservado a onboarding bajo sus guards.
+
+`AuthFormLayout` comparte el panel visual de login/registro. `PasswordField` solo cambia el tipo visible del input; no persiste credenciales. Login y registro conservan `AuthSession`, validadores, `FormData`, endpoints y payloads. No se ofrece recuperar contraseña mientras Backend no provea endpoint y flujo contractual.

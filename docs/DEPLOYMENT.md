@@ -297,3 +297,10 @@ No se desplegó a Netlify. Los commits del código y el merge usan `[skip netlif
 Validación: 373/373 tests, lint, TypeScript, build y auditoría de runtime con cero vulnerabilidades. Persiste el warning no fatal de PostCSS sobre `from`.
 
 ## Frontend Analytics — integrado en main, sin deploy, 2026-11-12
+
+
+# Rediseño de la experiencia pública — 2026-11-12, sin deploy
+
+La rama `feat/public-experience-redesign` está publicada para validar CI. HEAD `7922275a5ddc57a397e3e440efca9b4043bf9c7b`; Actions run [43274185714](https://github.com/M1nzutt/cognova-frontend/actions/runs/43274185714) terminó `success` en Frontend checks y Gitleaks.
+
+No se desplegó a Netlify ni se usó Netlify CLI. Los commits llevan `[skip netlify]`; `build:netlify` en CI solo valida/genera el artefacto y no publica. No hubo contacto con Backend ni smoke productivo. La rama no está integrada a `main`.
