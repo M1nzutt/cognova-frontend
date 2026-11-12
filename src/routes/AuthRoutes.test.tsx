@@ -118,6 +118,28 @@ describe('authentication routes and forms', () => {
     expect(screen.getByTestId('location')).toHaveTextContent('/dashboard')
   })
 
+
+  it('keeps mobile navigation compact and exposes secondary sections on demand', async () => {
+    document.cookie = 'cognova_csrf=csrf; Path=/'
+    vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }))
+    vi.stubGlobal('fetch', vi.fn().mockImplementation(async (url: string) => url.endsWith('/refresh')
+      ? jsonResponse({ access_token: makeToken(), token_type: 'bearer' }) : jsonResponse(user)))
+    mount('/dashboard')
+
+    const navigation = await screen.findByRole('navigation', { name: 'Navegación principal' })
+    expect(navigation).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Inicio' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Calendario' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Materias' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Planes' })).toBeVisible()
+    expect(screen.queryByRole('link', { name: 'Sesiones' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /modo oscuro/i })).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByText('Más'))
+    expect(screen.getByRole('link', { name: 'Sesiones' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'IA y reflexiones' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Análisis' })).toBeVisible()
+  })
   it('shows real profile data and keeps it visible on a refresh error', async () => {
     document.cookie = 'cognova_csrf=csrf; Path=/'
     const fetchMock = vi.fn().mockImplementation(async (url: string) => url.endsWith('/refresh')
