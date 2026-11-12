@@ -1,3 +1,29 @@
+# Frontend IA — integración local en validación, 2026-11-11
+
+La rama `feat/ai-frontend` añade generación/revisión de Planes IA, snapshot
+persistido, decisiones legibles, presentación diferenciada de misiones IA y
+análisis de comportamiento desde el Backend. Contrato de Backend esperado:
+`feat/gemini-behavior` SHA `110978bc1931fd0fc5882c7a0316acd57e0e9183`, Database
+0008. La rama no está mergeada ni desplegada; no se ha probado con Gemini ni con
+un Backend productivo. La publicación y el smoke real esperan el entorno Docker
+final con Database 0008 y `GEMINI_API_KEY` configurada como secreto.
+
+Se usan snapshots JSON ya expuestos por Backend, sin estructuras de dominio ni
+reglas de negocio duplicadas. El timeout no repite escrituras; errores de
+proveedor no se muestran en bruto y el cliente respeta `Retry-After`. La página
+de comportamiento identifica historial menor a cinco sesiones y evita
+afirmaciones diagnósticas o causales.
+
+Validación local final: `npm test` y `build:netlify` aprobaron 349/349 pruebas
+en 45 archivos; lint, TypeScript y Vite también pasaron. `npm audit --omit=dev`
+reportó cero vulnerabilidades. `npm audit` completo reportó diez moderadas
+transitivas de tooling por `minimatch` bajo ESLint/TypeScript-ESLint; resolverlas
+requiere `npm audit fix --force` y el cambio mayor de ESLint 9, por eso no se
+alteró el toolchain. Sigue el warning no fatal de PostCSS `from`. No hubo cambios
+en Backend, Database ni Netlify.
+Contratos: [API_CONTRACT](API_CONTRACT.md), [AI_BEHAVIOR](AI_BEHAVIOR.md) y
+[STUDY_PLANS_CONTRACT](STUDY_PLANS_CONTRACT.md).
+
 # Frontend Planes de Estudio + Retos — publicado, 2026-11-05
 
 Netlify `https://cognova-frontend.netlify.app` publicó el merge `--no-ff`

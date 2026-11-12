@@ -1,3 +1,24 @@
+# Frontend IA — validación local, 2026-11-11
+
+Rama `feat/ai-frontend`; no mergeada ni desplegada. Pruebas con fetch interceptado
+validan el contrato esperado de Backend `feat/gemini-behavior` SHA
+`110978bc1931fd0fc5882c7a0316acd57e0e9183`; no representan smoke con Gemini ni
+Backend real. Snapshot en refresh, generación borrador, regeneración exitosa y
+fallida, historial de decisiones, misiones IA, análisis con historial menor o
+igual/mayor a cinco sesiones, error seguro y `Retry-After` tienen cobertura
+automatizada. El cleanup/auth de producción no aplica; no se crearon recursos
+externos.
+
+Resultados locales finales: `npm test` y `npm run build:netlify` aprobaron
+349/349 pruebas en 45 archivos; lint, TypeScript y build aprobaron. `npm audit
+--omit=dev`: cero vulnerabilidades. `npm audit` completo: diez vulnerabilidades
+moderadas transitivas de desarrollo por `minimatch` bajo ESLint/TypeScript-ESLint;
+la corrección ofrecida exige `--force` y baja ESLint a 9, cambio mayor que queda
+sin aplicar. Vite imprime el warning no fatal existente de PostCSS `from`.
+Dependencia de release: Docker Backend sobre Database 0008 con `GEMINI_API_KEY`
+como secreto; después se deberá verificar auth, `no-store`, rutas directas,
+refresh, responsive/teclado, errores JS y cleanup con cuenta sintética.
+
 # Planes y Retos — validación productiva, 2026-11-05
 
 Netlify `https://cognova-frontend.netlify.app`, deploy
