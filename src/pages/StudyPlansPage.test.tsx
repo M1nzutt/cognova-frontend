@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
-import { studyPlanSetup, planFixture, challengeFixture } from '../test/studyPlanSetup'
+import { studyPlanSetup, planFixture, aiPlanFixture, aiProposalFixture, challengeFixture } from '../test/studyPlanSetup'
 
 describe('study plans', () => {
   it('protects the route and shows an empty state', async () => {
@@ -32,6 +32,42 @@ describe('study plans', () => {
     await userEvent.selectOptions(screen.getByLabelText('Ver planes'), 'active')
     expect(await screen.findByText('No hay planes con este estado')).toBeVisible()
     expect(fetch.mock.calls.some(([url]) => String(url).includes('status=active'))).toBe(true)
+  })
+
+  it('generates a persisted AI draft and opens it without activating it', async () => {
+    const { fetch } = studyPlanSetup({ plans: [] })
+    const generate = await screen.findByRole('button', { name: 'Proponer un plan con IA' })
+    generate.focus(); await userEvent.keyboard('{Enter}')
+    expect(await screen.findByRole('heading', { name: 'Preparar examen' })).toBeVisible()
+    expect(screen.getByText(aiProposalFixture.explanation)).toBeVisible()
+    expect(screen.getAllByText('Borrador').length).toBeGreaterThan(0)
+    expect(screen.getByRole('button', { name: 'Aceptar propuesta' })).toBeVisible()
+    expect(fetch.mock.calls.some(([url, request]) => String(url).endsWith('/study-plans/generate') && request?.method === 'POST')).toBe(true)
+    const call = fetch.mock.calls.find(([url]) => String(url).endsWith('/study-plans/generate'))
+    expect(call?.[1]?.body).toBeUndefined()
+    expect(fetch.mock.calls.some(([url]) => String(url).endsWith('/activate'))).toBe(false)
+    expect(screen.queryByText('gemini-test-model')).not.toBeInTheDocument()
+  })
+
+  it('shows generation loading state until the API answers', async () => {
+    let release!: () => void
+    const gate = new Promise<void>(resolve => { release = resolve })
+    studyPlanSetup({ plans: [], generateGate: gate })
+    await userEvent.click(await screen.findByRole('button', { name: 'Proponer un plan con IA' }))
+    expect(screen.getByRole('button', { name: 'Preparando propuesta…' })).toBeDisabled()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    release()
+    expect(await screen.findByRole('heading', { name: 'Preparar examen' })).toBeVisible()
+  })
+
+  it('keeps the plan list visible when AI generation fails', async () => {
+    const { fetch } = studyPlanSetup({ plans: [], generateStatus: 503 })
+    await userEvent.click(await screen.findByRole('button', { name: 'Proponer un plan con IA' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('No pudimos generar una propuesta ahora')
+    expect(screen.getByRole('button', { name: 'Proponer un plan con IA' })).toBeVisible()
+    expect(screen.queryByRole('heading', { name: 'Preparar examen' })).not.toBeInTheDocument()
+    expect(screen.getByRole('alert')).not.toHaveTextContent('private detail')
+    expect(fetch.mock.calls.some(([url]) => String(url).endsWith('/study-plans/generate'))).toBe(true)
   })
 
   it('creates a manual plan and opens its direct detail route', async () => {
@@ -80,19 +116,31 @@ describe('study plans', () => {
   })
 
   it('accepts or rejects AI proposals with visible decision evidence', async () => {
-    const proposed = { ...structuredClone(planFixture), source: 'ai' as const }
+    const proposed = structuredClone(aiPlanFixture)
     studyPlanSetup({ path: '/app/study-plans/4', plans: [proposed] })
     await screen.findByRole('heading', { name: 'Preparar examen' })
     await userEvent.click(screen.getByRole('button', { name: 'Aceptar propuesta' }))
     expect(await screen.findByText(/Aceptaste Preparar examen/)).toBeVisible()
+    expect(screen.getByText('Valor propuesto')).toBeVisible()
+    expect(screen.getByText('Valor elegido')).toBeVisible()
   })
 
   it('shows that rejecting an AI proposal did not apply it', async () => {
-    const proposed = { ...structuredClone(planFixture), source: 'ai' as const }
+    const proposed = structuredClone(aiPlanFixture)
     studyPlanSetup({ path: '/app/study-plans/4', plans: [proposed] })
     await screen.findByRole('heading', { name: 'Preparar examen' })
     await userEvent.click(screen.getByRole('button', { name: 'Rechazar propuesta' }))
     expect(await screen.findByText(/Rechazaste Preparar examen; no se aplicó/)).toBeVisible()
+    expect(screen.getByText('No se eligió un valor.')).toBeVisible()
+  })
+
+  it('compares an edited AI draft with its persisted original proposal', async () => {
+    const current = { ...structuredClone(aiPlanFixture), name: 'Revisar biología', decisions: [{ id: 3, action: 'edited' as const, field_path: 'name', proposed_value: 'Preparar examen', chosen_value: 'Revisar biología', created_at: planFixture.created_at }] }
+    studyPlanSetup({ path: '/app/study-plans/4', plans: [current] })
+    expect(await screen.findByText('Nombre original')).toBeVisible()
+    expect(screen.getByText('Nombre actual')).toBeVisible()
+    expect(screen.getAllByText('Revisar biología').length).toBeGreaterThan(0)
+    expect(screen.getByText(/Editaste nombre: de Preparar examen a Revisar biología/)).toBeVisible()
   })
 
   it('requires confirmation for a safe empty draft deletion', async () => {
@@ -113,15 +161,105 @@ describe('study plans', () => {
     expect(screen.queryByRole('button', { name: 'Eliminar plan' })).not.toBeInTheDocument()
   })
 
-  it('shows decisions and a safe 503 for unavailable regeneration', async () => {
-    const proposed = { ...structuredClone(planFixture), source: 'ai' as const, decisions: [{ id: 1, action: 'edited' as const, field_path: 'objective', proposed_value: 'Estudiar', chosen_value: 'Repasar', created_at: planFixture.created_at }] }
+  it('shows decisions and safely preserves the proposal when regeneration fails', async () => {
+    const proposed = { ...structuredClone(aiPlanFixture), decisions: [{ id: 1, action: 'edited' as const, field_path: 'objective', proposed_value: 'Estudiar', chosen_value: 'Repasar', created_at: planFixture.created_at }] }
     const setup = studyPlanSetup({ path: '/app/study-plans/4', plans: [proposed] })
     expect(await screen.findByText(/Editaste objetivo/)).toBeVisible()
+    expect(screen.getByText('Valor propuesto')).toBeVisible()
+    expect(screen.getByText('Valor elegido')).toBeVisible()
     await userEvent.click(screen.getByRole('button', { name: 'Pedir otra propuesta' }))
-    expect(await screen.findByRole('alert')).toHaveTextContent('todavía no está disponible')
+    expect(await screen.findByRole('alert')).toHaveTextContent('Tu plan actual se conserva sin cambios')
     expect(screen.getByRole('alert')).not.toHaveTextContent('private detail')
     expect(setup.fetch.mock.calls.some(([url]) => String(url).endsWith('/regenerate'))).toBe(true)
     expect(setup.plans[0].decisions).toHaveLength(1)
+    expect(setup.plans[0].ai_proposal_snapshot?.explanation).toBe(aiProposalFixture.explanation)
+  })
+
+  it('shows the persisted original proposal and suggested missions on a direct detail route', async () => {
+    studyPlanSetup({ path: '/app/study-plans/4', plans: [aiPlanFixture] })
+    expect(await screen.findByText(aiProposalFixture.explanation)).toBeVisible()
+    expect(screen.getByText(aiProposalFixture.reasoning_summary)).toBeVisible()
+    expect(screen.getByText(/SUGERENCIA 1/)).toBeVisible()
+    expect(screen.getByText('En qué se basa')).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Biología' })).toHaveAttribute('href', '/app/subjects/1')
+    expect(screen.getByRole('heading', { name: 'Repasar células' })).toBeVisible()
+  })
+
+  it('keeps the previous snapshot as readable history when regeneration succeeds', async () => {
+    const setup = studyPlanSetup({ path: '/app/study-plans/4', plans: [aiPlanFixture], regenerateStatus: 200 })
+    await screen.findByText(aiProposalFixture.explanation)
+    await userEvent.click(screen.getByRole('button', { name: 'Pedir otra propuesta' }))
+    expect(await screen.findByRole('heading', { name: 'Nueva propuesta' })).toBeVisible()
+    expect(screen.getByText('Nueva propuesta solicitada.')).toBeVisible()
+    expect(screen.getByText('Valor propuesto')).toBeVisible()
+    expect(setup.plans[0].decisions).toHaveLength(1)
+    expect(setup.plans[0].decisions[0].proposed_value).toMatchObject({ plan: { name: 'Preparar examen' } })
+    expect(setup.plans[0].ai_proposal_snapshot?.plan.name).toBe('Nueva propuesta')
+  })
+
+  it('shows no pattern claim with zero completed sessions', async () => {
+    const { fetch } = studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: 0 })
+    expect(await screen.findByRole('heading', { name: 'Observaciones de tus sesiones' })).toBeVisible()
+    expect(await screen.findByText(/hacen falta sesiones para identificar patrones/i)).toBeVisible()
+    expect(screen.getByText(/0 sesiones finalizadas/)).toBeVisible()
+    expect(screen.getByText('Sigue registrando tus sesiones')).toBeVisible()
+    expect(fetch.mock.calls.some(([url, request]) => String(url).endsWith('/analysis/behavior') && request?.method === 'POST')).toBe(true)
+  })
+
+  it.each([1, 4])('shows factual entries and questions with %i sessions, without calling them a pattern', async count => {
+    studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: count })
+    expect(await screen.findByText(`Tienes ${count} sesiones finalizadas registradas.`)).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Dato de tus sesiones' })).toBeVisible()
+    expect(screen.getByText('¿Qué notas al revisar estas sesiones?')).toBeVisible()
+    expect(screen.getByText(/todavía no identifica un patrón/)).toBeVisible()
+    expect(screen.queryByText('Una observación para reflexionar')).not.toBeInTheDocument()
+  })
+
+  it.each([5, 7])('shows evidence-based observations with %i completed sessions', async count => {
+    studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: count })
+    expect(await screen.findByRole('heading', { name: 'Una observación para reflexionar' })).toBeVisible()
+    expect(screen.getByText(/Dos sesiones comenzaron/)).toBeVisible()
+    expect(screen.getByText(/Qué te ayudó a empezar/)).toBeVisible()
+    expect(screen.getByText(/se apoya en dos sesiones/)).toBeVisible()
+  })
+
+  it('presents behavior observations, evidence, questions and related resource links', async () => {
+    studyPlanSetup({ path: '/app/behavior' })
+    expect(await screen.findByText(/empezaste con más tiempo/)).toBeVisible()
+    expect(screen.getByText(/Dos sesiones comenzaron/)).toBeVisible()
+    expect(screen.getByText(/Qué te ayudó a empezar/)).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Abrir materia relacionada 1' })).toHaveAttribute('href', '/app/subjects/1')
+    expect(screen.getByRole('link', { name: 'Abrir actividad relacionada 1' })).toHaveAttribute('href', `/app/activities/${planFixture.activities[0].id}`)
+    expect(screen.getByRole('link', { name: 'Abrir sesión relacionada 1' })).toHaveAttribute('href', `/app/sessions/${planFixture.study_sessions[0].id}`)
+  })
+
+  it('distinguishes an AI mission and shows its explanation, evidence, condition and linked resource', async () => {
+    const mission = { ...challengeFixture, source: 'ai' as const, generation_criteria: { explanation: 'Se sugirió dividir el repaso en pasos breves.', evidence: ['La sesión está vinculada a Biología.'], measurable_condition: 'Completar 30 minutos de repaso.' } }
+    studyPlanSetup({ path: '/app/study-plans/4/challenges/8', challenges: [mission] })
+    expect(await screen.findByRole('heading', { name: 'Repasar células' })).toBeVisible()
+    expect(screen.getByText('MISIÓN SUGERIDA POR COGNOVA')).toBeVisible()
+    expect(screen.getByText('Se sugirió dividir el repaso en pasos breves.')).toBeVisible()
+    expect(screen.getByText('La sesión está vinculada a Biología.')).toBeVisible()
+    expect(screen.getByText(/Completar 30 minutos de repaso/)).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Biología' })).toHaveAttribute('href', '/app/subjects/1')
+  })
+
+  it('honors Retry-After without exposing provider details', async () => {
+    studyPlanSetup({ path: '/app/behavior', behaviorStatus: 503 })
+    expect(await screen.findByRole('alert')).toHaveTextContent('Espera 30 segundos')
+    expect(screen.getByRole('alert')).not.toHaveTextContent('private detail')
+  })
+
+  it('handles a 429 Gemini rate limit and a general 503 safely', async () => {
+    studyPlanSetup({ path: '/app/behavior', behaviorStatus: 429 })
+    expect(await screen.findByRole('alert')).toHaveTextContent('Espera 30 segundos')
+    expect(screen.getByRole('alert')).not.toHaveTextContent('private detail')
+  })
+
+  it('shows a safe general provider error without leaking response details', async () => {
+    studyPlanSetup({ path: '/app/behavior', behaviorStatus: 503, behaviorCode: 'PROVIDER_UNAVAILABLE' })
+    expect(await screen.findByRole('alert')).toHaveTextContent('El servicio no está disponible por ahora')
+    expect(screen.getByRole('alert')).not.toHaveTextContent('private detail')
   })
 
   it('refreshes after a 409 transition', async () => {
