@@ -1,4 +1,8 @@
-# Frontend IA — integración local en validación, 2026-11-11
+# Frontend IA — código validado localmente; merge pendiente, 2026-11-11
+
+La rama feat/ai-frontend se publicó en GitHub en SHA c25616e (incluye [skip ci] [skip netlify] según el mecanismo documentado); no está mergeada en main ni desplegada a Netlify. npm run verify pasó con lint, 349/349 pruebas, TypeScript y Vite.
+El repositorio no tiene workflows de GitHub Actions y GitHub reporta cero estados/checks y cero workflow runs para ese SHA. El CI remoto no está disponible; la integración a main queda pendiente de un check remoto aprobado. No hubo smoke real Gemini ni smoke visual completo multi-breakpoint; ambos se difieren al entorno integrado/Docker, sin bloquear el desarrollo. El rediseño visual completo sigue pendiente.
+
 
 La rama `feat/ai-frontend` añade generación/revisión de Planes IA, snapshot
 persistido, decisiones legibles, presentación diferenciada de misiones IA y

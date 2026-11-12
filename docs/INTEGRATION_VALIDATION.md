@@ -1,4 +1,8 @@
-# Frontend IA — validación local, 2026-11-11
+# Frontend IA — código validado; integración remota pendiente, 2026-11-11
+
+Rama publicada feat/ai-frontend, SHA c25616e. Sin workflows de GitHub Actions; estado y workflow runs remotos vacíos. El commit usa [skip ci] [skip netlify] para evitar Netlify, por lo que no hay CI remoto aprobado y no se integra aún a main.
+La verificación local npm run verify aprobó lint, 349/349 pruebas, TypeScript y build. No se ejecutó smoke real Gemini ni revisión visual completa multi-breakpoint. Ambos quedan para el entorno Docker integrado y no bloquean otros trabajos; el rediseño visual completo sigue pendiente.
+
 
 Rama `feat/ai-frontend`; no mergeada ni desplegada. Pruebas con fetch interceptado
 validan el contrato esperado de Backend `feat/gemini-behavior` SHA
