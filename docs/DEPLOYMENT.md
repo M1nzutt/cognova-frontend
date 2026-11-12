@@ -1,3 +1,15 @@
+## Frontend Analytics — código listo, sin deploy, 2026-11-12
+
+La rama feat/academic-analytics-ui implementa /app/analytics sobre el contrato
+Backend Analytics b9b04eb70160403b3afe5fc068fb3ed8380eacc1. Pasan localmente
+372/372 tests, lint, TypeScript, build, build:netlify y audit de producción
+(0 vulnerabilidades). GitHub Actions remoto está pendiente del push de la rama.
+
+No se desplegó a Netlify. build:netlify solo valida y genera artefactos localmente
+o en CI; requiere RENDER_API_ORIGIN para revisar redirects. No hubo smoke contra
+Backend productivo ni smoke visual integrado. Esos pasos corresponden al entorno
+Docker final. No configurar una publicación Netlify para este cambio.
+
 # Frontend IA — integrado; deploy Netlify omitido, 2026-11-12
 
 Merge a `main`: `f416679bc692661e2ad36eaebfa8f45d8c104f61` (`--no-ff`). GitHub Actions pasó en la rama (run `43155103439`) y en `main` (run `43155808579`). `.github/workflows/frontend-ci.yml` usa Node 24 y corre instalación reproducible, lint, typecheck, tests en UTC, builds, auditoría de producción y Gitleaks v3.

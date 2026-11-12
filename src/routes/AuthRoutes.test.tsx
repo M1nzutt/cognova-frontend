@@ -19,7 +19,7 @@ async function fillLogin() {
 }
 
 describe('authentication routes and forms', () => {
-  it.each(['/dashboard', '/questionnaire'])('protects %s without making up a session', async (path) => {
+  it.each(['/dashboard', '/questionnaire', '/app/analytics'])('protects %s without making up a session', async (path) => {
     const fetchMock = vi.fn()
     vi.stubGlobal('fetch', fetchMock)
     mount(path)

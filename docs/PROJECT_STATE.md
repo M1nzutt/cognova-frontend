@@ -1,3 +1,22 @@
+# Frontend Analytics — listo para CI de rama, 2026-11-12
+
+Backend Analytics está integrado en main en b9b04eb70160403b3afe5fc068fb3ed8380eacc1.
+El Frontend implementa la sección protegida Análisis en /app/analytics, con
+overview, tiempo por rango y materia, cronología por cursor y búsqueda agrupada
+de Materias, Actividades, Planes y Retos. Los filtros y rutas usan los DTOs del
+Backend y el cliente autenticado existente; la zona IANA se obtiene del navegador.
+
+Validación local: 372/372 tests en 48 archivos, lint, TypeScript, build,
+build:netlify y npm audit --omit=dev (cero vulnerabilidades de producción).
+build:netlify se ejecutó con RENDER_API_ORIGIN, igual que el workflow; no contacta
+Render ni publica. Continúa el warning no fatal preexistente de PostCSS sobre
+from. CI remoto de rama pendiente del push. No se desplegó a Netlify ni hubo
+smoke externo; el entorno final sigue siendo Docker. Rediseño visual global e
+integración/smoke en Docker siguen diferidos y no bloquean el desarrollo actual.
+
+Rama: feat/academic-analytics-ui. Base main: 61a533221bfbe22b458156f7b2588f2c829b3c86.
+El cierre Git/CI y el merge quedan pendientes de la validación remota.
+
 # Frontend IA — integrado a nivel código/CI, 2026-11-12
 
 `feat/ai-frontend` se integró a `main` con merge `--no-ff` `f416679bc692661e2ad36eaebfa8f45d8c104f61`. CI de rama: run `43155103439`, `success`; CI de main sobre el merge: run `43155808579`, `success`. El workflow `.github/workflows/frontend-ci.yml` corre en push, pull request a `main` y `workflow_dispatch`. Node 24 coincide con `netlify.toml` y cumple `engines.node >=22.12.0`.

@@ -208,16 +208,65 @@ La interfaz de Sesiones y la vista transversal están publicadas sobre Backend
 `4735a697aed69f66f3055c902a00507b66a556e0` / `0006_study_sessions`. No sintetizar
 items ni alterar recursos desde Calendario.
 
-## Analytics
+## Analytics académico
 
-- GET `/analytics/summary`
-- GET `/analytics/by-time-of-day`
-- GET `/analytics/by-duration`
-- GET `/analytics/by-subject`
+Analytics es una vista descriptiva, autenticada y de solo lectura. Consume estos
+endpoints de Backend:
 
-Con menos de 5 sesiones válidas:
-- puede devolver datos descriptivos;
-- no debe presentar patrones como concluyentes.
+- GET /api/v1/analytics/overview
+- GET /api/v1/analytics/study-time
+- GET /api/v1/analytics/timeline
+- GET /api/v1/analytics/search
+
+Todas las rutas requieren sesión válida y onboarding completo. Devuelven
+Cache-Control: no-store. El frontend no envía user_id ni infiere causas
+psicológicas a partir de los registros.
+
+### Overview
+
+Sin filtros. La respuesta contiene total_studied_seconds, total_studied_minutes,
+finished_sessions, completed_sessions, partial_sessions, postponed_sessions,
+cancelled_sessions, subjects_with_activity, completed_activities,
+pending_activities, in_progress_activities, active_plans, completed_plans,
+completed_challenges y failed_challenges. Los números de tiempo son cadenas
+decimales. Las métricas de estado describen el estado actual.
+
+### Tiempo de estudio
+
+GET /analytics/study-time requiere from y to como instantes ISO 8601 con offset
+explícito; el rango es semiabierto [from,to), from debe ser anterior a to y se
+admiten hasta 366 días transcurridos. timezone es un nombre IANA (por defecto UTC);
+la interfaz envía la zona IANA local del navegador. granularity admite day, week
+o month. El usuario puede elegir un día, semana, mes o límites personalizados.
+
+La respuesta incluye from, to, timezone, granularity, total_seconds,
+total_minutes, sessions_count, by_subject y buckets. Cada entrada de by_subject
+contiene subject_id, name, seconds, minutes y sessions_count. Cada bucket contiene
+from, to, seconds y minutes. Los intervalos se presentan en la zona horaria local
+del navegador, y los valores visibles provienen del DTO; no se derivan porcentajes.
+
+### Cronología
+
+GET /analytics/timeline requiere from y to con las mismas reglas temporales.
+category es opcional: activity, study_session, decision, plan o challenge. limit
+admite 1–100 (por defecto 50) y cursor es opaco. Responde items y next_cursor.
+Cada item incluye event_id, occurred_at, category, event_type, resource_type,
+resource_id, title, subject_id, subject_name y details. La cronología conserva
+exactamente el orden del Backend. El cursor pertenece al mismo rango y categoría;
+al cambiar filtros o fechas se inicia una paginación nueva. El Backend no expone
+los valores propuestos/elegidos ni snapshots IA en decisiones.
+
+### Búsqueda
+
+GET /analytics/search requiere prefix de 1–64 caracteres no vacíos y acepta type
+opcional (subject, activity, study_plan o study_challenge), limit 1–50 (por
+defecto 20) y cursor opaco. La respuesta incluye items y next_cursor; cada item
+contiene type, id, title, subject_id, plan_id y status. El Backend normaliza
+mayúsculas y tildes al buscar prefijos. La interfaz agrupa resultados por tipo y
+solo ofrece navegación directa cuando conoce una ruta compatible.
+
+Las rutas rechazan filtros/rangos/cursor inválidos con 422. La UI no muestra
+inferencias causales y conserva la separación entre métricas descriptivas e IA.
 
 ## History
 

@@ -1,3 +1,24 @@
+# Frontend Analytics — validación local, 2026-11-12
+
+Contrato consumido: Backend main b9b04eb70160403b3afe5fc068fb3ed8380eacc1.
+La ruta protegida /app/analytics consume overview, study-time, timeline y search
+con el ApiClient autenticado/no-store. Los rangos son límites locales convertidos
+a instantes ISO, zona IANA del navegador, máximo 366 días. La cronología conserva
+el orden/cursor del Backend; búsqueda agrupa por recurso y usa debounce/cursor.
+
+Validación local aprobada: 372/372 pruebas en 48 archivos; pruebas cubren resumen
+vacío/lleno, rangos day/week/month/custom, timezone y límite, buckets/materias,
+cinco categorías de timeline, orden/cursor/filtro, cuatro tipos de búsqueda,
+prefijo sin llamada vacía, rutas, estados, teclado y viewports móvil/tablet/escritorio.
+También pasaron lint, TypeScript, build, build:netlify y audit de producción con
+cero vulnerabilidades. build:netlify usa RENDER_API_ORIGIN requerido por el
+script; solo comprueba/genera artefactos, no despliega. Persiste el warning
+conocido no fatal de PostCSS.
+
+GitHub Actions de la rama está pendiente de push. No se hizo smoke con Backend
+real ni visual en entorno integrado; no hubo despliegue. Estas comprobaciones
+quedan para Docker. Analytics es descriptivo y la interfaz no atribuye causas.
+
 # Frontend IA — integrado a nivel código/CI, 2026-11-12
 
 Merge `--no-ff` `f416679bc692661e2ad36eaebfa8f45d8c104f61` integró `feat/ai-frontend` a `main`. GitHub Actions run `43155103439` en la rama y run `43155808579` en `main` concluyeron `success`; ambos jobs (checks frontend y Gitleaks) pasaron. La validación cubrió instalación `npm ci`, lint, `typecheck`, 349/349 tests en UTC, build, `build:netlify`, audit de producción y escaneo de secretos.
