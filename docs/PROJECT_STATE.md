@@ -1,10 +1,9 @@
-## Docker integrado — implementación preparada, pendiente de runtime — 2026-11-12
+## Docker integrado — stack integrado validado localmente — 2026-11-12
 
-La rama feat/docker-integrated-env añade imagen Nginx de producción para los
-assets React/TypeScript y proxy same-origin /api/*. No se despliega a Netlify.
-La guía del stack integrado está en el repo Backend y el smoke visual integrado
-queda pendiente de Docker habilitado. Este equipo no tiene Docker CLI/runtime,
-por lo que la imagen aún no tuvo build ni comprobación HTTP real.
+La imagen Nginx de producción se construyó y quedó healthy en el Compose real. El Dockerfile usa la sintaxis exec válida de HEALTHCHECK para /healthz; mantiene fallback de React Router y proxy same-origin /api/*. No hubo deploy a Netlify.
+
+El smoke browser headless verificó 11 rutas directas con refresh en desktop 1440×900 y móvil 390×844. Landing/login/registro respondieron; rutas protegidas sin sesión redirigieron a login. Se comprobó teclado (primer foco: “Saltar al contenido”), labels de formularios, cero overflow horizontal y cero errores JS/console no controlados. API autenticada se cubrió mediante smoke integrado; no se inició sesión desde la UI del browser. Queda pendiente iniciar sesión en el navegador con un usuario sintético y recorrer visualmente el contenido protegido.
+
 # Frontend Analytics — integrado en main, sin deploy, 2026-11-12
 
 Backend Analytics contract consumido: `b9b04eb70160403b3afe5fc068fb3ed8380eacc1`. La ruta protegida `/app/analytics` presenta overview, tiempo por rango y materia, cronología con filtros/cursor y búsqueda agrupada para Materias, Actividades, Planes y Retos. Rangos de día/semana/mes/personalizados usan la zona IANA local del navegador; se conservan el orden y los cursores del Backend.
