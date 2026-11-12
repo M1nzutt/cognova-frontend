@@ -1,16 +1,17 @@
-# Frontend IA — código validado localmente; merge pendiente, 2026-11-11
+# Frontend IA — integrado a nivel código/CI, 2026-11-12
 
-La rama feat/ai-frontend se publicó en GitHub en SHA c25616e (incluye [skip ci] [skip netlify] según el mecanismo documentado); no está mergeada en main ni desplegada a Netlify. npm run verify pasó con lint, 349/349 pruebas, TypeScript y Vite.
-El repositorio no tiene workflows de GitHub Actions y GitHub reporta cero estados/checks y cero workflow runs para ese SHA. El CI remoto no está disponible; la integración a main queda pendiente de un check remoto aprobado. No hubo smoke real Gemini ni smoke visual completo multi-breakpoint; ambos se difieren al entorno integrado/Docker, sin bloquear el desarrollo. El rediseño visual completo sigue pendiente.
+`feat/ai-frontend` se integró a `main` con merge `--no-ff` `f416679bc692661e2ad36eaebfa8f45d8c104f61`. CI de rama: run `43155103439`, `success`; CI de main sobre el merge: run `43155808579`, `success`. El workflow `.github/workflows/frontend-ci.yml` corre en push, pull request a `main` y `workflow_dispatch`. Node 24 coincide con `netlify.toml` y cumple `engines.node >=22.12.0`.
+GitHub Actions ejecuta `npm ci`, `npm run lint`, `npm run typecheck` (`tsc -b`), `npm test` con `TZ=UTC`, `npm run build`, `npm run build:netlify`, `npm audit --omit=dev` y Gitleaks v3. `build:netlify` solo genera el artefacto en el runner; no despliega. Pushes de release usan `[skip netlify]` sin suprimir CI. Gitleaks cumple la línea base de escaneo de secretos; comentarios y artifacts están desactivados. CI no usa `GEMINI_API_KEY` ni otros secretos propios.
+La auditoría de producción dio cero vulnerabilidades. La auditoría completa conserva diez vulnerabilidades moderadas transitivas de herramientas de desarrollo (`minimatch` en ESLint/TypeScript-ESLint); no bloquea el audit de producción y no se fuerza un downgrade mayor para silenciarla. No se desplegó a Netlify. No hubo smoke real Gemini ni smoke visual final multi-breakpoint; quedan para Docker integrado/rediseño y no bloquean el desarrollo. El rediseño visual completo sigue pendiente.
 
 
 La rama `feat/ai-frontend` añade generación/revisión de Planes IA, snapshot
 persistido, decisiones legibles, presentación diferenciada de misiones IA y
 análisis de comportamiento desde el Backend. Contrato de Backend esperado:
 `feat/gemini-behavior` SHA `110978bc1931fd0fc5882c7a0316acd57e0e9183`, Database
-0008. La rama no está mergeada ni desplegada; no se ha probado con Gemini ni con
-un Backend productivo. La publicación y el smoke real esperan el entorno Docker
-final con Database 0008 y `GEMINI_API_KEY` configurada como secreto.
+0008. El código IA está integrado en `main`, pero aún no se ha probado con Gemini
+ni con un Backend productivo. El despliegue y el smoke real esperan Docker con
+Database 0008 y `GEMINI_API_KEY` como secreto del Backend.
 
 Se usan snapshots JSON ya expuestos por Backend, sin estructuras de dominio ni
 reglas de negocio duplicadas. El timeout no repite escrituras; errores de

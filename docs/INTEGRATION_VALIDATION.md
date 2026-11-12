@@ -1,10 +1,11 @@
-# Frontend IA — código validado; integración remota pendiente, 2026-11-11
+# Frontend IA — integrado a nivel código/CI, 2026-11-12
 
-Rama publicada feat/ai-frontend, SHA c25616e. Sin workflows de GitHub Actions; estado y workflow runs remotos vacíos. El commit usa [skip ci] [skip netlify] para evitar Netlify, por lo que no hay CI remoto aprobado y no se integra aún a main.
-La verificación local npm run verify aprobó lint, 349/349 pruebas, TypeScript y build. No se ejecutó smoke real Gemini ni revisión visual completa multi-breakpoint. Ambos quedan para el entorno Docker integrado y no bloquean otros trabajos; el rediseño visual completo sigue pendiente.
+Merge `--no-ff` `f416679bc692661e2ad36eaebfa8f45d8c104f61` integró `feat/ai-frontend` a `main`. GitHub Actions run `43155103439` en la rama y run `43155808579` en `main` concluyeron `success`; ambos jobs (checks frontend y Gitleaks) pasaron. La validación cubrió instalación `npm ci`, lint, `typecheck`, 349/349 tests en UTC, build, `build:netlify`, audit de producción y escaneo de secretos.
+No hubo deploy a Netlify; los pushes usan `[skip netlify]` y `build:netlify` únicamente prepara el artefacto en Actions. `npm audit --omit=dev` encontró cero vulnerabilidades. La auditoría completa tiene diez moderadas transitivas de herramientas de desarrollo por `minimatch`; se mantienen documentadas y no se aplica downgrade mayor. No se necesita `GEMINI_API_KEY` en el frontend ni en CI.
+No se ejecutó smoke real Gemini ni smoke visual final multi-breakpoint. Ambos quedan para Docker integrado y el rediseño; no bloquean otros desarrollos. Rediseño visual completo pendiente.
 
 
-Rama `feat/ai-frontend`; no mergeada ni desplegada. Pruebas con fetch interceptado
+Código integrado a `main` por el merge indicado arriba; no desplegado a Netlify. Pruebas con fetch interceptado
 validan el contrato esperado de Backend `feat/gemini-behavior` SHA
 `110978bc1931fd0fc5882c7a0316acd57e0e9183`; no representan smoke con Gemini ni
 Backend real. Snapshot en refresh, generación borrador, regeneración exitosa y

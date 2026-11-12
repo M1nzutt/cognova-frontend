@@ -1,10 +1,11 @@
-# Frontend IA — rama publicada, Netlify omitido, 2026-11-11
+# Frontend IA — integrado; deploy Netlify omitido, 2026-11-12
 
-La rama feat/ai-frontend se publicó en SHA c25616e. El commit lleva [skip ci] [skip netlify], conforme al mecanismo documentado, y no se inició build ni deploy Netlify. No hay workflows de GitHub Actions en el repo; GitHub no devolvió checks ni workflow runs para el SHA, así que la rama no se integra hasta que haya CI remoto aprobado.
-Smoke real Gemini y validación visual completa multi-breakpoint están diferidos al entorno integrado/Docker; no bloquean el desarrollo. Rediseño visual completo pendiente.
+Merge a `main`: `f416679bc692661e2ad36eaebfa8f45d8c104f61` (`--no-ff`). GitHub Actions pasó en la rama (run `43155103439`) y en `main` (run `43155808579`). `.github/workflows/frontend-ci.yml` usa Node 24 y corre instalación reproducible, lint, typecheck, tests en UTC, builds, auditoría de producción y Gitleaks v3.
+El merge usa `[skip netlify]` sin `[skip ci]`; Netlify no hizo build ni deploy. `build:netlify` solo se ejecuta en el runner de Actions para verificar la generación local del artefacto. Gitleaks forma parte de la línea base de seguridad; es una cuenta personal, no requiere licencia adicional, y comentarios/artifacts se desactivaron. CI usa el `GITHUB_TOKEN` automático con permisos de lectura y no requiere `GEMINI_API_KEY`.
+Smoke real Gemini y validación visual final multi-breakpoint se difieren al entorno Docker integrado; no bloquean el desarrollo. Rediseño visual completo pendiente.
 
 
-La rama `feat/ai-frontend` está en desarrollo y no se ha publicado a Netlify.
+La rama `feat/ai-frontend` ya está integrada a `main`, pero no desplegada a Netlify.
 No se ejecutó smoke productivo ni se confirmó el comportamiento contra Backend.
 Su publicación requiere que el entorno Docker final exponga el contrato
 `POST /study-plans/generate`, `/regenerate` y `/analysis/behavior` sobre Database
