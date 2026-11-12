@@ -1,6 +1,7 @@
 import { ApiClient } from '../api/client'
 import { ApiError } from '../api/ApiError'
-import { readPlan, readPlanList } from '../utils/readStudyPlan'
+import { readAiPlanGeneration, readPlan, readPlanList } from '../utils/readStudyPlan'
+import type { AiPlanGenerationResponse } from '../types/ai'
 import type { PlanStatus, StudyPlan, StudyPlanList, StudyPlanWrite } from '../types/studyPlan'
 
 export function planPath(id: number): string {
@@ -22,6 +23,10 @@ const writable = (value: StudyPlanWrite): StudyPlanWrite => ({
 
 export class StudyPlanService {
   constructor(private readonly client: ApiClient) {}
+
+  async generate(signal?: AbortSignal): Promise<AiPlanGenerationResponse> {
+    return readAiPlanGeneration(await this.client.request('/study-plans/generate', { method: 'POST', signal }))
+  }
 
   async list(status: PlanStatus | 'all' = 'all', afterId?: number, signal?: AbortSignal): Promise<StudyPlanList> {
     return readPlanList(await this.client.request('/study-plans', {

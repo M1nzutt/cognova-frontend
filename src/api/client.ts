@@ -51,7 +51,7 @@ export class ApiClient {
       })
     } catch (error) {
       if (options.signal?.aborted) throw error
-      throw new ApiError(timeout.aborted ? 'El servidor tardó demasiado en responder. Inténtalo de nuevo.' : 'No pudimos conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.')
+      throw new ApiError(timeout.aborted ? 'El servidor tardó demasiado en responder. Inténtalo de nuevo.' : 'No pudimos conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.', 0, timeout.aborted ? 'TIMEOUT' : 'NETWORK_ERROR')
     }
     if (token && version !== this.getSessionVersion()) throw new DOMException('Session changed', 'AbortError')
     if (response.status === 401 && token) {
@@ -76,9 +76,19 @@ export class ApiClient {
     if (!response.ok) {
       const error = data && typeof data === 'object' && 'error' in data ? data.error : undefined
       const code = error && typeof error === 'object' && 'code' in error && typeof error.code === 'string' ? error.code : 'HTTP_ERROR'
-      throw new ApiError(errorMessage(code, response.status), response.status, code)
+      const retryAfterSeconds = parseRetryAfter(response.headers.get('Retry-After'))
+      throw new ApiError(errorMessage(code, response.status), response.status, code, retryAfterSeconds)
     }
     if (data === undefined && response.status !== 204) throw new ApiError('El servidor devolvió una respuesta no válida.', response.status, 'INVALID_RESPONSE')
     return data as T
   }
+}
+
+function parseRetryAfter(value: string | null): number | null {
+  if (!value) return null
+  const seconds = Number(value)
+  if (Number.isFinite(seconds) && seconds >= 0) return Math.min(Math.ceil(seconds), 86_400)
+  const date = Date.parse(value)
+  if (!Number.isFinite(date)) return null
+  return Math.min(Math.max(0, Math.ceil((date - Date.now()) / 1000)), 86_400)
 }
