@@ -459,7 +459,7 @@ Los commits y merge usan `[skip netlify]`. No hubo deploy a Netlify, llamadas pr
 
 # Experiencia pública — validación local y CI, 2026-11-12
 
-Rama `feat/public-experience-redesign`, SHA `7922275a5ddc57a397e3e440efca9b4043bf9c7b`. GitHub Actions run [43274185714](https://github.com/M1nzutt/cognova-frontend/actions/runs/43274185714): Frontend checks y Gitleaks, ambos `success`. Ejecutó `npm ci`, lint, typecheck, tests UTC, build, build:netlify y auditoría de producción; sin deploy.
+Rama `feat/public-experience-redesign`, implementación SHA `7922275a5ddc57a397e3e440efca9b4043bf9c7b`. GitHub Actions run [43274185714](https://github.com/M1nzutt/cognova-frontend/actions/runs/43274185714): Frontend checks y Gitleaks, ambos `success`. Ejecutó `npm ci`, lint, typecheck, tests UTC, build, build:netlify y auditoría de producción; sin deploy. El commit documental posterior `6d1f7be83dc934b54fcd01494f66570ab47e7ba4` también pasó el run [43276611548](https://github.com/M1nzutt/cognova-frontend/actions/runs/43276611548).
 
 Validación local: 385/385 tests en 49 archivos, lint, TypeScript, build, build:netlify y `npm audit --omit=dev` (0 vulnerabilidades). Build:netlify usó `RENDER_API_ORIGIN=https://cognova-backend-lpsi.onrender.com`, igual al workflow; solo genera redirects del artefacto local, sin conexión. Vite mantiene el warning no fatal de PostCSS `from`.
 

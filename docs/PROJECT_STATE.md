@@ -409,7 +409,7 @@ No se desplegó a Netlify ni se llamó Backend productivo. El merge y los commit
 
 # Experiencia pública — rediseño en rama, 2026-11-12
 
-La rama `feat/public-experience-redesign` parte de `main` SHA `22783e6cff54600518d9db05db3d991832d73031`. Su HEAD publicado es `7922275a5ddc57a397e3e440efca9b4043bf9c7b`; GitHub Actions run [43274185714](https://github.com/M1nzutt/cognova-frontend/actions/runs/43274185714) pasó en Frontend checks y Gitleaks. Sigue en la rama, sin merge a `main` ni deploy.
+La rama `feat/public-experience-redesign` parte de `main` SHA `22783e6cff54600518d9db05db3d991832d73031`. El SHA de implementación validado es `7922275a5ddc57a397e3e440efca9b4043bf9c7b`; CI run [43274185714](https://github.com/M1nzutt/cognova-frontend/actions/runs/43274185714) pasó en Frontend checks y Gitleaks. El commit documental `6d1f7be83dc934b54fcd01494f66570ab47e7ba4` también pasó CI run [43276611548](https://github.com/M1nzutt/cognova-frontend/actions/runs/43276611548). Sigue en la rama, sin merge a `main` ni deploy.
 
 `PublicShell` agrupa bienvenida, login, registro y 404 sin sidebar. Login y registro conservan `GuestRoute`; onboarding conserva `EntryShell` y sus protecciones. Contratos, endpoints, payloads, validación y auth no cambiaron. No se muestra recuperación de contraseña porque la API no ofrece ese flujo.
 
