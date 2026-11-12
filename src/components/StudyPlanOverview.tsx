@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { PlanBranch, StudyPlan } from '../types/studyPlan'
-import { decisionText, planStatusLabels, sourceLabels } from '../utils/studyPlanPresentation'
+import { decisionText, decisionValues, planStatusLabels, sourceLabels } from '../utils/studyPlanPresentation'
 import { localDateTime } from '../utils/studySessionPresentation'
 import styles from './StudyPlans.module.css'
 
@@ -58,7 +58,17 @@ export function StudyPlanOverview({ plan }: { plan: StudyPlan }) {
     <section className={styles.panel} aria-labelledby="plan-decisions">
       <h2 id="plan-decisions">Decisiones sobre el plan</h2>
       {plan.decisions.length === 0 ? <p>Aún no hay cambios o decisiones guardadas.</p>
-        : <ol className={styles.resourceList}>{plan.decisions.map(decision => <li key={decision.id}><time dateTime={decision.created_at}>{localDateTime(decision.created_at)}</time>: {decisionText(decision)}</li>)}</ol>}
+        : <ol className={styles.resourceList}>{plan.decisions.map(decision => {
+          const values = decisionValues(decision)
+          const action = decision.action === 'accepted' ? 'Aceptada' : decision.action === 'rejected' ? 'Rechazada' : decision.action === 'edited' ? 'Editada' : 'Nueva propuesta solicitada'
+          return <li key={decision.id}>
+            <time dateTime={decision.created_at}>{localDateTime(decision.created_at)}</time>: <strong>{action}.</strong> {decisionText(decision)}
+            <dl className={styles.summary}>
+              <dt>Valor propuesto</dt><dd>{values.proposed}</dd>
+              <dt>Valor elegido</dt><dd>{values.chosen}</dd>
+            </dl>
+          </li>
+        })}</ol>}
     </section>
   </div>
 }

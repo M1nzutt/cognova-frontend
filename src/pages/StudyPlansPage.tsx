@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useStudyPlanServices } from '../hooks/useStudyPlanServices'
 import { useStudyPlanResource } from '../hooks/useStudyPlanResource'
 import { useStudyPlanMutation } from '../hooks/useStudyPlanMutation'
@@ -17,14 +17,24 @@ export function StudyPlansPage() {
   const load = useCallback((signal: AbortSignal) => services.plans.list(status, undefined, signal), [services, status])
   const resource = useStudyPlanResource(load)
   const more = useStudyPlanMutation()
+  const generate = useStudyPlanMutation()
+  const navigate = useNavigate()
   const page = resource.data
   const changeStatus = (value: PlanStatus | 'all') => setParams(value === 'all' ? {} : { status: value })
 
   return <section className={styles.page}>
     <div className={styles.heading}>
       <div><p className="eyebrow">TU PRÓXIMO PASO</p><h1>Planes de estudio</h1><p>Organiza materias, actividades y sesiones en un solo recorrido.</p></div>
-      <Link className={styles.primary} to="/app/study-plans/new">Crear plan</Link>
+      <div className={styles.actions}>
+        <Link className="button" to="/app/study-plans/new">Crear plan</Link>
+        <button className={styles.primary} type="button" disabled={generate.busy} aria-busy={generate.busy}
+          onClick={() => void generate.run(signal => services.plans.generate(signal), result => navigate(`/app/study-plans/${result.plan.id}`))}>
+          {generate.busy ? 'Preparando propuesta…' : 'Proponer un plan con IA'}
+        </button>
+      </div>
     </div>
+    <p className={styles.muted}>La IA prepara un borrador para que lo revises. Solo tú decides si lo aceptas.</p>
+    {generate.error && <p role="alert" className={styles.error}>{generate.error}</p>}
     <div className={styles.filters}>
       <label htmlFor="plan-status">Ver planes</label>
       <select id="plan-status" value={status} onChange={event => changeStatus(event.target.value as PlanStatus | 'all')}>
