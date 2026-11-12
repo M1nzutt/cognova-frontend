@@ -444,3 +444,14 @@ Las cuatro capturas revisadas y sus hashes están en
 **Frontend Calendario mixto queda cerrado de punta a punta y puede continuar la siguiente fase.**
 
 ## Historial — Calendario, integración productiva aprobada, 2026-10-26
+# Rediseño visual — integración validada, 2026-11-12
+
+La rama `feat/cognova-visual-redesign`, SHA `a66b995aec8d7ec44317f159a5cc111d43b75b34`, pasó CI run [43182426915](https://github.com/M1nzutt/cognova-frontend/actions/runs/43182426915). Se integró con merge `--no-ff` `4cf2e13b2ed3bb566d02e5b39655b8f4aa4223ef`; CI de `main` run [43182852232](https://github.com/M1nzutt/cognova-frontend/actions/runs/43182852232) pasó. Los dos runs incluyeron checks frontend, build de artefacto sin deploy, auditoría de producción y Gitleaks.
+
+Validación local: 373/373 tests en 48 archivos, `npm run lint`, `npm run typecheck`, `npm run build` y `npm audit --omit=dev` (cero vulnerabilidades). El build mantiene el warning no fatal de PostCSS sobre la opción `from`.
+
+Chrome local y rutas con respuestas API sintéticas revisaron bienvenida, login, dashboard y Calendario. Se inspeccionaron capturas de escritorio y móvil; Calendario se midió a 1440, 1280, 1024, 768, 390 y 375 px, con ancho de documento igual al viewport y sin excepciones JavaScript. Esto no fue smoke contra Backend ni prueba productiva. La suite cubre teclado, navegación adaptativa y estados accesibles.
+
+Los commits y merge usan `[skip netlify]`. No hubo deploy a Netlify, llamadas productivas, cambios de Backend/Database ni smoke con Gemini. La validación completa en Docker —incluida la revisión visual con servicios integrados— sigue pendiente y no bloquea otros desarrollos. No se modificó `API_CONTRACT.md` porque las rutas y contratos no cambiaron.
+
+# Frontend Analytics — integración y validación, 2026-11-12

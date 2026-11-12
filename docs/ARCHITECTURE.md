@@ -38,7 +38,7 @@ Ya existe:
 - React + TypeScript + Vite;
 - React Router;
 - AppShell;
-- tema claro/oscuro;
+- tema claro único mediante CSS Modules y tokens;
 - CSS Modules/tokens;
 - cliente Fetch/AuthService inicial;
 - tests iniciales de auth service.
@@ -87,7 +87,8 @@ Evitar componentes gigantes y lógica de red duplicada.
 Decisión confirmada: CSRF Path=/ y refresh HttpOnly Path=/api/v1/auth. Netlify publica la SPA y reenvía /api/* a Render, con cookies host-only. El contrato está sincronizado; la integración productiva verificada se registra
 en INTEGRATION_VALIDATION. No se reescriben cookies ni se omite CSRF.
 
-LocalStorage queda permitido para preferencias no sensibles, por ejemplo tema visual.
+LocalStorage queda permitido para preferencias no sensibles. El tema visual vigente
+es único y claro; la autenticación nunca usa Web Storage.
 
 ## Estado de sesión
 
@@ -149,10 +150,16 @@ Frontend nunca contiene:
 - Notion-like;
 - pastel suave;
 - detalles cósmicos discretos;
-- claro/oscuro;
+- tema claro único;
 - responsive;
 - accesible;
 - sin estética infantil/gamer.
+
+El rediseño global de noviembre de 2026 usa tokens de color, tipografía, espacio,
+radios y elevación compartidos. El rail de escritorio usa ciruela con navegación
+de alto contraste; en móvil se transforma en navegación inferior clara con accesos
+principales y un menú secundario. Los calendarios cambian a tarjetas de días en
+pantallas estrechas. No se modifican rutas, contratos, permisos ni flujos de API.
 
 ## Build/hosting
 

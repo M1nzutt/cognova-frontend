@@ -62,7 +62,15 @@ formulación conceptual anterior de Retos como propuesta IA aceptada e ineditabl
 - Sin pantalla especial para estructuras.
 - Seed/demo reproducible.
 - Diseño: Notion + pastel + detalles cósmicos discretos.
-- Tema claro y oscuro.
+- Tema claro único; no ofrecer selector ni variante oscura en la interfaz vigente.
+
+## Rediseño visual vigente — 2026-11-12
+
+La experiencia usa tokens visuales compartidos, una identidad ciruela/lavanda,
+navegación lateral de alto contraste en escritorio y navegación inferior adaptable
+en móvil. El calendario conserva lectura de mes/semana y presenta días como
+tarjetas en pantallas estrechas. Las mejoras son de presentación y accesibilidad;
+no cambian rutas, contratos REST, reglas de dominio ni persistencia.
 
 ## Autenticación — decisión vigente 2026-10-05
 

@@ -667,12 +667,11 @@ No se busca una interfaz infantil ni saturada de estrellas.
 
 # 27. Tema
 
-Debe existir:
+La interfaz actual se ofrece únicamente en tema claro. La misma identidad Cognova
+se aplica en desktop y móvil; no se muestra un selector de tema oscuro.
 
-- modo claro;
-- modo oscuro.
-
-Ambos deben conservar la misma identidad visual.
+El CSS declara `color-scheme: light` y los componentes consumen los tokens
+compartidos de ciruela, orquídea, lavanda y papel.
 
 ---
 

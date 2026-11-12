@@ -288,3 +288,12 @@ runner y verifica que no se use `start_at`. Commit `c2edfd2` pasó
 arriba. Ver evidencia de smoke en `INTEGRATION_VALIDATION.md`.
 
 ## Histórico — Calendario publicado y cerrado, 2026-10-26
+## Rediseño visual — integrado en main, Netlify omitido, 2026-11-12
+
+La rama `feat/cognova-visual-redesign` SHA `a66b995aec8d7ec44317f159a5cc111d43b75b34` pasó CI run `43182426915`. Merge `--no-ff` a `main`: `4cf2e13b2ed3bb566d02e5b39655b8f4aa4223ef`; CI de `main` run `43182852232` pasó.
+
+No se desplegó a Netlify. Los commits del código y el merge usan `[skip netlify]`; GitHub Actions ejecutó `build:netlify` solo para validar/generar el artefacto. No hubo smoke productivo ni llamadas a Backend. El chequeo visual local con Chrome y datos sintéticos está documentado en `INTEGRATION_VALIDATION.md`; smoke integrado y revisión visual con servicios reales quedan para Docker.
+
+Validación: 373/373 tests, lint, TypeScript, build y auditoría de runtime con cero vulnerabilidades. Persiste el warning no fatal de PostCSS sobre `from`.
+
+## Frontend Analytics — integrado en main, sin deploy, 2026-11-12

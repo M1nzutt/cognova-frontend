@@ -6,7 +6,7 @@ Backend Analytics contract consumido: `b9b04eb70160403b3afe5fc068fb3ed8380eacc1`
 
 Validación local: 372/372 tests en 48 archivos, lint, TypeScript, build, build:netlify y `npm audit --omit=dev` con cero vulnerabilidades de producción. Persiste el warning no fatal de PostCSS sobre `from`. La auditoría completa conserva diez vulnerabilidades moderadas transitivas de tooling y no se forzó un downgrade mayor.
 
-No hubo deploy a Netlify ni smoke real contra Backend ni revisión visual completa multi-breakpoint. El merge omite Netlify con `[skip netlify]`; `build:netlify` solo valida y genera artefactos. Smoke integrado y revisión visual final quedan para Docker/rediseño; no bloquean continuar desarrollo. El rediseño visual global sigue pendiente.
+No hubo deploy a Netlify ni smoke real contra Backend en esa fase. El merge omite Netlify con `[skip netlify]`; `build:netlify` solo valida y genera artefactos. La revisión visual del rediseño global quedó registrada en la sección vigente superior; el smoke integrado con Backend queda para Docker y no bloquea continuar desarrollo.
 
 Rama publicada: `feat/academic-analytics-ui`, SHA `4d878db2456209b25558d3d478d6893cfc71a0f4`. `main` integrado en `b7b27be1e39853c10e7bfad574969dab50804bec`.
 
@@ -14,7 +14,7 @@ Rama publicada: `feat/academic-analytics-ui`, SHA `4d878db2456209b25558d3d478d68
 
 `feat/ai-frontend` se integró a `main` con merge `--no-ff` `f416679bc692661e2ad36eaebfa8f45d8c104f61`. CI de rama: run `43155103439`, `success`; CI de main sobre el merge: run `43155808579`, `success`. El workflow `.github/workflows/frontend-ci.yml` corre en push, pull request a `main` y `workflow_dispatch`. Node 24 coincide con `netlify.toml` y cumple `engines.node >=22.12.0`.
 GitHub Actions ejecuta `npm ci`, `npm run lint`, `npm run typecheck` (`tsc -b`), `npm test` con `TZ=UTC`, `npm run build`, `npm run build:netlify`, `npm audit --omit=dev` y Gitleaks v3. `build:netlify` solo genera el artefacto en el runner; no despliega. Pushes de release usan `[skip netlify]` sin suprimir CI. Gitleaks cumple la línea base de escaneo de secretos; comentarios y artifacts están desactivados. CI no usa `GEMINI_API_KEY` ni otros secretos propios.
-La auditoría de producción dio cero vulnerabilidades. La auditoría completa conserva diez vulnerabilidades moderadas transitivas de herramientas de desarrollo (`minimatch` en ESLint/TypeScript-ESLint); no bloquea el audit de producción y no se fuerza un downgrade mayor para silenciarla. No se desplegó a Netlify. No hubo smoke real Gemini ni smoke visual final multi-breakpoint; quedan para Docker integrado/rediseño y no bloquean el desarrollo. El rediseño visual completo sigue pendiente.
+La auditoría de producción dio cero vulnerabilidades. La auditoría completa conserva diez vulnerabilidades moderadas transitivas de herramientas de desarrollo (`minimatch` en ESLint/TypeScript-ESLint); no bloquea el audit de producción y no se fuerza un downgrade mayor para silenciarla. No se desplegó a Netlify ni hubo smoke real Gemini. La revisión visual local del rediseño se registra en la sección vigente superior; el smoke integrado con Gemini queda para Docker y no bloquea el desarrollo.
 
 
 La rama `feat/ai-frontend` añade generación/revisión de Planes IA, snapshot
@@ -394,3 +394,14 @@ Git: 81 commits iniciales; 26 commits creados en esta tarea, 107 totales; faltan
 **Sesiones queda implementada y publicada.** La integración de Sesiones en
 Calendario y la auditoría moderada de herramientas de desarrollo son pendientes
 separados; no bloquean el flujo independiente de Sesiones.
+# Rediseño visual Cognova — integrado en main, sin deploy, 2026-11-12
+
+`feat/cognova-visual-redesign` se publicó en `a66b995aec8d7ec44317f159a5cc111d43b75b34` y pasó GitHub Actions, run [43182426915](https://github.com/M1nzutt/cognova-frontend/actions/runs/43182426915). Se integró a `main` con merge `--no-ff` `4cf2e13b2ed3bb566d02e5b39655b8f4aa4223ef`; CI del merge, run [43182852232](https://github.com/M1nzutt/cognova-frontend/actions/runs/43182852232), concluyó `success`.
+
+El rediseño cubre sistema de tokens, navegación, bienvenida, auth/onboarding, dashboard, Materias, Actividades, Calendario, Sesiones, Planes/Retos y Análisis. Cognova se ofrece en tema claro único. No cambian rutas, contratos REST, auth, reglas académicas ni persistencia; `API_CONTRACT.md` queda sin cambios.
+
+Validación local: 373/373 tests en 48 archivos, lint, TypeScript, build y `npm audit --omit=dev` con cero vulnerabilidades de producción. La suite remota también pasó `build:netlify` y Gitleaks. Chrome local con API sintética revisó bienvenida, login, dashboard y Calendario; breakpoints 1440, 1280, 1024, 768, 390 y 375 px no tuvieron overflow horizontal en Calendario, y no hubo excepciones JavaScript.
+
+No se desplegó a Netlify ni se llamó Backend productivo. El merge y los commits del rediseño incluyen `[skip netlify]`; `build:netlify` de Actions solo validó artefactos y no publicó. El smoke visual y funcional contra Docker integrado sigue pendiente, incluyendo IA real; no bloquea otros desarrollos. Persiste el warning no fatal de PostCSS sobre `from`.
+
+# Frontend Analytics — integrado en main, sin deploy, 2026-11-12
