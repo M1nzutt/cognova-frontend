@@ -1,5 +1,6 @@
 import type { ActivityPriority, ActivityStatus } from './activity'
 import type { SessionContext, SessionExecutionState, SessionResult } from './studySession'
+import type { AiPlanProposalSnapshot } from './ai'
 
 export const planStatuses = ['draft', 'active', 'completed', 'abandoned'] as const
 export const planSources = ['ai', 'manual'] as const
@@ -60,6 +61,7 @@ export interface PlanBranch {
 export interface WeeklyRhythmEntry { weekday: number; name: string; planned_minutes: number }
 export interface CandidateSlot { start_at: string; end_at: string; duration_minutes: number }
 export interface StudyPlan extends StudyPlanSummary {
+  ai_proposal_snapshot: AiPlanProposalSnapshot | null
   subjects: PlanSubject[]
   activities: PlanActivity[]
   study_sessions: PlanSession[]
