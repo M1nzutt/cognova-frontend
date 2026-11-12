@@ -28,19 +28,20 @@ import { DashboardPendingPage } from '../pages/DashboardPendingPage'
 import { QuestionnairePage } from '../pages/QuestionnairePage'
 import { ProtectedRoute } from './ProtectedRoute'
 import { GuestRoute } from './GuestRoute'
+import { PublicShell } from '../components/PublicShell'
 
 export function AppRoutes() {
   return (
     <Routes>
-      <Route element={<AppShell />}>
-        <Route index element={<WelcomePage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
-      <Route element={<EntryShell />}>
+      <Route element={<PublicShell />}>
         <Route element={<GuestRoute />}>
+          <Route index element={<WelcomePage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
+      </Route>
+      <Route element={<EntryShell />}>
         <Route element={<ProtectedRoute />}>
           <Route element={<OnboardingRoute />}>
             <Route path="onboarding/academic-profile" element={<AcademicProfilePage />} />

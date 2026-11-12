@@ -1,5 +1,5 @@
 import { StrictMode } from 'react'
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, useLocation } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
@@ -19,6 +19,28 @@ async function fillLogin() {
 }
 
 describe('authentication routes and forms', () => {
+  it.each(['/', '/login', '/register'])('keeps the public shell free of internal navigation on %s', async (path) => {
+    vi.stubGlobal('fetch', vi.fn())
+    mount(path)
+
+    expect(await screen.findByRole('navigation', { name: 'Navegación pública' })).toBeVisible()
+    expect(screen.queryByRole('navigation', { name: 'Navegación principal' })).not.toBeInTheDocument()
+    for (const label of ['Materias', 'Actividades', 'Calendario', 'Sesiones', 'Planes', 'Retos', 'Análisis']) {
+      expect(screen.queryByRole('link', { name: label })).not.toBeInTheDocument()
+    }
+  })
+
+  it('shows the welcome page inside the public shell without an app sidebar', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+    mount('/')
+
+    expect(await screen.findByRole('heading', { name: /estudio/i })).toBeVisible()
+    const navigation = screen.getByRole('navigation', { name: 'Navegación pública' })
+    expect(within(navigation).getByRole('link', { name: 'Crear cuenta' })).toHaveAttribute('href', '/register')
+    expect(within(navigation).getByRole('link', { name: 'Iniciar sesión' })).toHaveAttribute('href', '/login')
+    expect(screen.queryByRole('navigation', { name: 'Navegación principal' })).not.toBeInTheDocument()
+  })
+
   it.each(['/dashboard', '/questionnaire', '/app/analytics'])('protects %s without making up a session', async (path) => {
     const fetchMock = vi.fn()
     vi.stubGlobal('fetch', fetchMock)
