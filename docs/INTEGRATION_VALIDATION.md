@@ -1,3 +1,9 @@
+# Docker Frontend — build y smoke local completados — 2026-11-12
+
+docker compose build incluyó Frontend y pasó; el servicio Nginx quedó healthy en /healthz y el proxy /api/* llegó al Backend. El Dockerfile ahora usa la forma JSON exec válida de Docker HEALTHCHECK CMD y conserva el endpoint. No se desplegó a Netlify.
+
+Smoke de browser con Edge headless: 11 rutas comprobadas por URL directa y refresh en desktop 1440×900 y móvil 390×844, todas con respuesta SPA 200. Rutas protegidas redirigieron a login sin auth; teclado inició en “Saltar al contenido”; se verificaron labels. No hubo overflow horizontal ni errores JavaScript/console no controlados. No se introdujeron credenciales en el browser, por lo que el flujo autenticado UI queda pendiente; los endpoints autenticados se validaron por API.
+
 # Frontend Analytics — integración y validación, 2026-11-12
 
 Contrato consumido: Backend main `b9b04eb70160403b3afe5fc068fb3ed8380eacc1`. La ruta protegida `/app/analytics` consume overview, study-time, timeline y search con el ApiClient autenticado/no-store. Los rangos locales se convierten a instantes ISO y usan la zona IANA del navegador, con máximo de 366 días. Cronología mantiene orden/cursor del Backend; búsqueda agrupa resultados y pagina con cursor.
