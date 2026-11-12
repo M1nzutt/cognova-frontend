@@ -6,12 +6,12 @@
 .heroActions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.5rem; }
 .heroPrimary { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; padding: .7rem 1.2rem; border: 1px solid var(--accent); border-radius: var(--radius-pill); color: white; background: var(--accent); font-size: .9rem; font-weight: 700; text-decoration: none; }
 .heroPrimary:hover { border-color: var(--color-plum-950); background: var(--color-plum-950); }
-.heroSecondary { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; padding: .7rem 1.1rem; border: 1px solid var(--color-border-strong); border-radius: var(--radius-pill); color: var(--color-plum-900); background: rgb(255 254 255 / .72); font-size: .9rem; font-weight: 700; text-decoration: none; }
+.heroSecondary { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; padding: .7rem 1.1rem; border: 1px solid var(--color-border-strong); border-radius: var(--radius-pill); color: var(--color-plum-900); background: var(--color-paper-glass); font-size: .9rem; font-weight: 700; text-decoration: none; }
 .heroArtwork { position: relative; display: grid; min-height: 290px; place-items: center; }
-.orbit { position: relative; display: grid; width: min(100%, 310px); aspect-ratio: 1; place-items: center; border: 1px solid rgb(110 52 130 / .2); border-radius: 50%; transform: rotate(-24deg); }
-.orbit::before, .orbit::after { position: absolute; inset: 12%; border: 1px solid rgb(110 52 130 / .18); border-radius: 50%; content: ''; }
-.orbit::after { inset: 26%; border-color: rgb(110 52 130 / .2); }
-.orbitCore { z-index: 1; display: grid; width: 78px; height: 78px; place-items: center; border: 1px solid var(--color-orchid-500); border-radius: 50%; color: var(--color-plum-900); background: rgb(255 254 255 / .68); transform: rotate(24deg); }
+.orbit { position: relative; display: grid; width: min(100%, 310px); aspect-ratio: 1; place-items: center; border: 1px solid var(--color-plum-line); border-radius: 50%; transform: rotate(-24deg); }
+.orbit::before, .orbit::after { position: absolute; inset: 12%; border: 1px solid var(--color-plum-line-mid); border-radius: 50%; content: ''; }
+.orbit::after { inset: 26%; border-color: var(--color-plum-line); }
+.orbitCore { z-index: 1; display: grid; width: 78px; height: 78px; place-items: center; border: 1px solid var(--color-orchid-500); border-radius: 50%; color: var(--color-plum-900); background: var(--color-paper-glass-soft); transform: rotate(24deg); }
 .orbitDot { position: absolute; top: 13%; right: 16%; width: 13px; height: 13px; border: 2px solid var(--color-lilac-100); border-radius: 50%; background: var(--color-orchid-600); }
 .orbitDot:nth-child(3) { top: auto; right: auto; bottom: 16%; left: 17%; width: 9px; height: 9px; background: var(--color-plum-800); }
 .notice { display: flex; align-items: flex-start; gap: .8rem; margin: 0 0 1.5rem; padding: 1rem 1.1rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }

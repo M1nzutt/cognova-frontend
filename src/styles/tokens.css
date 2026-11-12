@@ -17,12 +17,38 @@
   --color-danger: #9B4050;
   --color-success: #476B55;
   --color-warning: #815A2C;
+  --color-surface-muted: #F8F3FA;
+  --color-surface-soft: #FCF8FD;
+  --color-surface-hover: #FDF9FE;
+  --color-surface-danger: #FFF7F8;
+  --color-border-danger: #E7C8D0;
+  --color-border-danger-soft: #DDB9C1;
+  --color-badge: #FBF6FD;
+  --color-muted-soft: #8D8293;
+  --color-placeholder: #83788A;
+  --color-sidebar: var(--color-plum-950);
+  --color-sidebar-hover: #40204F;
+  --color-sidebar-active: #734486;
+  --color-sidebar-text: #F8F2FB;
+  --color-sidebar-muted: #D7C6E0;
+  --color-sidebar-border: #654174;
+  --color-paper-glass: rgb(255 254 255 / .72);
+  --color-paper-glass-soft: rgb(255 254 255 / .68);
+  --color-paper-glass-strong: rgb(255 254 255 / .88);
+  --color-paper-glass-solid: rgb(255 254 255 / .97);
+  --color-plum-line: rgb(110 52 130 / .2);
+  --color-plum-line-mid: rgb(110 52 130 / .18);
+  --color-plum-line-soft: rgb(110 52 130 / .14);
+  --color-orchid-halo: rgb(165 106 189 / .1);
+  --color-dialog-backdrop: rgb(32 18 40 / .42);
+  --color-swatch-outline: rgb(0 0 0 / .12);
 
   --text: var(--color-text);
   --muted: var(--color-muted);
   --background: var(--color-canvas);
   --surface: var(--color-paper);
   --border: var(--color-border);
+  --border-strong: var(--color-border-strong);
   --lavender: var(--color-lilac-100);
   --accent: var(--color-plum-800);
 
@@ -54,6 +80,8 @@
   --shadow-soft: 0 6px 22px rgb(50 24 64 / .055);
   --shadow-card: 0 14px 34px rgb(50 24 64 / .075);
   --shadow-popover: 0 18px 44px rgb(50 24 64 / .16);
+  --shadow-button: 0 1px 2px rgb(50 24 64 / .035);
+  --shadow-bottom-nav: 0 -8px 24px rgb(50 24 64 / .07);
 
   --content-max: 1360px;
   --sidebar-width: 252px;

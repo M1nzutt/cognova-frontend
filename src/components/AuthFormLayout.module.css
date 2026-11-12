@@ -9,7 +9,7 @@
 .field { display: grid; gap: .4rem; color: var(--text); font-size: .88rem; font-weight: 650; }
 .input { width: 100%; min-width: 0; min-height: 50px; padding: .7rem .85rem; border: 1px solid var(--border-strong); border-radius: .82rem; color: var(--text); background: var(--color-paper); }
 .hint { color: var(--muted); font-size: .8rem; font-weight: 400; }
-.submit { width: 100%; min-height: 50px; justify-content: center; border-color: var(--accent); border-radius: var(--radius-pill); color: white; background: var(--accent); }
-.submit:hover { border-color: var(--color-plum-950); color: white; background: var(--color-plum-950); }
-.feedback { margin: 0; padding: .85rem 1rem; border: 1px solid #E7C8D0; border-left: 3px solid var(--color-danger); border-radius: var(--radius-sm); color: var(--color-danger); background: #FFF7F8; font-size: .9rem; overflow-wrap: anywhere; }
+.form .submit { width: 100%; min-height: 50px; justify-content: center; border-color: var(--accent); border-radius: var(--radius-pill); color: white; background: var(--accent); }
+.form .submit:hover { border-color: var(--color-plum-950); color: white; background: var(--color-plum-950); }
+.feedback { margin: 0; padding: .85rem 1rem; border: 1px solid var(--color-border-danger); border-left: 3px solid var(--color-danger); border-radius: var(--radius-sm); color: var(--color-danger); background: var(--color-surface-danger); font-size: .9rem; overflow-wrap: anywhere; }
 @media (max-width: 520px) { .panel { padding: 1.35rem 1.1rem; border-radius: var(--radius-lg); } }
