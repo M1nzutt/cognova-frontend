@@ -1,3 +1,10 @@
+## Docker integrado local — pendiente de validar con runtime — 2026-11-12
+
+Se preparó Dockerfile multi-stage Node/Nginx. Nginx sirve React Router con fallback
+a index.html y proxya /api/* a Backend en la red Docker, conservando cookies y
+CSRF same-origin. No se publicó a Netlify. Docker CLI/runtime no está instalado en
+el equipo, por eso build, proxy, headers y rutas no se verificaron con contenedores.
+La guía del entorno integrado está en cognova-backend/docs/DOCKER_DEPLOYMENT.md.
 ## Frontend Analytics — integrado en main, sin deploy, 2026-11-12
 
 `feat/academic-analytics-ui` (SHA `4d878db2456209b25558d3d478d6893cfc71a0f4`) pasó CI remoto, run `43173243794`. Se integró a `main` con merge `--no-ff` `b7b27be1e39853c10e7bfad574969dab50804bec`; CI sobre ese SHA pasó, run `43173544012` (`success`). La ruta `/app/analytics` usa el contrato Backend `b9b04eb70160403b3afe5fc068fb3ed8380eacc1`.

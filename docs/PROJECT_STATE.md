@@ -1,3 +1,10 @@
+## Docker integrado — implementación preparada, pendiente de runtime — 2026-11-12
+
+La rama feat/docker-integrated-env añade imagen Nginx de producción para los
+assets React/TypeScript y proxy same-origin /api/*. No se despliega a Netlify.
+La guía del stack integrado está en el repo Backend y el smoke visual integrado
+queda pendiente de Docker habilitado. Este equipo no tiene Docker CLI/runtime,
+por lo que la imagen aún no tuvo build ni comprobación HTTP real.
 # Frontend Analytics — integrado en main, sin deploy, 2026-11-12
 
 Backend Analytics contract consumido: `b9b04eb70160403b3afe5fc068fb3ed8380eacc1`. La ruta protegida `/app/analytics` presenta overview, tiempo por rango y materia, cronología con filtros/cursor y búsqueda agrupada para Materias, Actividades, Planes y Retos. Rangos de día/semana/mes/personalizados usan la zona IANA local del navegador; se conservan el orden y los cursores del Backend.

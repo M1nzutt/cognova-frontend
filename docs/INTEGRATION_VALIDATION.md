@@ -1,3 +1,15 @@
+# Docker Frontend — preparado, sin build/runtime — 2026-11-12
+
+Nginx sirve el bundle y hace proxy /api/* same-origin; React Router usa fallback
+SPA. La imagen corre como usuario nginx y healthcheck /healthz. No se desplegó a
+Netlify. En esta máquina no existe Docker CLI/runtime, así que no se pudo construir
+la imagen ni verificar proxy, rutas directas, cookies, refresh, responsive o errores
+JavaScript con Backend real. El smoke multi-breakpoint integrado sigue pendiente de
+ejecución con Docker.
+
+La validación local de aplicación pasó: 385/385 tests, lint, TypeScript, build y
+`npm audit --omit=dev` con 0 vulnerabilidades. Estas pruebas no verifican la imagen
+Nginx ni el proxy en una red Compose.
 # Frontend Analytics — integración y validación, 2026-11-12
 
 Contrato consumido: Backend main `b9b04eb70160403b3afe5fc068fb3ed8380eacc1`. La ruta protegida `/app/analytics` consume overview, study-time, timeline y search con el ApiClient autenticado/no-store. Los rangos locales se convierten a instantes ISO y usan la zona IANA del navegador, con máximo de 366 días. Cronología mantiene orden/cursor del Backend; búsqueda agrupa resultados y pagina con cursor.
