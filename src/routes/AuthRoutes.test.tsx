@@ -1,5 +1,5 @@
 import { StrictMode } from 'react'
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, useLocation } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
@@ -19,6 +19,84 @@ async function fillLogin() {
 }
 
 describe('authentication routes and forms', () => {
+  it.each(['/', '/login', '/register'])('keeps the public shell free of internal navigation on %s', async (path) => {
+    vi.stubGlobal('fetch', vi.fn())
+    mount(path)
+
+    expect(await screen.findByRole('navigation', { name: 'Navegación pública' })).toBeVisible()
+    expect(screen.queryByRole('navigation', { name: 'Navegación principal' })).not.toBeInTheDocument()
+    for (const label of ['Materias', 'Actividades', 'Calendario', 'Sesiones', 'Planes', 'Retos', 'Análisis']) {
+      expect(screen.queryByRole('link', { name: label })).not.toBeInTheDocument()
+    }
+  })
+
+  it('shows the welcome page inside the public shell without an app sidebar', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+    mount('/')
+
+    expect(await screen.findByRole('heading', { name: /más claridad/i })).toBeVisible()
+    const navigation = screen.getByRole('navigation', { name: 'Navegación pública' })
+    expect(within(navigation).getByRole('link', { name: 'Crear cuenta' })).toHaveAttribute('href', '/register')
+    expect(within(navigation).getByRole('link', { name: 'Iniciar sesión' })).toHaveAttribute('href', '/login')
+    expect(screen.queryByRole('navigation', { name: 'Navegación principal' })).not.toBeInTheDocument()
+  })
+
+  it('keeps unknown URLs in the public shell without changing their route', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+    mount('/unknown-page')
+
+    expect(await screen.findByRole('heading', { name: 'No encontramos esta página' })).toBeVisible()
+    expect(screen.getByTestId('location')).toHaveTextContent('/unknown-page')
+    expect(screen.getByRole('navigation', { name: 'Navegación pública' })).toBeVisible()
+    expect(screen.queryByRole('navigation', { name: 'Navegación principal' })).not.toBeInTheDocument()
+  })
+
+  it.each(['/login', '/register'])('can show and hide the password on %s without losing its value', async (path) => {
+    vi.stubGlobal('fetch', vi.fn())
+    mount(path)
+    const input = await screen.findByLabelText('Contraseña')
+    const keyboard = userEvent.setup()
+    await keyboard.type(input, 'Example123!')
+
+    expect(input).toHaveAttribute('type', 'password')
+    const show = screen.getByRole('button', { name: 'Mostrar contraseña' })
+    await keyboard.click(show)
+    expect(input).toHaveAttribute('type', 'text')
+    expect(input).toHaveValue('Example123!')
+    expect(screen.getByRole('button', { name: 'Ocultar contraseña' })).toHaveAttribute('aria-pressed', 'true')
+    await keyboard.click(screen.getByRole('button', { name: 'Ocultar contraseña' }))
+    expect(input).toHaveAttribute('type', 'password')
+    expect(input).toHaveValue('Example123!')
+  })
+
+  it('does not offer password recovery without a supported auth flow', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+    mount('/login')
+
+    expect(await screen.findByRole('heading', { name: 'Inicia sesión' })).toBeVisible()
+    expect(screen.queryByRole('link', { name: /olvidé|recuperar contraseña/i })).not.toBeInTheDocument()
+  })
+
+  it('keeps the public login controls in a useful keyboard order', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+    mount('/login')
+    const keyboard = userEvent.setup()
+    await screen.findByRole('heading', { name: 'Inicia sesión' })
+
+    await keyboard.tab()
+    expect(document.activeElement).toHaveAttribute('href', '#main-content')
+    await keyboard.tab()
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Cognova, inicio')
+    await keyboard.tab()
+    expect(document.activeElement).toHaveAttribute('href', '/register')
+    await keyboard.tab()
+    expect(document.activeElement).toHaveAttribute('id', 'login-email')
+    await keyboard.tab()
+    expect(document.activeElement).toHaveAttribute('id', 'login-password')
+    await keyboard.tab()
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Mostrar contraseña')
+  })
+
   it.each(['/dashboard', '/questionnaire', '/app/analytics'])('protects %s without making up a session', async (path) => {
     const fetchMock = vi.fn()
     vi.stubGlobal('fetch', fetchMock)

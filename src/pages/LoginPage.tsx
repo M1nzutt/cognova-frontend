@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { AuthFormLayout } from '../components/AuthFormLayout'
-import styles from '../components/AuthFormLayout.module.css'
+import { PasswordField } from '../components/PasswordField'
+import styles from '../components/PublicAuthForm.module.css'
 import { useAuth } from '../hooks/useAuth'
 import { useAuthForm } from '../hooks/useAuthForm'
 import { validateLogin } from '../utils/authValidation'
@@ -21,20 +22,28 @@ export function LoginPage() {
   }
 
   return (
-    <AuthFormLayout title="Inicia sesión" description="Retoma tu recorrido en Cognova." alternative="¿Aún no tienes cuenta?" linkText="Regístrate" linkTo="/register">
+    <AuthFormLayout
+      title="Inicia sesión"
+      description="Retoma tu recorrido en Cognova."
+      alternative="¿Aún no tienes cuenta?"
+      linkText="Regístrate"
+      linkTo="/register"
+      contextLabel="BIENVENIDA DE VUELTA"
+      storyTitle="Retoma tu recorrido con una mirada nueva."
+      storyDescription="Vuelve a tus planes y registros. Cognova te ayuda a conectar lo que haces con lo que quieres aprender."
+    >
       {message && <p role="status" className={styles.feedback}>{message}</p>}
       {logoutFailed && <button className="button" type="button" onClick={() => void session.logout()}>Reintentar cierre de sesión</button>}
       <form className={styles.form} onSubmit={onSubmit} aria-busy={loading}>
         <fieldset className={styles.fieldset} disabled={loading || logoutFailed}>
-          <label className={styles.field}>Correo electrónico
-            <input className={styles.input} name="email" type="email" autoComplete="email" required />
-          </label>
-          <label className={styles.field}>Contraseña
-            <input className={styles.input} name="password" type="password" autoComplete="current-password" required />
-          </label>
-          <button className={`button ${styles.submit}`} type="submit">{loading ? 'Iniciando sesión…' : 'Iniciar sesión'}</button>
+          <div className={styles.field}>
+            <label htmlFor="login-email">Correo electrónico</label>
+            <input id="login-email" className={styles.input} name="email" type="email" autoComplete="email" required />
+          </div>
+          <PasswordField id="login-password" name="password" label="Contraseña" autoComplete="current-password" required />
+          <button className={styles.submit} type="submit">{loading ? 'Iniciando sesión…' : 'Iniciar sesión'}</button>
         </fieldset>
-        {(validation || error) && <p role="alert" className={styles.feedback}>{validation || error}</p>}
+        {(validation || error) && <p id="login-feedback" role="alert" className={styles.feedback}>{validation || error}</p>}
         {loading && <p role="status">Comprobando tus datos…</p>}
       </form>
     </AuthFormLayout>

@@ -405,3 +405,18 @@ Validación local: 373/373 tests en 48 archivos, lint, TypeScript, build y `npm 
 No se desplegó a Netlify ni se llamó Backend productivo. El merge y los commits del rediseño incluyen `[skip netlify]`; `build:netlify` de Actions solo validó artefactos y no publicó. El smoke visual y funcional contra Docker integrado sigue pendiente, incluyendo IA real; no bloquea otros desarrollos. Persiste el warning no fatal de PostCSS sobre `from`.
 
 # Frontend Analytics — integrado en main, sin deploy, 2026-11-12
+
+
+# Experiencia pública — rediseño en rama, 2026-11-12
+
+La rama `feat/public-experience-redesign` parte de `main` SHA `22783e6cff54600518d9db05db3d991832d73031`. El SHA de implementación validado es `7922275a5ddc57a397e3e440efca9b4043bf9c7b`; CI run [43274185714](https://github.com/M1nzutt/cognova-frontend/actions/runs/43274185714) pasó en Frontend checks y Gitleaks. El commit documental `6d1f7be83dc934b54fcd01494f66570ab47e7ba4` también pasó CI run [43276611548](https://github.com/M1nzutt/cognova-frontend/actions/runs/43276611548). Sigue en la rama, sin merge a `main` ni deploy.
+
+`PublicShell` agrupa bienvenida, login, registro y 404 sin sidebar. Login y registro conservan `GuestRoute`; onboarding conserva `EntryShell` y sus protecciones. Contratos, endpoints, payloads, validación y auth no cambiaron. No se muestra recuperación de contraseña porque la API no ofrece ese flujo.
+
+La landing presenta una semana ilustrativa, tres valores (Organiza, Registra, Comprende) y una reflexión de IA con observación, evidencia, pregunta y decisión de la persona. No presenta Cognova como chatbot ni simula respuestas de IA. Login/registro comparten panel, labels, control accesible de contraseña y estados existentes.
+
+No se añadieron librerías ni fuentes remotas. Se conserva React + TypeScript, tema claro, sans del sistema para texto y Georgia para titulares.
+
+Validación local: 385/385 tests en 49 archivos, lint, TypeScript, build, build:netlify y `npm audit --omit=dev` aprobaron; auditoría producción 0 vulnerabilidades. Build:netlify usó el mismo `RENDER_API_ORIGIN` público no secreto del workflow y solo generó/validó el artefacto. Persiste el warning no fatal de PostCSS `from`.
+
+Chrome local revisó las tres rutas a 1440, 1280, 1024, 768, 430, 390 y 375 px: sin overflow horizontal, errores JS ni llamadas API. Evidencia local ignorada por Git: `.local/public-redesign-2026-11-12/`, seis PNG y `manifest.json` con medidas y SHA256. El primer Tab enfoca el skip-link con outline visible. No se hizo smoke real ni deploy. La auditoría completa conserva las vulnerabilidades de tooling previamente documentadas; auditoría de producción sigue en cero.

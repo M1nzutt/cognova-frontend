@@ -159,3 +159,14 @@ Renderiza Actividades por `deadline` y Sesiones por `planned_start_at`, con filt
 compatibles y paginación en el orden Backend. Cada elemento abre su recurso original.
 No hay tabla ni migración de Calendario. La publicación validada está en
 `PROJECT_STATE.md`; el contrato técnico está en `CALENDAR_CONTRACT.md`.
+
+
+## Experiencia pública de Cognova — decisión 2026-11-12
+
+- Antes de autenticarse, mostrar superficie pública sin sidebar ni enlaces internos; limitar navegación a inicio, login y creación de cuenta.
+- Comunicar Organiza, Registra y Comprende con una vista semanal etiquetada como ejemplo.
+- Presentar IA mediante observación, evidencia y pregunta; la persona interpreta y decide. No usar experiencia de chatbot ni fingir generación activa.
+- Login y registro comparten composición editorial con formulario protagonista. Mostrar/ocultar contraseña no envía ni persiste el valor.
+- No agregar recuperación de contraseña sin endpoint y reglas funcionales de Backend.
+- Mantener tema claro ciruela/lavanda con neutrales cálidos, fuentes del sistema y Georgia; no descargar fuentes remotas.
+- Conservar React + TypeScript, contratos y auth. Sin dependencias nuevas en esta fase.
