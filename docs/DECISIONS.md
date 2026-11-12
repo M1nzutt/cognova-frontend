@@ -2,14 +2,18 @@
 
 ## Decisión vigente de Planes y Retos — 2026-11-05
 
-Backend 0007 expone Planes manuales y propuestas `ai` cuando haya proveedor.
-El usuario acepta, edita o rechaza propuestas y conserva evidencia de sus
-decisiones; nada generado se aplica automáticamente. Retos viven dentro del
-Plan, pueden ser contextuales y usan los estados `pending`, `in_progress`,
-`completed`, `failed`, `cancelled`. Frontend consume proyecciones del Backend,
-no implementa estructuras de dominio. Gemini real y Retos en Calendario son
-dependencias futuras. Esta decisión sustituye la formulación conceptual
-anterior de Retos como propuesta IA aceptada e ineditable.
+Backend 0007 expone Planes manuales y relaciones; su integración Gemini está
+implementada en código Backend `feat/gemini-behavior` SHA
+`110978bc1931fd0fc5882c7a0316acd57e0e9183`, pero todavía no está desplegada.
+La propuesta IA persistida requiere Database 0008. El usuario acepta, edita,
+rechaza o regenera propuestas y conserva evidencia de sus decisiones; nada
+generado se aplica automáticamente. Retos viven dentro del Plan, pueden ser
+contextuales y usan los estados `pending`, `in_progress`, `completed`, `failed`,
+`cancelled`. Frontend consume proyecciones del Backend y no implementa estructuras
+de dominio. La UI IA está en desarrollo, y su smoke real queda pendiente del
+despliegue Docker final con `GEMINI_API_KEY` como secreto. Retos en Calendario
+siguen dependiendo de que Backend los exponga. Esta decisión sustituye la
+formulación conceptual anterior de Retos como propuesta IA aceptada e ineditable.
 
 ## Producto
 

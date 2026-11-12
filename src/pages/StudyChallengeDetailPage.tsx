@@ -4,7 +4,7 @@ import { StudyChallengeForm } from '../components/StudyChallengeForm'
 import { useStudyPlanServices } from '../hooks/useStudyPlanServices'
 import { useStudyPlanResource } from '../hooks/useStudyPlanResource'
 import { useStudyPlanMutation } from '../hooks/useStudyPlanMutation'
-import { challengeGoal, challengeStatusLabels, sourceLabels } from '../utils/studyPlanPresentation'
+import { aiChallengeContext, challengeGoal, challengeStatusLabels, sourceLabels } from '../utils/studyPlanPresentation'
 import { localDateTime } from '../utils/studySessionPresentation'
 import styles from '../components/StudyPlans.module.css'
 
@@ -19,6 +19,7 @@ export function StudyChallengeDetailPage() {
   const mutation = useStudyPlanMutation()
   const [editing, setEditing] = useState(false)
   const plan = planResource.data, mission = resource.data
+  const aiContext = mission ? aiChallengeContext(mission) : null
   const transition = (action: 'start' | 'complete' | 'fail' | 'cancel') => void mutation.run(
     signal => services.challenges.transition(id, missionId, action, signal),
     next => { resource.setData(next); planResource.retry() },
@@ -37,8 +38,12 @@ export function StudyChallengeDetailPage() {
         next => { resource.setData(next); planResource.retry(); setEditing(false) },
         async () => { resource.retry(); planResource.retry() },
       )} /> : <>
+        {mission.source === 'ai' && <p className="eyebrow">MISIÓN SUGERIDA POR COGNOVA</p>}
         <section className={styles.panel} aria-label="Detalle de la misión">
-          <p>{mission.description}</p><dl className={styles.summary}>
+          <p>{mission.description}</p>{aiContext?.explanation && <p>{aiContext.explanation}</p>}
+          {aiContext && aiContext.evidence.length > 0 && <><h2>En qué se basa</h2><ul>{aiContext.evidence.map((item, index) => <li key={index}>{item}</li>)}</ul></>}
+          {aiContext?.condition && <p><strong>Condición:</strong> {aiContext.condition}</p>}
+          <dl className={styles.summary}>
             <dt>Estado</dt><dd>{challengeStatusLabels[mission.status]}</dd>
             <dt>Origen</dt><dd>{sourceLabels[mission.source]}</dd>
             <dt>Objetivo</dt><dd>{challengeGoal(mission)}</dd>

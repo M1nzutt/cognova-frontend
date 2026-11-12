@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { StudyPlanOverview } from '../components/StudyPlanOverview'
+import { AiProposalPanel } from '../components/AiProposalPanel'
 import { StudyPlanForm } from '../components/StudyPlanForm'
 import { StudyChallengesPanel } from '../components/StudyChallengesPanel'
 import { useStudyPlanServices } from '../hooks/useStudyPlanServices'
@@ -59,11 +60,12 @@ export function StudyPlanDetailPage() {
           {plan.status === 'draft' && plan.source === 'ai' && <>
             <button className={styles.primary} type="button" disabled={mutation.busy} onClick={() => transition('accept')}>Aceptar propuesta</button>
             <button className="button" type="button" disabled={mutation.busy} onClick={() => transition('reject')}>Rechazar propuesta</button>
-            <button className="button" type="button" disabled={mutation.busy} onClick={() => transition('regenerate')}>Pedir otra propuesta</button>
+            <button className="button" type="button" disabled={mutation.busy} aria-busy={mutation.busy} onClick={() => transition('regenerate')}>{mutation.busy ? 'Preparando otra propuesta…' : 'Pedir otra propuesta'}</button>
           </>}
           {plan.status === 'active' && <button className={styles.primary} type="button" disabled={mutation.busy} onClick={() => transition('complete')}>Completar plan</button>}
           {(plan.status === 'draft' || plan.status === 'active') && <button className="button" type="button" disabled={mutation.busy} onClick={() => transition('abandon')}>Abandonar plan</button>}
         </div>
+        <AiProposalPanel plan={plan} />
         <StudyPlanOverview plan={plan} />
         <StudyChallengesPanel plan={plan} onChange={resource.retry} />
         {canDelete && <div className={styles.dangerZone}><h2>Eliminar borrador</h2><p>Solo puedes eliminar un borrador sin recursos, misiones ni decisiones.</p>

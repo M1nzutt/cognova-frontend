@@ -2,14 +2,17 @@
 
 ## Estado implementado — 2026-11-05
 
-Planes de Estudio manuales y Retos anidados están publicados en Frontend
+Planes manuales y Retos anidados están publicados en Frontend
 `5baf625e14fbb543a9fd715dbfaaf3b43c2f8c6d`, Netlify
 `6aec118ff6c3ff162f7334de`, sobre Backend
 `d9fff7c36e6a1c1c98079e9be225c1d273e0e9d0` y Database 0007.
-El usuario controla el Plan; ninguna propuesta de IA se aplica sola. La
-generación Gemini real sigue pendiente. El detalle muestra proyecciones
-académicas del Backend sin recalcularlas en Frontend. Retos aún no forman
-parte de Calendario. Ver `STUDY_PLANS_CONTRACT.md` y `PROJECT_STATE.md`.
+La integración Gemini está implementada en código Backend
+`feat/gemini-behavior` SHA `110978bc1931fd0fc5882c7a0316acd57e0e9183`, pero
+espera Database 0008, despliegue Docker final y el secreto `GEMINI_API_KEY`.
+Frontend IA se trabaja en una rama y no está publicada ni smoke-validada. El
+usuario controla el Plan; ninguna propuesta se aplica sola. El detalle consume
+proyecciones académicas del Backend sin recalcularlas. Retos aún no forman parte
+del Calendario. Ver `STUDY_PLANS_CONTRACT.md` y `PROJECT_STATE.md`.
 
 ## Estado histórico — 2026-11-03
 

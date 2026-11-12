@@ -133,3 +133,26 @@ Separar:
 - feedback/correcciones del usuario.
 
 Una observación generada debe poder rastrearse hasta evidencia suficiente almacenada.
+
+## Presentación Frontend — contrato de integración
+
+Frontend consume las rutas de Backend para generar Plan y analizar comportamiento;
+nunca incluye la API key ni llama a Gemini directamente. El Plan generado se abre
+como borrador y requiere una decisión explícita. El detalle muestra el snapshot
+persistido, su explicación, resumen visible, recursos y misiones sugeridas; mantiene
+la propuesta original como comparación tras editar o regenerar.
+
+La evidencia `accepted`, `edited`, `rejected` y `regenerated` se presenta con
+etiquetas y valores comprensibles, sin JSON crudo. Un rate limit o timeout muestra
+un mensaje controlado; `Retry-After` se conserva para orientar el siguiente intento.
+Una petición con timeout no se repite automáticamente: primero se actualiza el Plan.
+
+La vista de comportamiento muestra cantidad de sesiones, evidencia, pregunta,
+base de confianza y enlaces relacionados. Con menos de cinco sesiones señala que
+el historial es insuficiente; nunca convierte una observación en diagnóstico ni
+afirma una causa psicológica. La experiencia no presenta modelo, prompts, respuesta
+cruda del proveedor ni chain-of-thought.
+
+Esta UI está en una rama de desarrollo y aún no se ha validado contra un Backend
+desplegado. La integración Backend indicada en los contratos requiere Database
+0008 y configuración de `GEMINI_API_KEY` como secreto del entorno final.

@@ -3,6 +3,7 @@ import { useAuth } from './useAuth'
 import { useStudySessionServices } from './useStudySessionServices'
 import { StudyPlanService } from '../services/StudyPlanService'
 import { StudyChallengeService } from '../services/StudyChallengeService'
+import { BehaviorAnalysisService } from '../services/BehaviorAnalysisService'
 import type { Activity } from '../types/activity'
 import type { StudySessionSummary, StudySessionCursor } from '../types/studySession'
 
@@ -12,6 +13,7 @@ export function useStudyPlanServices() {
   return useMemo(() => ({
     plans: new StudyPlanService(session.api),
     challenges: new StudyChallengeService(session.api),
+    behavior: new BehaviorAnalysisService(session.api),
     loadSubjects: existing.loadSubjects,
     async loadChoices(signal: AbortSignal) {
       const subjects = await existing.loadSubjects(signal)

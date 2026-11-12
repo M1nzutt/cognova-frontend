@@ -1,3 +1,21 @@
+# Frontend IA — rama publicada, Netlify omitido, 2026-11-11
+
+La rama feat/ai-frontend se publicó en SHA c25616e. El commit lleva [skip ci] [skip netlify], conforme al mecanismo documentado, y no se inició build ni deploy Netlify. No hay workflows de GitHub Actions en el repo; GitHub no devolvió checks ni workflow runs para el SHA, así que la rama no se integra hasta que haya CI remoto aprobado.
+Smoke real Gemini y validación visual completa multi-breakpoint están diferidos al entorno integrado/Docker; no bloquean el desarrollo. Rediseño visual completo pendiente.
+
+
+La rama `feat/ai-frontend` está en desarrollo y no se ha publicado a Netlify.
+No se ejecutó smoke productivo ni se confirmó el comportamiento contra Backend.
+Su publicación requiere que el entorno Docker final exponga el contrato
+`POST /study-plans/generate`, `/regenerate` y `/analysis/behavior` sobre Database
+0008. `GEMINI_API_KEY` debe configurarse como secreto del entorno Backend; nunca
+en Netlify ni en el bundle. No usar Netlify CLI/token para esta fase.
+
+Validación local de esta rama: `npm run build:netlify` pasó con 349/349 pruebas,
+lint, TypeScript y Vite. La auditoría de runtime reportó cero vulnerabilidades;
+la completa reportó diez moderadas de tooling por `minimatch` y no se aplicó la
+corrección breaking que baja ESLint a 9. Este resultado no es un deploy ni smoke.
+
 # Planes y Retos — publicación 2026-11-05
 
 Netlify sitio `https://cognova-frontend.netlify.app`, deploy

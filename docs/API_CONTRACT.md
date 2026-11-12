@@ -237,18 +237,36 @@ Respuesta conceptual:
 
 ## AI
 
-- POST `/ai/analyze`
-- GET `/ai/conversations`
-- POST `/ai/conversations`
-- GET `/ai/conversations/{id}/messages`
-- POST `/ai/conversations/{id}/messages`
+Contrato de Backend para Planes IA y análisis de comportamiento, rama de
+integración `feat/gemini-behavior`, SHA `110978bc1931fd0fc5882c7a0316acd57e0e9183`.
+Este contrato aún no se ha validado contra un Backend desplegado.
 
-Reglas:
-- IA real;
-- contexto académico;
-- evidencia desde backend;
-- rate limiting/cost controls;
-- manejo de proveedor no disponible.
+- POST `/study-plans/generate`, sin body, requiere auth y onboarding completo;
+  responde `{plan, explanation, reasoning_summary}` con Plan `source=ai`,
+  `status=draft` y `ai_proposal_snapshot` persistido. La UI lo abre como borrador;
+  nunca lo activa automáticamente.
+- GET `/study-plans/{id}` vuelve a incluir el snapshot, para conservar explicación,
+  resumen visible y propuesta original tras refresh. No mostrar `model`, nombres
+  internos de esquema ni objetos JSON crudos.
+- POST `/study-plans/{id}/accept`, `/reject` y `/regenerate`, sin body. Accept/reject
+  registran la decisión y conservan el snapshot actual. Regenerate exitoso registra
+  la propuesta previa en `study_plan_decisions.proposed_value` y guarda la propuesta
+  nueva como snapshot vigente. Un fallo de proveedor no cambia Plan, snapshot ni
+  decisiones.
+- POST `/analysis/behavior`, sin body, requiere auth y onboarding completo;
+  responde `{finished_session_count, pattern_eligible, observations}`. Cada
+  observación contiene texto, evidencia, pregunta, base de confianza e IDs de
+  recursos relacionados. Con menos de cinco sesiones se presenta el estado de
+  historial insuficiente y no se afirma que exista un patrón.
+
+El Backend puede responder 503 `STUDY_PLAN_GENERATION_UNAVAILABLE`; rate limit de
+Gemini usa `GEMINI_RATE_LIMIT` y `Retry-After`. El cliente mantiene mensajes
+controlados, no muestra detalles del proveedor, no reintenta mutaciones y permite
+actualizar el recurso antes de repetir una solicitud con timeout.
+
+La API key solo existe en Backend. Frontend no envía prompts ni contexto académico
+directamente al proveedor. La respuesta persistida contiene explicación y resumen
+visibles, nunca chain-of-thought, prompts completos ni respuesta cruda.
 
 ## Observations
 

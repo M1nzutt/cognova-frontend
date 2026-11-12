@@ -5,7 +5,7 @@ import { useStudyPlanServices } from '../hooks/useStudyPlanServices'
 import { useStudyPlanResource } from '../hooks/useStudyPlanResource'
 import { useStudyPlanMutation } from '../hooks/useStudyPlanMutation'
 import { StudyChallengeForm } from './StudyChallengeForm'
-import { challengeGoal, challengeStatusLabels } from '../utils/studyPlanPresentation'
+import { aiChallengeContext, challengeGoal, challengeStatusLabels } from '../utils/studyPlanPresentation'
 import { localDateTime } from '../utils/studySessionPresentation'
 import styles from './StudyPlans.module.css'
 
@@ -28,11 +28,15 @@ export function StudyChallengesPanel({ plan, onChange }: { plan: StudyPlan; onCh
     {resource.loading && <p role="status">Cargando misiones…</p>}
     {resource.error && <div role="alert"><p>{resource.error}</p><button className="button" type="button" onClick={resource.retry}>Reintentar misiones</button></div>}
     {page && !resource.loading && !resource.error && (page.items.length === 0 ? <p>Este plan todavía no tiene misiones.</p> : <>
-      <ul className={styles.list} aria-label="Misiones del plan">{page.items.map(challenge => <li className={styles.mission} key={challenge.id} id={`mission-${challenge.id}`}>
-        <div className={styles.cardTop}><h3><Link to={`/app/study-plans/${plan.id}/challenges/${challenge.id}`}>{challenge.title}</Link></h3><span className={styles.badge}>{challengeStatusLabels[challenge.status]}</span></div>
-        <p>{challenge.description}</p><p><strong>Objetivo:</strong> {challengeGoal(challenge)}</p>
+      <ul className={styles.list} aria-label="Misiones del plan">{page.items.map(challenge => {
+        const aiContext = aiChallengeContext(challenge)
+        return <li className={styles.mission} key={challenge.id} id={`mission-${challenge.id}`}>
+        <div className={styles.cardTop}><div><p className="eyebrow">{challenge.source === 'ai' ? 'SUGERIDA POR COGNOVA' : 'MISIÓN DEL PLAN'}</p><h3><Link to={`/app/study-plans/${plan.id}/challenges/${challenge.id}`}>{challenge.title}</Link></h3></div><span className={styles.badge}>{challengeStatusLabels[challenge.status]}</span></div>
+        <p>{challenge.description}</p>{aiContext.explanation && <p>{aiContext.explanation}</p>}<p><strong>Objetivo:</strong> {challengeGoal(challenge)}</p>
+        {aiContext.condition && <p><strong>Condición:</strong> {aiContext.condition}</p>}
+        {aiContext.evidence.length > 0 && <ul aria-label="Evidencia de la misión">{aiContext.evidence.map((evidence, index) => <li key={index}>{evidence}</li>)}</ul>}
         {challenge.deadline && <p><strong>Fecha límite:</strong> <time dateTime={challenge.deadline}>{localDateTime(challenge.deadline)}</time></p>}
-      </li>)}</ul>
+      </li>})}</ul>
       {page.next_after_id !== null && <button className="button" type="button" disabled={mutation.busy} onClick={() => void mutation.run(
         signal => services.challenges.list(plan.id, page.next_after_id ?? undefined, signal),
         next => resource.setData(previous => previous ? { items: [...previous.items, ...next.items.filter(item => !previous.items.some(old => old.id === item.id))], next_after_id: next.next_after_id } : next),
