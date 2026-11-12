@@ -38,8 +38,8 @@ export function AppRoutes() {
           <Route index element={<WelcomePage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
-          <Route path="*" element={<NotFoundPage />} />
         </Route>
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
       <Route element={<EntryShell />}>
         <Route element={<ProtectedRoute />}>

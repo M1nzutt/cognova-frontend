@@ -41,6 +41,16 @@ describe('authentication routes and forms', () => {
     expect(screen.queryByRole('navigation', { name: 'Navegación principal' })).not.toBeInTheDocument()
   })
 
+  it('keeps unknown URLs in the public shell without changing their route', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+    mount('/unknown-page')
+
+    expect(await screen.findByRole('heading', { name: 'No encontramos esta página' })).toBeVisible()
+    expect(screen.getByTestId('location')).toHaveTextContent('/unknown-page')
+    expect(screen.getByRole('navigation', { name: 'Navegación pública' })).toBeVisible()
+    expect(screen.queryByRole('navigation', { name: 'Navegación principal' })).not.toBeInTheDocument()
+  })
+
   it.each(['/login', '/register'])('can show and hide the password on %s without losing its value', async (path) => {
     vi.stubGlobal('fetch', vi.fn())
     mount(path)

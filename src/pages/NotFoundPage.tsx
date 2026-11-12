@@ -5,7 +5,7 @@ export function NotFoundPage() {
     <section aria-labelledby="not-found-title">
       <p className="eyebrow">404 · PÁGINA NO ENCONTRADA</p>
       <h1 id="not-found-title">No encontramos esta página</h1>
-      <p>La dirección no existe. Puedes volver al inicio de tu espacio.</p>
+      <p>La dirección no existe. Puedes volver al inicio de Cognova.</p>
       <Link className="button" to="/">Volver al inicio</Link>
     </section>
   )
