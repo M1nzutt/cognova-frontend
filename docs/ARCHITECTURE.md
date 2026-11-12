@@ -187,3 +187,8 @@ en zona local, links al recurso original. Contrato: CALENDAR_CONTRACT.md.
 `GuestRoute` conserva el redirect existente para usuarios autenticados en bienvenida, login y registro. El 404 está fuera de ese guard para conservar las URLs desconocidas. `EntryShell` queda reservado a onboarding bajo sus guards.
 
 `AuthFormLayout` comparte el panel visual de login/registro. `PasswordField` solo cambia el tipo visible del input; no persiste credenciales. Login y registro conservan `AuthSession`, validadores, `FormData`, endpoints y payloads. No se ofrece recuperar contraseña mientras Backend no provea endpoint y flujo contractual.
+
+
+## Herramientas de interfaz para la experiencia pública
+
+El HTML semántico/JSX y CSS/CSS Modules son herramientas válidas para las vistas React + TypeScript. Las bibliotecas visuales compatibles siguen permitidas dentro de esta arquitectura cuando el producto las requiera; este rediseño no agrega dependencias.
