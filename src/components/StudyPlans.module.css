@@ -2,7 +2,7 @@
 .heading { composes: heading from './StudySessions.module.css'; }
 .primary { composes: primary from './StudySessions.module.css'; }
 .empty { composes: empty from './StudySessions.module.css'; }
-.list { composes: list from './StudySessions.module.css'; }
+.list { composes: list from './StudySessions.module.css'; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); }
 .card { composes: card from './StudySessions.module.css'; }
 .meta { composes: meta from './StudySessions.module.css'; }
 .badge { composes: badge from './StudySessions.module.css'; }
@@ -10,41 +10,34 @@
 .form { composes: form from './StudySessions.module.css'; }
 .detail { composes: detail from './StudySessions.module.css'; }
 .actions { composes: actions from './StudySessions.module.css'; }
-.notice { composes: notice from './StudySessions.module.css'; }
-.error { composes: error from './StudySessions.module.css'; }
-.danger { composes: danger from './StudySessions.module.css'; }
+.notice { composes: notice from './Subjects.module.css'; }
+.error { composes: error from './Subjects.module.css'; }
+.danger { composes: danger from './Subjects.module.css'; }
 .dangerZone { composes: dangerZone from './StudySessions.module.css'; }
-.muted { composes: muted from './StudySessions.module.css'; }
-.cardTop { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: .5rem 1rem; }
-.cardTop h2 { margin: 0; }
-.filters { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; margin: 1rem 0 1.5rem; }
-.filters select { min-height: 44px; border: 1px solid var(--border); border-radius: .5rem; background: var(--surface); color: var(--text); padding: .5rem .7rem; }
-.sections { display: grid; gap: 1.3rem; }
-.resourceList { display: grid; gap: .5rem; padding-left: 1.4rem; }
+.muted { composes: muted from './Subjects.module.css'; }
+.cardTop { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: .55rem 1rem; }
+.cardTop h2 { margin: 0; font-size: 1.05rem; }
+.filters { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem .8rem; padding: .85rem 1rem; margin: 1rem 0 1.25rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }
+.filters label { color: var(--muted); font-size: .84rem; font-weight: 650; }
+.filters select { min-height: 42px; }
+.sections { display: grid; gap: 1.2rem; }
+.resourceList { display: grid; gap: .45rem; padding-left: 1.25rem; }
 .resourceList li { overflow-wrap: anywhere; }
-.choiceGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: .5rem 1rem; }
-.choice { display: flex !important; align-items: flex-start; gap: .5rem; margin-top: 0 !important; font-weight: 400 !important; }
-.choice input { width: 1.2rem !important; min-height: 1.2rem !important; height: 1.2rem; flex: none; margin-top: .25rem; }
-.mission { padding: 1rem; border: 1px solid var(--border); border-radius: .8rem; background: var(--surface); }
-.mission h3 { margin: .2rem 0; }
-.missionDetail { border-left: 3px solid var(--accent); padding-left: 1rem; }
-.rhythm { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: .4rem; list-style: none; padding: 0; }
-.rhythm li { padding: .6rem .25rem; border: 1px solid var(--border); border-radius: .5rem; text-align: center; font-size: .8rem; overflow-wrap: anywhere; }
-.rhythm strong { display: block; font-size: 1rem; }
-.hierarchy { list-style: none; padding-left: 1rem; border-left: 1px solid var(--border); }
-.hierarchy li { padding: .2rem 0; overflow-wrap: anywhere; }
-.summary { display: grid; grid-template-columns: minmax(90px, 160px) 1fr; gap: .35rem 1rem; }
+.choiceGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: .6rem; }
+.choice { display: flex !important; align-items: flex-start; gap: .55rem; padding: .65rem .75rem; margin-top: 0 !important; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-weight: 450 !important; }
+.choice input { width: 1.1rem !important; min-height: 1.1rem !important; height: 1.1rem; flex: 0 0 auto; margin-top: .25rem; }
+.mission { padding: 1rem 1.1rem; border: 1px solid var(--color-lilac-200); border-radius: var(--radius-md); background: var(--color-surface-soft); }
+.mission h3 { margin: .2rem 0 .45rem; }
+.missionDetail { padding-left: .9rem; border-left: 2px solid var(--color-orchid-500); }
+.rhythm { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: .35rem; padding: 0; list-style: none; }
+.rhythm li { min-width: 0; padding: .6rem .2rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-size: .76rem; text-align: center; overflow-wrap: anywhere; }
+.rhythm strong { display: block; margin-bottom: .15rem; color: var(--color-plum-900); font-size: .94rem; }
+.hierarchy { padding-left: .9rem; border-left: 2px solid var(--color-lilac-200); list-style: none; }
+.hierarchy li { padding: .25rem 0; overflow-wrap: anywhere; }
+.summary { display: grid; grid-template-columns: minmax(100px, 160px) minmax(0, 1fr); gap: .4rem .9rem; }
 .summary dt { color: var(--muted); }
-.summary dd { margin: 0; overflow-wrap: anywhere; }
+.summary dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
 .dialog { composes: dialog from './StudySessions.module.css'; }
 .confirm { composes: confirm from './StudySessions.module.css'; }
-@media (max-width: 650px) {
-  .rhythm { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .filters > * { flex: 1 1 auto; }
-  .cardTop { display: block; }
-}
-@media (max-width: 390px) {
-  .rhythm { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .actions > * { flex: 1 1 100%; }
-  .summary { grid-template-columns: 1fr; }
-}
+@media (max-width: 700px) { .rhythm { grid-template-columns: repeat(4, minmax(0, 1fr)); } .filters > * { flex: 1 1 auto; } .cardTop { gap: .6rem; } }
+@media (max-width: 400px) { .rhythm { grid-template-columns: repeat(2, minmax(0, 1fr)); } .actions > * { flex: 1 1 100%; } .summary { grid-template-columns: 1fr; } }
