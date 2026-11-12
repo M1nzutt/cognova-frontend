@@ -34,7 +34,7 @@ describe('authentication routes and forms', () => {
     vi.stubGlobal('fetch', vi.fn())
     mount('/')
 
-    expect(await screen.findByRole('heading', { name: /estudio/i })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: /más claridad/i })).toBeVisible()
     const navigation = screen.getByRole('navigation', { name: 'Navegación pública' })
     expect(within(navigation).getByRole('link', { name: 'Crear cuenta' })).toHaveAttribute('href', '/register')
     expect(within(navigation).getByRole('link', { name: 'Iniciar sesión' })).toHaveAttribute('href', '/login')
