@@ -1,23 +1,12 @@
-# Frontend Analytics — validación local, 2026-11-12
+# Frontend Analytics — integración y validación, 2026-11-12
 
-Contrato consumido: Backend main b9b04eb70160403b3afe5fc068fb3ed8380eacc1.
-La ruta protegida /app/analytics consume overview, study-time, timeline y search
-con el ApiClient autenticado/no-store. Los rangos son límites locales convertidos
-a instantes ISO, zona IANA del navegador, máximo 366 días. La cronología conserva
-el orden/cursor del Backend; búsqueda agrupa por recurso y usa debounce/cursor.
+Contrato consumido: Backend main `b9b04eb70160403b3afe5fc068fb3ed8380eacc1`. La ruta protegida `/app/analytics` consume overview, study-time, timeline y search con el ApiClient autenticado/no-store. Los rangos locales se convierten a instantes ISO y usan la zona IANA del navegador, con máximo de 366 días. Cronología mantiene orden/cursor del Backend; búsqueda agrupa resultados y pagina con cursor.
 
-Validación local aprobada: 372/372 pruebas en 48 archivos; pruebas cubren resumen
-vacío/lleno, rangos day/week/month/custom, timezone y límite, buckets/materias,
-cinco categorías de timeline, orden/cursor/filtro, cuatro tipos de búsqueda,
-prefijo sin llamada vacía, rutas, estados, teclado y viewports móvil/tablet/escritorio.
-También pasaron lint, TypeScript, build, build:netlify y audit de producción con
-cero vulnerabilidades. build:netlify usa RENDER_API_ORIGIN requerido por el
-script; solo comprueba/genera artefactos, no despliega. Persiste el warning
-conocido no fatal de PostCSS.
+Validación local aprobada: 372/372 pruebas en 48 archivos; cubren resumen vacío/lleno, rangos day/week/month/custom, timezone y límite, buckets/materias, cinco categorías de timeline, orden/cursor/filtro, cuatro tipos de búsqueda, prefijo sin llamada vacía, rutas, estados, teclado y viewports móvil/tablet/escritorio. También pasaron lint, TypeScript, build, build:netlify y `npm audit --omit=dev` con cero vulnerabilidades de producción. Persiste el warning conocido no fatal de PostCSS.
 
-GitHub Actions de la rama está pendiente de push. No se hizo smoke con Backend
-real ni visual en entorno integrado; no hubo despliegue. Estas comprobaciones
-quedan para Docker. Analytics es descriptivo y la interfaz no atribuye causas.
+CI de rama `feat/academic-analytics-ui`: run `43173243794`, success, SHA `4d878db2456209b25558d3d478d6893cfc71a0f4`. Merge `--no-ff` a `main`: `b7b27be1e39853c10e7bfad574969dab50804bec`. CI de `main` sobre el merge: run `43173544012`, success. Incluye Gitleaks, lint, typecheck, tests, builds y auditoría de producción.
+
+No se desplegó a Netlify ni se hizo smoke con Backend real ni revisión visual final multi-breakpoint. El build Netlify solo genera/valida artefactos de CI. El smoke integrado y la revisión visual final quedan para Docker; Analytics es descriptivo y la interfaz no atribuye causas. Esto no bloquea otros desarrollos. El rediseño visual completo sigue pendiente.
 
 # Frontend IA — integrado a nivel código/CI, 2026-11-12
 

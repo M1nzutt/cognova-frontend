@@ -1,21 +1,14 @@
-# Frontend Analytics — listo para CI de rama, 2026-11-12
+# Frontend Analytics — integrado en main, sin deploy, 2026-11-12
 
-Backend Analytics está integrado en main en b9b04eb70160403b3afe5fc068fb3ed8380eacc1.
-El Frontend implementa la sección protegida Análisis en /app/analytics, con
-overview, tiempo por rango y materia, cronología por cursor y búsqueda agrupada
-de Materias, Actividades, Planes y Retos. Los filtros y rutas usan los DTOs del
-Backend y el cliente autenticado existente; la zona IANA se obtiene del navegador.
+Backend Analytics contract consumido: `b9b04eb70160403b3afe5fc068fb3ed8380eacc1`. La ruta protegida `/app/analytics` presenta overview, tiempo por rango y materia, cronología con filtros/cursor y búsqueda agrupada para Materias, Actividades, Planes y Retos. Rangos de día/semana/mes/personalizados usan la zona IANA local del navegador; se conservan el orden y los cursores del Backend.
 
-Validación local: 372/372 tests en 48 archivos, lint, TypeScript, build,
-build:netlify y npm audit --omit=dev (cero vulnerabilidades de producción).
-build:netlify se ejecutó con RENDER_API_ORIGIN, igual que el workflow; no contacta
-Render ni publica. Continúa el warning no fatal preexistente de PostCSS sobre
-from. CI remoto de rama pendiente del push. No se desplegó a Netlify ni hubo
-smoke externo; el entorno final sigue siendo Docker. Rediseño visual global e
-integración/smoke en Docker siguen diferidos y no bloquean el desarrollo actual.
+`feat/academic-analytics-ui` pasó CI de rama, run `43173243794` (commit `4d878db2456209b25558d3d478d6893cfc71a0f4`). Se integró a `main` con `--no-ff`, merge `b7b27be1e39853c10e7bfad574969dab50804bec`; CI de `main`, run `43173544012`, concluyó `success`. Gitleaks, lint, TypeScript, tests, build, build:netlify y auditoría de dependencias de producción pasaron en Actions.
 
-Rama: feat/academic-analytics-ui. Base main: 61a533221bfbe22b458156f7b2588f2c829b3c86.
-El cierre Git/CI y el merge quedan pendientes de la validación remota.
+Validación local: 372/372 tests en 48 archivos, lint, TypeScript, build, build:netlify y `npm audit --omit=dev` con cero vulnerabilidades de producción. Persiste el warning no fatal de PostCSS sobre `from`. La auditoría completa conserva diez vulnerabilidades moderadas transitivas de tooling y no se forzó un downgrade mayor.
+
+No hubo deploy a Netlify ni smoke real contra Backend ni revisión visual completa multi-breakpoint. El merge omite Netlify con `[skip netlify]`; `build:netlify` solo valida y genera artefactos. Smoke integrado y revisión visual final quedan para Docker/rediseño; no bloquean continuar desarrollo. El rediseño visual global sigue pendiente.
+
+Rama publicada: `feat/academic-analytics-ui`, SHA `4d878db2456209b25558d3d478d6893cfc71a0f4`. `main` integrado en `b7b27be1e39853c10e7bfad574969dab50804bec`.
 
 # Frontend IA — integrado a nivel código/CI, 2026-11-12
 

@@ -1,14 +1,11 @@
-## Frontend Analytics — código listo, sin deploy, 2026-11-12
+## Frontend Analytics — integrado en main, sin deploy, 2026-11-12
 
-La rama feat/academic-analytics-ui implementa /app/analytics sobre el contrato
-Backend Analytics b9b04eb70160403b3afe5fc068fb3ed8380eacc1. Pasan localmente
-372/372 tests, lint, TypeScript, build, build:netlify y audit de producción
-(0 vulnerabilidades). GitHub Actions remoto está pendiente del push de la rama.
+`feat/academic-analytics-ui` (SHA `4d878db2456209b25558d3d478d6893cfc71a0f4`) pasó CI remoto, run `43173243794`. Se integró a `main` con merge `--no-ff` `b7b27be1e39853c10e7bfad574969dab50804bec`; CI sobre ese SHA pasó, run `43173544012` (`success`). La ruta `/app/analytics` usa el contrato Backend `b9b04eb70160403b3afe5fc068fb3ed8380eacc1`.
 
-No se desplegó a Netlify. build:netlify solo valida y genera artefactos localmente
-o en CI; requiere RENDER_API_ORIGIN para revisar redirects. No hubo smoke contra
-Backend productivo ni smoke visual integrado. Esos pasos corresponden al entorno
-Docker final. No configurar una publicación Netlify para este cambio.
+Pasan localmente 372/372 tests, lint, TypeScript, build, build:netlify y `npm audit --omit=dev` (cero vulnerabilidades de producción). El warning PostCSS sobre `from` no es fatal. CI además pasó Gitleaks y auditoría de producción; la auditoría completa mantiene diez vulnerabilidades moderadas transitivas de tooling, documentadas sin downgrade mayor.
+
+No se desplegó a Netlify. El merge usa `[skip netlify]`; `build:netlify` valida y genera artefactos, pero no publica. No hubo smoke con Backend real ni revisión visual completa multi-breakpoint. Ambos quedan para el entorno integrado Docker/rediseño y no bloquean el desarrollo. No configurar un deploy Netlify para este cambio.
+
 
 # Frontend IA — integrado; deploy Netlify omitido, 2026-11-12
 
