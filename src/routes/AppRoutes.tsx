@@ -13,6 +13,7 @@ import { StudyPlanCreatePage } from '../pages/StudyPlanCreatePage'
 import { StudyPlanDetailPage } from '../pages/StudyPlanDetailPage'
 import { StudyChallengeDetailPage } from '../pages/StudyChallengeDetailPage'
 import { BehaviorAnalysisPage } from '../pages/BehaviorAnalysisPage'
+import { AnalyticsPage } from '../pages/AnalyticsPage'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AcademicProfilePage } from '../pages/AcademicProfilePage'
 import { OnboardingRoute } from './OnboardingRoute'
@@ -54,6 +55,7 @@ export function AppRoutes() {
             <Route path="app/calendar" element={<CalendarPage />} />
             <Route path="app/study-plans" element={<StudyPlansPage />} />
             <Route path="app/behavior" element={<BehaviorAnalysisPage />} />
+            <Route path="app/analytics" element={<AnalyticsPage />} />
             <Route path="app/study-plans/new" element={<StudyPlanCreatePage />} />
             <Route path="app/study-plans/:planId" element={<StudyPlanDetailPage />} />
             <Route path="app/study-plans/:planId/challenges/:challengeId" element={<StudyChallengeDetailPage />} />
