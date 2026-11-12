@@ -41,6 +41,52 @@ describe('authentication routes and forms', () => {
     expect(screen.queryByRole('navigation', { name: 'Navegación principal' })).not.toBeInTheDocument()
   })
 
+  it.each(['/login', '/register'])('can show and hide the password on %s without losing its value', async (path) => {
+    vi.stubGlobal('fetch', vi.fn())
+    mount(path)
+    const input = await screen.findByLabelText('Contraseña')
+    const keyboard = userEvent.setup()
+    await keyboard.type(input, 'Example123!')
+
+    expect(input).toHaveAttribute('type', 'password')
+    const show = screen.getByRole('button', { name: 'Mostrar contraseña' })
+    await keyboard.click(show)
+    expect(input).toHaveAttribute('type', 'text')
+    expect(input).toHaveValue('Example123!')
+    expect(screen.getByRole('button', { name: 'Ocultar contraseña' })).toHaveAttribute('aria-pressed', 'true')
+    await keyboard.click(screen.getByRole('button', { name: 'Ocultar contraseña' }))
+    expect(input).toHaveAttribute('type', 'password')
+    expect(input).toHaveValue('Example123!')
+  })
+
+  it('does not offer password recovery without a supported auth flow', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+    mount('/login')
+
+    expect(await screen.findByRole('heading', { name: 'Inicia sesión' })).toBeVisible()
+    expect(screen.queryByRole('link', { name: /olvidé|recuperar contraseña/i })).not.toBeInTheDocument()
+  })
+
+  it('keeps the public login controls in a useful keyboard order', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+    mount('/login')
+    const keyboard = userEvent.setup()
+    await screen.findByRole('heading', { name: 'Inicia sesión' })
+
+    await keyboard.tab()
+    expect(document.activeElement).toHaveAttribute('href', '#main-content')
+    await keyboard.tab()
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Cognova, inicio')
+    await keyboard.tab()
+    expect(document.activeElement).toHaveAttribute('href', '/register')
+    await keyboard.tab()
+    expect(document.activeElement).toHaveAttribute('id', 'login-email')
+    await keyboard.tab()
+    expect(document.activeElement).toHaveAttribute('id', 'login-password')
+    await keyboard.tab()
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Mostrar contraseña')
+  })
+
   it.each(['/dashboard', '/questionnaire', '/app/analytics'])('protects %s without making up a session', async (path) => {
     const fetchMock = vi.fn()
     vi.stubGlobal('fetch', fetchMock)
