@@ -10,6 +10,7 @@ interface RequestOptions {
   csrf?: boolean
   signal?: AbortSignal
   retryAuth?: boolean
+  timeoutMs?: number
   query?: Record<string, number | string>
 }
 
@@ -41,7 +42,7 @@ export class ApiClient {
       headers.set('X-CSRF-Token', csrf)
     }
     let response: Response
-    const timeout = AbortSignal.timeout(20_000)
+    const timeout = AbortSignal.timeout(options.timeoutMs ?? 20_000)
     try {
       response = await fetch(`${this.baseUrl.replace(/\/$/, '')}${path}${query.size ? `?${query}` : ''}`, {
         method: options.method ?? 'GET', headers,

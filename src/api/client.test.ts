@@ -29,4 +29,14 @@ describe('API error metadata', () => {
     const client = new ApiClient('/api/v1', () => null, vi.fn())
     await expect(client.request('/analysis/behavior', { method: 'POST' })).rejects.toMatchObject({ code: 'TIMEOUT', status: 0 })
   })
+
+  it('uses the route-specific timeout when supplied', async () => {
+    const timeout = vi.spyOn(AbortSignal, 'timeout').mockReturnValue(new AbortController().signal)
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ ok: true }), {
+      status: 200, headers: { 'Content-Type': 'application/json' },
+    })))
+    const client = new ApiClient('/api/v1', () => null, vi.fn())
+    await client.request('/study-plans/generate', { method: 'POST', timeoutMs: 36_000 })
+    expect(timeout).toHaveBeenCalledWith(36_000)
+  })
 })

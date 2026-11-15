@@ -25,7 +25,11 @@ export class StudyPlanService {
   constructor(private readonly client: ApiClient) {}
 
   async generate(signal?: AbortSignal): Promise<AiPlanGenerationResponse> {
-    return readAiPlanGeneration(await this.client.request('/study-plans/generate', { method: 'POST', signal }))
+    return readAiPlanGeneration(await this.client.request('/study-plans/generate', {
+      method: 'POST',
+      signal,
+      timeoutMs: 36_000,
+    }))
   }
 
   async list(status: PlanStatus | 'all' = 'all', afterId?: number, signal?: AbortSignal): Promise<StudyPlanList> {
