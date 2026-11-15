@@ -16,6 +16,13 @@ del contrato. Su suite focalizada pasó 39/39; se agregó jerarquía visual a
 estados de carga, disponibilidad, evidencia y recursos relacionados. No se
 invocó Gemini ni se simuló resultado real.
 
+Revisión complementaria de autenticación pública en Chrome headless: `/login`
+y `/register` a 1440, 768 y 390 px. Se verificaron encabezados y labels de
+campos asociados, ausencia de sidebar, overflow horizontal y errores JS
+(ninguno encontrado). Las pantallas de onboarding conservan el flujo y su
+validación automatizada existente (`OnboardingRoutes.test.tsx`); no se dispuso
+de credenciales para un smoke visual autenticado.
+
 ## Auditoría funcional Docker — actualización local — 2026-11-15
 
 La evidencia autenticada previa con el usuario sintético local cubre Dashboard,
