@@ -21,8 +21,8 @@ describe('protected study sessions list', () => {
     const paused = { ...studySession, execution_state: 'paused' as const, intervals: [{ id: 21, started_at: studySession.start_at!, ended_at: '2030-01-15T15:15:00Z' }], actual_duration: '600.000000' }
     studySessionSetup({ sessions: [paused] })
     expect(await screen.findByRole('heading', { name: 'Sesiones de estudio' })).toBeVisible()
-    expect(await screen.findByRole('heading', { name: 'Tu temporizador está en pausa' })).toBeVisible()
-    expect(screen.getByRole('link', { name: 'Volver a la sesión activa' })).toHaveAttribute('href', '/app/sessions/8')
+    expect(await screen.findByRole('heading', { name: 'Tu sesión sigue aquí' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Abrir temporizador' })).toHaveAttribute('href', '/app/sessions/8')
     expect(await screen.findByRole('link', { name: /Sesión de Biología/ })).toBeVisible()
   })
 
@@ -46,7 +46,8 @@ describe('protected study sessions list', () => {
 
   it('shows an empty state', async () => {
     studySessionSetup({ sessions: [] })
-    expect(await screen.findByText('No hay sesiones con estos filtros')).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Tu próximo espacio empieza aquí' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Planificar mi primera sesión' })).toBeVisible()
   })
 
   it('shows safe errors without leaking server messages', async () => {

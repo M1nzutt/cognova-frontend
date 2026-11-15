@@ -1,20 +1,28 @@
-## Mejora UX académica — en curso — 2026-11-15
+## Mejora UX académica — completada — 2026-11-15
 
-Primera iteración visual en Materias y Actividades: Materias ahora destaca el
-cupo real de espacios activos en una cabecera editorial y conserva la navegación
-Activas/Archivadas; Actividades jerarquiza su acción principal, filtros, chips
-de estado/prioridad y ofrece un acceso directo al formulario desde el estado
-vacío. Se mantiene intacta la lógica y los contratos.
+Se actualizaron los cinco módulos académicos autenticados:
 
-El smoke visual local se ejecuta solo contra `http://localhost:8080`, crea una
-cuenta con el formulario normal y completa perfil/cuestionario. La cuenta y sus
-registros no se limpian. Las capturas iniciales en `.local/academic-ux` son
-referencia de estados vacíos, anteriores a esta iteración; falta repetir el
-recorrido y verificar operaciones/persistencia para las cinco pantallas. Ningún
-script de smoke productivo ni generación Gemini fue ejecutado.
+- Materias destaca el cupo real de espacios activos y mantiene la separación
+  Activas/Archivadas.
+- Actividades refuerza la acción principal, los filtros, los metadatos de estado
+  y prioridad y el acceso de creación desde el estado vacío.
+- Sesiones mejora la jerarquía de planificación, el retorno al temporizador
+  activo y los estados vacíos.
+- Calendario explica su alcance de solo lectura, zona horaria y semana visible.
+- Planes/Retos hacen más clara la creación manual frente a la propuesta opcional
+  de IA; Analytics agrupa las métricas por tema.
 
-Verificación de este bloque: 29/29 pruebas focalizadas, lint, TypeScript y build
-aprobados; se conserva el warning preexistente de PostCSS `from`.
+Se conservaron contratos, operaciones y decisiones existentes. El smoke local
+`scripts/academicUxLocalBrowser.ts` creó una cuenta sintética mediante registro y
+onboarding normal y recorrió creación de materia/actividad/sesión/plan/reto,
+transiciones del temporizador y reto, calendario mes/semana, Analytics/búsqueda
+y refresh. Comprobó las seis pantallas a 1440 y 390 px sin overflow horizontal.
+La cuenta y sus recursos quedan retenidos; no se borró información, no se llamó
+a Gemini y no se ejecutaron smokes productivos. Evidencia visual y reporte sin
+credenciales: `.local/academic-ux/` (ignorado por Git).
+
+`npm run verify`: lint, TypeScript, build y **387/387 pruebas en 50 archivos**
+aprobados. El build conserva el warning conocido de PostCSS `from`.
 
 ## Mejora UX/UI — primer bloque completado — 2026-11-15
 

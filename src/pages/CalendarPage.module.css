@@ -1,11 +1,20 @@
 .page { width: 100%; max-width: 1440px; min-width: 0; margin: 0 auto; }
-.heading { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
-.heading h1 { margin: .1rem 0 .4rem; font-size: var(--text-2xl); }
-.heading p { max-width: 70ch; margin: .35rem 0 0; color: var(--muted); }
+.intro { position: relative; display: flex; min-height: 158px; align-items: center; justify-content: space-between; gap: 1.5rem; overflow: hidden; padding: clamp(1.2rem, 3vw, 1.8rem); margin-bottom: 1.2rem; border: 1px solid var(--color-lilac-200); border-radius: var(--radius-lg); background: linear-gradient(110deg, #eef5f2, var(--surface) 72%); }
+.intro::after { position: absolute; right: -2.2rem; bottom: -7rem; width: 16rem; height: 16rem; border: 1px solid #d4e4dc; border-radius: 50%; box-shadow: 0 0 0 1.15rem var(--surface), 0 0 0 1.2rem #d4e4dc, 0 0 0 2.35rem var(--surface), 0 0 0 2.4rem #d4e4dc; content: ""; opacity: .65; pointer-events: none; }
+.introCopy, .introAction { position: relative; z-index: 1; }
+.introCopy { max-width: 55rem; }
+.introCopy > :global(.eyebrow) { margin: 0 0 .5rem; }
+.intro h1 { margin: .1rem 0 .4rem; font-size: var(--text-2xl); }
+.introCopy > p:not(.eyebrow) { max-width: 70ch; margin: .35rem 0 0; color: var(--muted); }
+.introAction { display: grid; justify-items: end; gap: .75rem; }
+.introAction > a { white-space: nowrap; }
+.introAction > a > span { margin-left: .25rem; }
+.readOnly { padding: .3rem .6rem; border: 1px solid #cddfd5; border-radius: var(--radius-pill); color: #345a48; background: #f6fbf8; font-size: .68rem; font-weight: 750; letter-spacing: .07em; }
 .zone { display: flex; align-items: center; gap: .5rem; padding-left: .75rem; margin: .65rem 0 0 !important; border-left: 2px solid var(--color-orchid-500); color: var(--muted); font-size: .78rem !important; }
 .page input { max-width: 100%; color: var(--text); background: var(--surface); }
 .filters { margin: .8rem 0 1rem; }
 .calendarCount { color: var(--muted); font-size: .82rem; }
 @media (max-width: 650px) {
-  .heading { align-items: flex-start; }
+  .intro { align-items: flex-start; flex-direction: column; }
+  .introAction { justify-items: start; }
 }

@@ -1,19 +1,22 @@
-## Mejora UX académica — en curso — 2026-11-15
+## Mejora UX académica — validación local completada — 2026-11-15
 
-El recorrido local `scripts/academicUxLocalBrowser.ts` registró una cuenta
-sintética nueva desde `/register`, completó perfil y cuestionario desde la UI,
-y abrió las rutas de Materias, Actividades, Sesiones, Calendario, Planes y
-Analytics. Las capturas de referencia y el reporte sin credenciales están en
-`.local/academic-ux/` (ruta ignorada por Git). No se hicieron limpiezas ni
-borrados.
+`scripts/academicUxLocalBrowser.ts` se limitó a `http://localhost:8080` y creó
+una cuenta sintética nueva mediante `/register`, perfil académico y cuestionario
+normales. En UI creó una Materia y una Actividad; planificó una Sesión asociada y
+ejecutó iniciar, pausar, reanudar, pausar y finalizar; creó un Plan con recursos
+vinculados y un Reto con transiciones iniciar/completar. Después comprobó
+Calendario en mes/semana y Analytics (resumen, tiempo, cronología y búsqueda),
+incluido refresh con búsqueda persistida en el recorrido. Todos los módulos se
+capturaron a 1440×1000 y 390×844; las seis vistas móviles no presentaron overflow
+horizontal. `pageErrors` quedó vacío.
 
-La primera captura reveló que el smoke no esperaba a que terminaran las consultas;
-se corrigió la espera antes de generar las referencias. Las recargas repetidas
-entre rutas protegidas pueden terminar en login en esta corrida, por lo que aún
-no se considera validada la restauración visual de todas las pantallas. Tampoco
-se recorrieron todavía operaciones académicas. El smoke de escritura real y la
-evidencia final quedan pendientes. Materias y Actividades recibieron la primera
-iteración visual; 29/29 pruebas focalizadas, lint, TypeScript y build aprobaron.
+El reporte sin credenciales y las 12 capturas viven en `.local/academic-ux/`,
+ruta ignorada por Git. No se limpió ni borró ningún dato generado, no se llamó a
+Gemini y no se ejecutaron smokes productivos. La cuenta sintética y sus recursos
+permanecen en el stack local.
+
+Validación final: `npm run verify` aprobó lint, TypeScript, build y 387/387
+pruebas en 50 archivos. Vite conserva el warning conocido de PostCSS `from`.
 
 ## Revisión visual UX/UI — primer bloque — 2026-11-15
 

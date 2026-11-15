@@ -23,14 +23,20 @@ function localTime(value:string,withDate=true):string {
  return new Intl.DateTimeFormat(undefined,withDate?{dateStyle:'medium',timeStyle:'short'}:{month:'short',day:'numeric'}).format(date)
 }
 function count(value:number):string { return new Intl.NumberFormat().format(value) }
-const metrics:[keyof AnalyticsOverview,string,boolean][]=[
- ['total_studied_seconds','Tiempo total estudiado',true],['finished_sessions','Sesiones finalizadas',false],
- ['completed_sessions','Sesiones completadas',false],['partial_sessions','Sesiones parciales',false],
- ['postponed_sessions','Sesiones postergadas',false],['cancelled_sessions','Sesiones canceladas',false],
- ['subjects_with_activity','Materias con actividad',false],['completed_activities','Actividades completadas',false],
- ['pending_activities','Actividades pendientes',false],['in_progress_activities','Actividades en progreso',false],
- ['active_plans','Planes activos',false],['completed_plans','Planes completados',false],
- ['completed_challenges','Retos completados',false],['failed_challenges','Retos fallidos',false],
+const metricGroups:{title:string;items:[keyof AnalyticsOverview,string,boolean][]}[]=[
+ {title:'Sesiones registradas',items:[
+  ['total_studied_seconds','Tiempo total estudiado',true],['finished_sessions','Sesiones finalizadas',false],
+  ['completed_sessions','Sesiones completadas',false],['partial_sessions','Sesiones parciales',false],
+  ['postponed_sessions','Sesiones postergadas',false],['cancelled_sessions','Sesiones canceladas',false],
+ ]},
+ {title:'Actividad académica',items:[
+  ['subjects_with_activity','Materias con actividad',false],['completed_activities','Actividades completadas',false],
+  ['pending_activities','Actividades pendientes',false],['in_progress_activities','Actividades en progreso',false],
+ ]},
+ {title:'Planes y retos',items:[
+  ['active_plans','Planes activos',false],['completed_plans','Planes completados',false],
+  ['completed_challenges','Retos completados',false],['failed_challenges','Retos fallidos',false],
+ ]},
 ]
 const categories:Record<AnalyticsCategory,string>={activity:'Actividad',study_session:'Sesión de estudio',decision:'Decisión de un plan',plan:'Plan',challenge:'Reto'}
 const searchNames={subject:'Materias',activity:'Actividades',study_plan:'Planes',study_challenge:'Retos'}
@@ -131,10 +137,10 @@ export function AnalyticsPage() {
 
  return <section className={styles.page}>
   <header className={styles.heading}><div><p className="eyebrow">TU RECORRIDO ACADÉMICO</p><h1>Análisis</h1><p>Consulta lo que has registrado y observa cómo se distribuye tu tiempo de estudio.</p></div><button className="button" onClick={()=>setRefresh(n=>n+1)}>Actualizar</button></header>
-  <section className={styles.section} aria-labelledby="overview-title"><h2 id="overview-title">Resumen general</h2>
+  <section className={styles.section} aria-labelledby="overview-title"><div className={styles.sectionHeading}><div><h2 id="overview-title">Resumen general</h2><p>Una lectura de los registros disponibles en tu espacio.</p></div></div>
     {overview.loading&&<LoadingStatus label="Cargando resumen…" />}
    {overview.error&&<div role="alert"><p>{overview.error}</p><button className="button" onClick={()=>setRefresh(n=>n+1)}>Intentar de nuevo</button></div>}
-   {overview.data&&<dl className={styles.metrics}>{metrics.map(([key,label,isDuration])=><div className={styles.metric} key={key}><dt>{label}</dt><dd>{isDuration?duration(overview.data!.total_studied_seconds):count(overview.data![key] as number)}</dd></div>)}</dl>}
+    {overview.data&&<div className={styles.metricGroups}>{metricGroups.map(group=><section className={styles.metricGroup} key={group.title} aria-label={group.title}><h3>{group.title}</h3><dl className={styles.metrics}>{group.items.map(([key,label,isDuration])=><div className={styles.metric} key={key}><dt>{label}</dt><dd>{isDuration?duration(overview.data!.total_studied_seconds):count(overview.data![key] as number)}</dd></div>)}</dl></section>)}</div>}
   </section>
   <section className={styles.section} aria-labelledby="study-title"><div className={styles.sectionHeading}><div><h2 id="study-title">Tiempo de estudio</h2><p>Zona horaria local: {timezone}.</p></div><label>Periodo<select value={preset} onChange={e=>setPreset(e.target.value as AnalyticsRangePreset)}><option value="day">Día</option><option value="week">Semana</option><option value="month">Mes</option><option value="custom">Rango personalizado</option></select></label></div>
    {preset==='custom'&&<div className={styles.rangeFields}><label>Desde (incluido)<input type="date" value={fromDate} onChange={e=>setFromDate(e.target.value)}/></label><label>Hasta (exclusivo)<input type="date" value={toDate} onChange={e=>setToDate(e.target.value)}/></label></div>}

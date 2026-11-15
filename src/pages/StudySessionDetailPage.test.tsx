@@ -109,7 +109,7 @@ describe('safe study plan deletion', () => {
     expect(submit).toBeDisabled()
     await userEvent.click(screen.getByRole('checkbox', { name: /Entiendo/ }))
     await userEvent.click(submit)
-    expect(await screen.findByText('No hay sesiones con estos filtros')).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Tu próximo espacio empieza aquí' })).toBeVisible()
     expect(setup.sessions).toHaveLength(0)
     const remove = setup.fetch.mock.calls.find(([, request]) => request?.method === 'DELETE')
     expect(new URL(String(remove?.[0]), 'https://test').searchParams.get('confirm')).toBe('true')

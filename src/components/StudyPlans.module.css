@@ -1,4 +1,17 @@
 .page { composes: page from './StudySessions.module.css'; }
+.hero { position: relative; display: flex; min-height: 170px; align-items: center; justify-content: space-between; gap: 1.5rem; overflow: hidden; padding: clamp(1.2rem, 3vw, 1.9rem); margin-bottom: .8rem; border: 1px solid #e8dfbd; border-radius: var(--radius-lg); background: linear-gradient(112deg, #f7f2df, var(--surface) 72%); }
+.hero::after { position: absolute; right: -2rem; bottom: -6.5rem; width: 15rem; height: 15rem; border: 1px solid #e5d9a9; border-radius: 50%; box-shadow: 0 0 0 1.2rem var(--surface), 0 0 0 1.25rem #e5d9a9, 0 0 0 2.4rem var(--surface), 0 0 0 2.45rem #e5d9a9; content: ""; opacity: .7; pointer-events: none; }
+.heroCopy, .hero .actions { position: relative; z-index: 1; }
+.heroCopy { max-width: 45rem; }
+.heroCopy > :global(.eyebrow) { margin: 0 0 .5rem; }
+.hero h1 { margin: .1rem 0 .4rem; font-size: var(--text-2xl); }
+.heroCopy > p:last-child { margin: .35rem 0 0; color: var(--muted); }
+.hero .actions { justify-content: flex-end; }
+.manualAction { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; gap: .4rem; padding: .65rem 1rem; border: 1px solid var(--color-lilac-200); border-radius: var(--radius-pill); color: var(--color-plum-950); background: var(--surface); font-size: .88rem; font-weight: 750; text-decoration: none; white-space: nowrap; }
+.manualAction:hover { border-color: var(--color-orchid-600); background: var(--color-lilac-100); }
+.manualAction > span { font-size: 1.1rem; }
+.aiNote { display: flex; align-items: flex-start; gap: .5rem; margin: .45rem 0 1rem; color: var(--muted); font-size: .84rem; }
+.aiNote > span { color: #8a6c22; font-size: 1rem; line-height: 1.1; }
 .heading { composes: heading from './StudySessions.module.css'; }
 .primary { composes: primary from './StudySessions.module.css'; }
 .empty { composes: empty from './StudySessions.module.css'; }
@@ -39,5 +52,5 @@
 .summary dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
 .dialog { composes: dialog from './StudySessions.module.css'; }
 .confirm { composes: confirm from './StudySessions.module.css'; }
-@media (max-width: 700px) { .rhythm { grid-template-columns: repeat(4, minmax(0, 1fr)); } .filters > * { flex: 1 1 auto; } .cardTop { gap: .6rem; } }
+@media (max-width: 700px) { .hero { align-items: flex-start; flex-direction: column; } .hero .actions { justify-content: flex-start; } .rhythm { grid-template-columns: repeat(4, minmax(0, 1fr)); } .filters > * { flex: 1 1 auto; } .cardTop { gap: .6rem; } }
 @media (max-width: 400px) { .rhythm { grid-template-columns: repeat(2, minmax(0, 1fr)); } .actions > * { flex: 1 1 100%; } .summary { grid-template-columns: 1fr; } }

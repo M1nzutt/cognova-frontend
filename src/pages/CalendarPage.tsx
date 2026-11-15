@@ -26,11 +26,11 @@ export function CalendarPage() {
   const query: CalendarItemsQuery = { ...range.query, ...filters, ...(type && type !== 'all' ? { type } : {}) }
   const filtered = Boolean(queryState.filters.subject_id || queryState.filters.status || queryState.filters.priority || (type && type !== 'all'))
   return <section className={styles.page} aria-labelledby="calendar-title">
-    <header className={styles.heading}>
-      <div><p className="eyebrow">TU RECORRIDO ACADÉMICO</p><h1 id="calendar-title">Calendario</h1>
-        <p>Tus actividades y sesiones, en perspectiva. Abre cada recurso para ver su detalle.</p>
-        <p className={styles.zone}>Fechas y horas en {localZone()}. Semanas de lunes a domingo.</p></div>
-      <Link to="/app/activities" className="button">Ir a Actividades</Link>
+    <header className={styles.intro}>
+      <div className={styles.introCopy}><p className="eyebrow">TU SEMANA, EN PERSPECTIVA</p><h1 id="calendar-title">Calendario</h1>
+        <p>Actividades y sesiones en una sola mirada. Abre cualquier elemento para continuar donde lo planificaste.</p>
+        <p className={styles.zone}>Fechas y horas en {localZone()} · semanas de lunes a domingo</p></div>
+      <div className={styles.introAction}><span className={styles.readOnly}>VISTA DE AGENDA</span><Link to="/app/activities" className="button">Ir a Actividades <span aria-hidden="true">→</span></Link></div>
     </header>
     <CalendarToolbar date={queryState.date} view={queryState.view} onDate={queryState.onDate} onView={queryState.onView} />
     {subjects.loading && <LoadingStatus label="Cargando materias…" />}

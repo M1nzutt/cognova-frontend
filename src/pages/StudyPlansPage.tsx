@@ -24,17 +24,17 @@ export function StudyPlansPage() {
   const changeStatus = (value: PlanStatus | 'all') => setParams(value === 'all' ? {} : { status: value })
 
   return <section className={styles.page}>
-    <div className={styles.heading}>
-      <div><p className="eyebrow">TU PRÓXIMO PASO</p><h1>Planes de estudio</h1><p>Organiza materias, actividades y sesiones en un solo recorrido.</p></div>
+    <header className={styles.hero}>
+      <div className={styles.heroCopy}><p className="eyebrow">OBJETIVO · RECURSOS · RITMO</p><h1>Planes de estudio</h1><p>Conecta lo que quieres lograr con las materias, actividades y sesiones que ya tienes.</p></div>
       <div className={styles.actions}>
-        <Link className="button" to="/app/study-plans/new">Crear plan</Link>
+        <Link className={styles.manualAction} to="/app/study-plans/new"><span aria-hidden="true">＋</span> Crear plan</Link>
         <button className={styles.primary} type="button" disabled={generate.busy} aria-busy={generate.busy}
           onClick={() => void generate.run(signal => services.plans.generate(signal), result => navigate(`/app/study-plans/${result.plan.id}`))}>
           {generate.busy ? 'Preparando propuesta…' : 'Proponer un plan con IA'}
         </button>
       </div>
-    </div>
-    <p className={styles.muted}>La IA prepara un borrador para que lo revises. Solo tú decides si lo aceptas.</p>
+    </header>
+    <p className={styles.aiNote}><span aria-hidden="true">✦</span> Las propuestas empiezan como borrador. Tú revisas y decides; también puedes planificar manualmente.</p>
     {generate.error && <p role="alert" className={styles.error}>{generate.error}</p>}
     <div className={styles.filters}>
       <label htmlFor="plan-status">Ver planes</label>

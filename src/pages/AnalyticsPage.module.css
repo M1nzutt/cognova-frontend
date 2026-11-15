@@ -1,5 +1,9 @@
 .page { display: grid; gap: 1.15rem; width: 100%; }
 .heading, .sectionHeading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.heading { position: relative; align-items: center; overflow: hidden; padding: clamp(1.1rem, 2.8vw, 1.65rem); border: 1px solid #ded3e9; border-radius: var(--radius-lg); background: linear-gradient(112deg, #f0e9f5, var(--surface) 72%); }
+.heading::after { position: absolute; right: 4rem; bottom: -6rem; width: 12rem; height: 12rem; border: 1px solid #ded3e9; border-radius: 50%; box-shadow: 0 0 0 1.1rem var(--surface), 0 0 0 1.15rem #ded3e9, 0 0 0 2.25rem var(--surface); content: ""; opacity: .6; pointer-events: none; }
+.heading > div, .heading > button { position: relative; z-index: 1; }
+.heading > button { flex: 0 0 auto; }
 .heading h1 { margin: .1rem 0 .4rem; font-size: var(--text-2xl); }
 .heading p:last-child, .sectionHeading p { color: var(--muted); }
 .heading > div { max-width: 70ch; }
@@ -8,6 +12,9 @@
 .sectionHeading { align-items: flex-end; margin-bottom: 1rem; }
 .sectionHeading h2 { margin: 0 0 .2rem; }
 .sectionHeading p { margin: .2rem 0 0; font-size: .84rem; }
+.metricGroups { display: grid; gap: 1.1rem; }
+.metricGroup { min-width: 0; }
+.metricGroup h3 { margin: 0 0 .55rem; color: var(--color-plum-800); font-size: .85rem; font-weight: 750; letter-spacing: .025em; }
 .section label, .rangeFields label, .granularity, .searchField { display: grid; gap: .38rem; color: var(--text); font-size: .82rem; font-weight: 650; }
 .section select, .section input { width: 100%; min-height: 44px; max-width: 100%; padding: .5rem .7rem; border-radius: var(--radius-sm); }
 .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .7rem; margin: 0; }
@@ -46,6 +53,7 @@
   .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .charts, .searchGroups { grid-template-columns: minmax(0, 1fr); }
   .heading, .sectionHeading { align-items: flex-start; flex-direction: column; }
+  .heading > button { align-self: flex-start; }
 }
 @media (max-width: 460px) {
   .section { padding: 1rem; }
