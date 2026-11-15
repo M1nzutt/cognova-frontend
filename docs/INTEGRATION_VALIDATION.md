@@ -23,6 +23,12 @@ campos asociados, ausencia de sidebar, overflow horizontal y errores JS
 validación automatizada existente (`OnboardingRoutes.test.tsx`); no se dispuso
 de credenciales para un smoke visual autenticado.
 
+También se abrieron directamente 11 rutas protegidas (Dashboard, Calendario,
+Materias, Actividades, Sesiones, Planes, IA y Analytics) a 1440 y 390 px. Las
+22 visitas anónimas redirigieron a login, sin overflow horizontal ni errores JS.
+Esta prueba valida el límite de autenticación y el shell público, no sustituye
+la inspección visual autenticada de cada módulo.
+
 ## Auditoría funcional Docker — actualización local — 2026-11-15
 
 La evidencia autenticada previa con el usuario sintético local cubre Dashboard,
