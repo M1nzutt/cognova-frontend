@@ -9,6 +9,7 @@ import { useStudyPlanResource } from '../hooks/useStudyPlanResource'
 import { useStudyPlanMutation } from '../hooks/useStudyPlanMutation'
 import { planStatusLabels } from '../utils/studyPlanPresentation'
 import styles from '../components/StudyPlans.module.css'
+import { LoadingStatus } from '../components/LoadingStatus'
 
 export function StudyPlanDetailPage() {
   const { planId } = useParams()
@@ -37,7 +38,7 @@ export function StudyPlanDetailPage() {
 
   return <section className={styles.page}>
     <Link to="/app/study-plans">← Planes de estudio</Link>
-    {resource.loading && <p role="status">Cargando plan…</p>}
+    {resource.loading && <LoadingStatus label="Cargando plan…" />}
     {resource.error && <div role="alert"><p>{resource.error}</p><button className="button" type="button" onClick={resource.retry}>Reintentar plan</button></div>}
     {plan && !resource.loading && !resource.error && <>
       <div className={styles.heading}><div><p className="eyebrow">TU RECORRIDO</p><h1>{plan.name}</h1><p>{planStatusLabels[plan.status]}</p></div>
@@ -45,7 +46,7 @@ export function StudyPlanDetailPage() {
       {mutation.error && <p role="alert" className={styles.error}>{mutation.error}</p>}
       {editing ? <>
         <h2>Editar borrador</h2>
-        {choices.loading && <p role="status">Cargando recursos…</p>}
+        {choices.loading && <LoadingStatus label="Cargando recursos…" />}
         {choices.error && <div role="alert"><p>{choices.error}</p><button className="button" type="button" onClick={choices.retry}>Reintentar recursos</button></div>}
         {choices.data && <StudyPlanForm key={plan.updated_at} {...choices.data} initial={plan} busy={mutation.busy} error={mutation.error}
           onCancel={() => { setEditing(false); mutation.clearError() }} onSave={value => void mutation.run(

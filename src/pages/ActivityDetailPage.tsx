@@ -11,6 +11,7 @@ import { ActivityDeleteConfirmation } from '../components/ActivityDeleteConfirma
 import { dateLabel, localZone, priorityLabels, statusLabels } from '../utils/activityPresentation'
 import type { Activity } from '../types/activity'
 import styles from '../components/Activities.module.css'
+import { LoadingStatus } from '../components/LoadingStatus'
 export function ActivityDetailPage() { const { activityId } = useParams(); return <ActivityDetail key={activityId} id={Number(activityId)} /> }
 function ActivityDetail({ id }: { id: number }) {
   const { service, loadSubjects } = useActivityServices()
@@ -21,7 +22,7 @@ function ActivityDetail({ id }: { id: number }) {
   function updated(value: Activity, message: string) { resource.setData(old => old ? { ...old, item: value } : old); setNotice(message) }
   function closeDelete() { setDeleting(false); mutation.clearError(); trigger.current?.focus() }
   return <section className={styles.page}><Link to="/app/activities">← Actividades</Link>
-    {resource.loading && <p role="status">Cargando actividad…</p>}{resource.error && <div role="alert"><h1>No pudimos abrir la actividad</h1><p>{resource.error}</p><button className="button" onClick={resource.retry}>Reintentar</button></div>}
+    {resource.loading && <LoadingStatus label="Cargando actividad…" />}{resource.error && <div role="alert"><h1>No pudimos abrir la actividad</h1><p>{resource.error}</p><button className="button" onClick={resource.retry}>Reintentar</button></div>}
     {item && resource.data && !resource.loading && <><div className={styles.heading}><h1>{editing ? 'Editar actividad' : item.title}</h1><span className={styles.badge}>{statusLabels[item.status]}</span></div>
       {notice && <p role="status">{notice}</p>}
       {mutation.error && !deleting && <div><p role="alert" className={styles.error}>{mutation.error}</p><button className="button" disabled={mutation.busy} onClick={() => void mutation.run(signal => service.detail(id, signal), v => updated(v, 'Versión actual consultada. Revisa tu borrador antes de volver a guardar.'))}>Consultar versión actual</button></div>}

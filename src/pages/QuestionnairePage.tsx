@@ -7,6 +7,7 @@ import { QuestionnaireQuestion } from '../components/QuestionnaireQuestion'
 import { QuestionnaireSummary } from '../components/QuestionnaireSummary'
 import { QuestionnaireHistory } from '../components/QuestionnaireHistory'
 import styles from '../components/Questionnaire.module.css'
+import { LoadingStatus } from '../components/LoadingStatus'
 
 export function QuestionnairePage() {
   const model = useQuestionnaire()
@@ -16,7 +17,7 @@ export function QuestionnairePage() {
   const heading = useRef<HTMLHeadingElement>(null)
   useEffect(() => { heading.current?.focus() }, [step, model.loading])
 
-  if (model.loading) return <p role="status">Preparando tu cuestionario…</p>
+  if (model.loading) return <LoadingStatus label="Preparando tu cuestionario…" />
   if (!model.catalog) return <section className={styles.panel}><h1>Tu percepción inicial</h1><p role="alert">{model.error ?? 'No hay un catálogo disponible.'}</p><button className="button" onClick={() => void model.load()}>Reintentar cuestionario</button></section>
   const { catalog, draft } = model
   const question = catalog.questions[step]
@@ -64,7 +65,7 @@ export function QuestionnairePage() {
         </button>
       </div>
     </form>
-    {model.busy && <p role="status">Comunicando tus respuestas con Cognova…</p>}
+    {model.busy && <LoadingStatus label="Comunicando tus respuestas con Cognova…" />}
     <p className={styles.hint}>Puedes volver sin perder tus elecciones. Las respuestas sin guardar permanecen solo en esta pantalla; una recarga descarta ese borrador.</p>
     {model.current && <div className={styles.actions}>
       <button className="button" onClick={() => setShowHistory(!showHistory)} aria-expanded={showHistory}>{showHistory ? 'Ocultar revisiones' : 'Consultar revisiones'}</button>

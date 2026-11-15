@@ -6,6 +6,7 @@ import { useSubjectData } from '../hooks/useSubjectData'
 import { useSubjectMutation } from '../hooks/useSubjectMutation'
 import { colorLabels, difficultyLabels } from '../utils/subjectPresentation'
 import styles from '../components/Subjects.module.css'
+import { LoadingStatus } from '../components/LoadingStatus'
 export function SubjectDetailPage() {
   const { subjectId } = useParams()
   return <SubjectDetail key={subjectId} id={Number(subjectId)} />
@@ -19,7 +20,7 @@ function SubjectDetail({ id }: { id: number }) {
   const item = data?.item
   const closeDelete = () => { setDeleting(false); mutation.clearError(); deleteButton.current?.focus() }
   return <section className={styles.page}><Link to="/app/subjects">← Materias</Link>
-    {loading && <p role="status">Cargando materia…</p>}
+    {loading && <LoadingStatus label="Cargando materia…" />}
     {error && <div role="alert"><h1>No pudimos abrir la materia</h1><p>{error}</p><button className="button" onClick={retry}>Reintentar</button></div>}
     {!loading && item && data && <>
       <div className={styles.heading}><h1>{editing ? 'Editar materia' : item.name}</h1><span className={styles.badge}>{item.status === 'active' ? 'Activa' : 'Archivada'}</span></div>

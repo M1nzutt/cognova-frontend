@@ -16,6 +16,7 @@ import { localZone } from '../utils/activityPresentation'
 import type { CalendarItemsQuery, CalendarView } from '../types/calendar'
 import type { Subject } from '../types/subject'
 import styles from './CalendarPage.module.css'
+import { LoadingStatus } from '../components/LoadingStatus'
 
 export function CalendarPage() {
   const { session } = useAuth(), queryState = useCalendarQuery()
@@ -32,7 +33,7 @@ export function CalendarPage() {
       <Link to="/app/activities" className="button">Ir a Actividades</Link>
     </header>
     <CalendarToolbar date={queryState.date} view={queryState.view} onDate={queryState.onDate} onView={queryState.onView} />
-    {subjects.loading && <p role="status">Cargando materias…</p>}
+    {subjects.loading && <LoadingStatus label="Cargando materias…" />}
     {subjects.error && <div role="alert"><p>No pudimos cargar tus materias.</p><button className="button" type="button" onClick={subjects.retry}>Reintentar materias</button></div>}
     <CalendarFilters value={queryState.filters} subjects={subjects.data ?? []} onChange={queryState.onFilters} />
     <CalendarResults key={JSON.stringify(query)} service={service} query={query} date={queryState.date} view={queryState.view} subjects={subjects.data ?? []} filtered={filtered} />

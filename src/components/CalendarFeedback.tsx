@@ -1,7 +1,7 @@
 import styles from './CalendarViews.module.css'
 
 export function CalendarLoading() {
-  return <p className={styles.feedback} role="status" aria-live="polite">Cargando calendario completo…</p>
+  return <p className={`${styles.feedback} ${styles.feedbackLoading}`} role="status" aria-live="polite"><span aria-hidden="true" />Cargando calendario completo…</p>
 }
 export function CalendarError({ message, onRetry }: { message: string; onRetry: () => void }) {
   return <div className={`${styles.feedback} ${styles.error}`} role="alert"><p>{message}</p><button className="button" type="button" onClick={onRetry}>Reintentar calendario</button></div>

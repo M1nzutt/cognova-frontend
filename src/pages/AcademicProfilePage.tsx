@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useAuthForm } from '../hooks/useAuthForm'
 import { validateAcademicProfile } from '../utils/academicProfileValidation'
 import styles from '../components/AuthFormLayout.module.css'
+import { LoadingStatus } from '../components/LoadingStatus'
 
 export function AcademicProfilePage() {
   const { user, session } = useAuth()
@@ -28,7 +29,7 @@ export function AcademicProfilePage() {
         <button className="button" type="submit">{loading ? 'Guardando…' : 'Guardar y continuar'}</button>
       </fieldset>
       {(validation || error) && <p role="alert">{validation || error}</p>}
-      {loading && <p role="status">Guardando tu perfil…</p>}
+      {loading && <LoadingStatus label="Guardando tu perfil…" />}
     </form>
   </section>
 }

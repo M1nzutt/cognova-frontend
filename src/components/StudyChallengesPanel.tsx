@@ -8,6 +8,7 @@ import { StudyChallengeForm } from './StudyChallengeForm'
 import { aiChallengeContext, challengeGoal, challengeStatusLabels } from '../utils/studyPlanPresentation'
 import { localDateTime } from '../utils/studySessionPresentation'
 import styles from './StudyPlans.module.css'
+import { LoadingStatus } from './LoadingStatus'
 
 export function StudyChallengesPanel({ plan, onChange }: { plan: StudyPlan; onChange: () => void }) {
   const services = useStudyPlanServices()
@@ -25,7 +26,7 @@ export function StudyChallengesPanel({ plan, onChange }: { plan: StudyPlan; onCh
       () => { setCreating(false); resource.retry(); onChange() },
       async () => { resource.retry(); onChange() },
     )} />}
-    {resource.loading && <p role="status">Cargando misiones…</p>}
+    {resource.loading && <LoadingStatus label="Cargando misiones…" />}
     {resource.error && <div role="alert"><p>{resource.error}</p><button className="button" type="button" onClick={resource.retry}>Reintentar misiones</button></div>}
     {page && !resource.loading && !resource.error && (page.items.length === 0 ? <p>Este plan todavía no tiene misiones.</p> : <>
       <ul className={styles.list} aria-label="Misiones del plan">{page.items.map(challenge => {

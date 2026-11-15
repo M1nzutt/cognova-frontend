@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useSubjectData } from '../hooks/useSubjectData'
 import { difficultyLabels } from '../utils/subjectPresentation'
 import styles from '../components/Subjects.module.css'
+import { LoadingStatus } from '../components/LoadingStatus'
 export function SubjectsPage() {
   const location = useLocation()
   const status = location.pathname.endsWith('/archived') ? 'archived' : 'active'
@@ -15,7 +16,7 @@ function SubjectListView({ status }: { status: 'active' | 'archived' }) {
     <div className={styles.heading}><div><h1>Materias</h1><p>Organiza lo que estás aprendiendo, a tu ritmo.</p></div>{data && data.activeCount < 5 && <Link className={styles.primary} to="/app/subjects/new">Nueva materia</Link>}</div>
     <nav className={styles.tabs} aria-label="Estado de materias"><Link to="/app/subjects" aria-current={status === 'active' ? 'page' : undefined}>Activas</Link><Link to="/app/subjects/archived" aria-current={status === 'archived' ? 'page' : undefined}>Archivadas</Link></nav>
     {location.state?.subjectDeleted && <p role="status">Materia eliminada.</p>}
-    {loading && <p role="status">Cargando tus materias…</p>}
+    {loading && <LoadingStatus label="Cargando tus materias…" />}
     {error && <div role="alert"><p>{error}</p><button className="button" onClick={retry}>Reintentar</button></div>}
     {!loading && data && <>
       <p className={styles.muted}>{data.activeCount} de 5 materias activas. Las archivadas no ocupan cupo.</p>

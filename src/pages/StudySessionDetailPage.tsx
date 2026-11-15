@@ -13,6 +13,7 @@ import { useStudySessionServices } from '../hooks/useStudySessionServices'
 import type { SessionResult, StudySession, StudySessionWrite } from '../types/studySession'
 import { executionStateLabels, formatDuration, localDateTime, sessionContextLabels, sessionResultLabels } from '../utils/studySessionPresentation'
 import styles from '../components/StudySessions.module.css'
+import { LoadingStatus } from '../components/LoadingStatus'
 
 export function StudySessionDetailPage() {
   const { sessionId } = useParams()
@@ -26,7 +27,7 @@ function SessionEditPlan({ session, busy, error, onSave, onCancel }: {
   const selectSubject = options.selectSubject
   return <section>
     <h2>Editar planificación</h2>
-    {options.loading && <p role="status">Cargando opciones de planificación…</p>}
+    {options.loading && <LoadingStatus label="Cargando opciones de planificación…" />}
     {options.error && <div role="alert"><p>{options.error}</p><button className="button" onClick={options.retry}>Reintentar</button></div>}
     {!options.loading && options.subjects.length > 0 && <StudySessionPlanForm initial={session} subjects={options.subjects} activities={options.activities} activitiesLoading={options.activitiesLoading} busy={busy} error={error || options.error} onSubjectChange={selectSubject} onSave={onSave} onCancel={onCancel} />}
   </section>
@@ -93,7 +94,7 @@ function StudySessionDetail({ id }: { id: number }) {
 
   return <section className={styles.page}>
     <Link to="/app/sessions">← Sesiones</Link>
-    {resource.loading && <p role="status">Cargando sesión…</p>}
+    {resource.loading && <LoadingStatus label="Cargando sesión…" />}
     {resource.error && <div role="alert"><h1>No pudimos abrir la sesión</h1><p>{resource.error}</p><button className="button" type="button" onClick={resource.retry}>Reintentar sesión</button></div>}
     {item && resource.data && !resource.loading && <>
       <div className={styles.heading}><div><h1 ref={heading} tabIndex={-1}>Sesión de {subject?.name ?? `Materia ${item.subject_id}`}</h1><p>Planificación y ejecución real de estudio.</p></div><span className={styles.badge}>{executionStateLabels[item.execution_state]}</span></div>

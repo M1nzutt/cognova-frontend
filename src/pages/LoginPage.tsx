@@ -6,6 +6,7 @@ import styles from '../components/PublicAuthForm.module.css'
 import { useAuth } from '../hooks/useAuth'
 import { useAuthForm } from '../hooks/useAuthForm'
 import { validateLogin } from '../utils/authValidation'
+import { LoadingStatus } from '../components/LoadingStatus'
 
 export function LoginPage() {
   const { session, message, logoutFailed } = useAuth()
@@ -44,7 +45,7 @@ export function LoginPage() {
           <button className={styles.submit} type="submit">{loading ? 'Iniciando sesión…' : 'Iniciar sesión'}</button>
         </fieldset>
         {(validation || error) && <p id="login-feedback" role="alert" className={styles.feedback}>{validation || error}</p>}
-        {loading && <p role="status">Comprobando tus datos…</p>}
+        {loading && <LoadingStatus label="Comprobando tus datos…" />}
       </form>
     </AuthFormLayout>
   )

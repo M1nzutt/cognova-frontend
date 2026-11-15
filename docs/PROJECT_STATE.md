@@ -28,6 +28,20 @@ proveedor siguen usando mensajes seguros existentes. `StudyPlansPage.test.tsx`
 aprueba sus 39 pruebas; lint, TypeScript y build también aprobaron. No se llamó
 a Gemini.
 
+### Estados de carga compartidos — tercer bloque
+
+Se creó `LoadingStatus` accesible (anuncio polite, indicador decorativo oculto
+a lectores de pantalla y movimiento reducido) y se aplicó a navegación/auth,
+onboarding, materias, actividades, sesiones, planes/retos, Analytics y carga de
+recursos relacionados. Calendario mantiene su feedback de contexto con
+indicador equivalente; la vista IA también usa el componente compartido. No se
+cambiaron contratos, textos de estado ni acciones.
+
+`npm run verify` aprobó lint, TypeScript, build y **387/387 pruebas en 50
+archivos**. No se pudo validar la preparación específica para Netlify porque no
+está configurada la variable de entorno `RENDER_API_ORIGIN`; no se inventó ni
+alteró configuración de despliegue.
+
 ## Auditoría funcional local — estado actualizado — 2026-11-15
 
 La auditoría autenticada previa contra Docker, con el usuario sintético local

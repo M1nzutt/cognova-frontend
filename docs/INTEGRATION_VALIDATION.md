@@ -29,6 +29,15 @@ Materias, Actividades, Sesiones, Planes, IA y Analytics) a 1440 y 390 px. Las
 Esta prueba valida el límite de autenticación y el shell público, no sustituye
 la inspección visual autenticada de cada módulo.
 
+## Estados de carga — tercer bloque — 2026-11-15
+
+Indicador reutilizable con `role=status`, anuncio `polite`, adorno oculto a
+tecnología asistiva y fallback estático bajo `prefers-reduced-motion`; aplicado
+a pantallas públicas, onboarding y módulos académicos/Analytics. `npm run
+verify`: lint, TypeScript, build y 387/387 pruebas aprobadas. La preparación
+Netlify no se validó: falta `RENDER_API_ORIGIN`, que se mantiene sin inventar ni
+configurar fuera del entorno de despliegue.
+
 ## Auditoría funcional Docker — actualización local — 2026-11-15
 
 La evidencia autenticada previa con el usuario sintético local cubre Dashboard,

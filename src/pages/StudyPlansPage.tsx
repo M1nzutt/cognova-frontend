@@ -8,6 +8,7 @@ import type { PlanStatus } from '../types/studyPlan'
 import { planStatusLabels, sourceLabels } from '../utils/studyPlanPresentation'
 import { localDateTime } from '../utils/studySessionPresentation'
 import styles from '../components/StudyPlans.module.css'
+import { LoadingStatus } from '../components/LoadingStatus'
 
 export function StudyPlansPage() {
   const services = useStudyPlanServices()
@@ -43,7 +44,7 @@ export function StudyPlansPage() {
       </select>
       <button className="button" type="button" onClick={resource.retry}>Actualizar</button>
     </div>
-    {resource.loading && <p role="status">Cargando planes…</p>}
+    {resource.loading && <LoadingStatus label="Cargando planes…" />}
     {resource.error && <div role="alert"><p>{resource.error}</p><button className="button" type="button" onClick={resource.retry}>Reintentar planes</button></div>}
     {page && !resource.loading && !resource.error && (page.items.length === 0
       ? <div className={styles.empty}><h2>{status === 'all' ? 'Tu primer plan empieza aquí' : 'No hay planes con este estado'}</h2><p>Organiza un objetivo y vincula tus recursos de estudio.</p><Link to="/app/study-plans/new">Crear plan manual</Link></div>

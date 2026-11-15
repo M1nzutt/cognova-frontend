@@ -6,6 +6,7 @@ import styles from '../components/PublicAuthForm.module.css'
 import { useAuth } from '../hooks/useAuth'
 import { useAuthForm } from '../hooks/useAuthForm'
 import { validateRegistration } from '../utils/authValidation'
+import { LoadingStatus } from '../components/LoadingStatus'
 
 export function RegisterPage() {
   const { session } = useAuth()
@@ -58,7 +59,7 @@ export function RegisterPage() {
           <button className={styles.submit} type="submit">{loading ? 'Creando cuenta…' : 'Crear cuenta'}</button>
         </fieldset>
         {(validation || error) && <p id="register-feedback" role="alert" className={styles.feedback}>{validation || error}</p>}
-        {loading && <p role="status">Estamos creando tu cuenta…</p>}
+        {loading && <LoadingStatus label="Estamos creando tu cuenta…" />}
       </form>
     </AuthFormLayout>
   )

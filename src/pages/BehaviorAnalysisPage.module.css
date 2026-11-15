@@ -10,10 +10,7 @@
 .principles strong { color: var(--color-plum-900); font-size: .8rem; }
 .principles span { color: var(--muted); font-size: .74rem; line-height: 1.5; }
 
-.loading, .error { display: flex; align-items: center; gap: .8rem; padding: 1rem 1.15rem; margin: 0; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }
-.loading { color: var(--muted); }
-.loading > span { width: 1.05rem; height: 1.05rem; flex: 0 0 auto; border: 2px solid var(--color-lilac-200); border-top-color: var(--color-orchid-600); border-radius: 50%; animation: spin 900ms linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+.error { display: flex; align-items: center; gap: .8rem; padding: 1rem 1.15rem; margin: 0; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }
 .error { align-items: flex-start; justify-content: space-between; border-color: var(--color-border-danger); background: var(--color-surface-danger); }
 .error h2 { margin: 0; color: var(--color-danger); font-size: 1rem; }
 .error p { margin: .3rem 0 0; color: var(--muted); font-size: .86rem; }
@@ -57,4 +54,3 @@
   .error { flex-direction: column; }
   .observationTop { font-size: .58rem; }
 }
-@media (prefers-reduced-motion: reduce) { .loading > span { animation: none; } }

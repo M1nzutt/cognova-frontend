@@ -7,6 +7,7 @@ import { useStudyPlanMutation } from '../hooks/useStudyPlanMutation'
 import { aiChallengeContext, challengeGoal, challengeStatusLabels, sourceLabels } from '../utils/studyPlanPresentation'
 import { localDateTime } from '../utils/studySessionPresentation'
 import styles from '../components/StudyPlans.module.css'
+import { LoadingStatus } from '../components/LoadingStatus'
 
 export function StudyChallengeDetailPage() {
   const { planId, challengeId } = useParams()
@@ -27,7 +28,7 @@ export function StudyChallengeDetailPage() {
   )
   return <section className={styles.page}>
     <Link to={`/app/study-plans/${id}`}>← Volver al plan</Link>
-    {(resource.loading || planResource.loading) && <p role="status">Cargando misión…</p>}
+    {(resource.loading || planResource.loading) && <LoadingStatus label="Cargando misión…" />}
     {(resource.error || planResource.error) && <div role="alert"><p>{resource.error || planResource.error}</p><button className="button" type="button" onClick={() => { resource.retry(); planResource.retry() }}>Reintentar</button></div>}
     {mission && plan && !resource.loading && !planResource.loading && !resource.error && !planResource.error && <>
       <div className={styles.heading}><div><p className="eyebrow">MISIÓN DE {plan.name.toUpperCase()}</p><h1>{mission.title}</h1><p>{challengeStatusLabels[mission.status]}</p></div>

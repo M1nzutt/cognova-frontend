@@ -7,6 +7,7 @@ import { useStudySessionServices } from '../hooks/useStudySessionServices'
 import type { StudySessionFilters as Filters } from '../types/studySession'
 import { executionStateLabels, formatDuration, localDateTime, sessionResultLabels } from '../utils/studySessionPresentation'
 import styles from '../components/StudySessions.module.css'
+import { LoadingStatus } from '../components/LoadingStatus'
 
 export function StudySessionsPage() {
   const services = useStudySessionServices()
@@ -25,7 +26,7 @@ export function StudySessionsPage() {
       <Link to={`/app/sessions/${query.data.active.id}`}>Volver a la sesión activa</Link>
     </section>}
     <StudySessionFilters subjects={subjects.data ?? []} onApply={setFilters} onClear={() => setFilters({})} />
-    {query.loading && <p role="status">Cargando sesiones…</p>}
+    {query.loading && <LoadingStatus label="Cargando sesiones…" />}
     {query.error && <div role="alert"><p>{query.error}</p><button className="button" type="button" onClick={query.retry}>Reintentar sesiones</button></div>}
     {query.data && !query.loading && !query.error && query.data.items.length === 0 && <div className={styles.empty}><h2>No hay sesiones con estos filtros</h2><p>Planifica una sesión para organizar tu próximo espacio de estudio.</p><Link to="/app/sessions/new">Crear sesión planificada</Link></div>}
     {query.data && query.data.items.length > 0 && <>

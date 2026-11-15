@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useStudyPlanServices } from '../hooks/useStudyPlanServices'
 import { useStudyPlanResource } from '../hooks/useStudyPlanResource'
 import styles from './BehaviorAnalysisPage.module.css'
+import { LoadingStatus } from '../components/LoadingStatus'
 
 export function BehaviorAnalysisPage() {
   const services = useStudyPlanServices()
@@ -20,7 +21,7 @@ export function BehaviorAnalysisPage() {
       <div><strong>Evidencia</strong><span>Cada observación muestra los registros que la respaldan.</span></div>
       <div><strong>Tu criterio</strong><span>La interpretación y las decisiones siguen siendo tuyas.</span></div>
     </div>
-    {resource.loading && <p className={styles.loading} role="status"><span aria-hidden="true" />Revisando tus sesiones registradas…</p>}
+    {resource.loading && <LoadingStatus label="Revisando tus sesiones registradas…" />}
     {resource.error && <div className={styles.error} role="alert"><div><h2>No pudimos cargar las observaciones</h2><p>{resource.error}</p></div><button className="button" type="button" onClick={resource.retry}>Intentar de nuevo</button></div>}
     {analysis && !resource.loading && !resource.error && <>
       <div className={styles.summary} role="status">

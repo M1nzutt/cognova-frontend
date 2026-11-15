@@ -19,6 +19,9 @@
 .week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: .55rem; margin-top: .65rem; }
 .week .day { min-height: 16rem; border: 1px solid var(--border); border-radius: var(--radius-md); }
 .feedback { padding: 1.2rem 1.3rem; margin: .9rem 0; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); box-shadow: var(--shadow-soft); }
+.feedbackLoading { display: flex; align-items: center; gap: .7rem; color: var(--muted); }
+.feedbackLoading > span { width: 1rem; height: 1rem; flex: 0 0 auto; border: 2px solid var(--color-lilac-200); border-top-color: var(--color-orchid-600); border-radius: 50%; animation: calendar-turn 850ms linear infinite; }
+@keyframes calendar-turn { to { transform: rotate(360deg); } }
 .feedback h3 { margin: 0 0 .35rem; font-size: 1rem; }
 .feedback p { margin: .3rem 0; color: var(--muted); }
 .error { border-color: var(--color-border-danger); background: var(--color-surface-danger); }
@@ -43,3 +46,4 @@
 }
 @media (max-width: 380px) { .month { gap: .4rem; } .month .day { padding: .55rem; } }
 @media (forced-colors: active) { .day[data-today] { outline: 2px solid Highlight; outline-offset: -2px; } }
+@media (prefers-reduced-motion: reduce) { .feedbackLoading > span { animation: none; border-color: var(--color-orchid-600); } }

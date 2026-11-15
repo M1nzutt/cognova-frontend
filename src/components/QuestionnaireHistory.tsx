@@ -3,6 +3,7 @@ import type { QuestionnaireCatalog, QuestionnaireHistory as History } from '../t
 import { QuestionnaireService } from '../services/QuestionnaireService'
 import { ApiError } from '../api/ApiError'
 import { QuestionnaireSummary } from './QuestionnaireSummary'
+import { LoadingStatus } from './LoadingStatus'
 
 export function QuestionnaireHistory({ service, catalog }: { service: QuestionnaireService; catalog: QuestionnaireCatalog }) {
   const [history, setHistory] = useState<History | null>(null)
@@ -30,7 +31,7 @@ export function QuestionnaireHistory({ service, catalog }: { service: Questionna
       <QuestionnaireSummary catalog={catalog} response={response} />
     </details>)}
     {history?.items.length === 0 && <p>Aún no hay revisiones guardadas.</p>}
-    {loading && <p role="status">Consultando revisiones…</p>}
+    {loading && <LoadingStatus label="Consultando revisiones…" />}
     {error && <><p role="alert">{error}</p><button className="button" disabled={loading} onClick={() => requestPage(history?.next_before_revision ?? undefined)}>Reintentar historial</button></>}
     {!error && history?.next_before_revision != null && <button className="button" disabled={loading} onClick={() => requestPage(history.next_before_revision!)}>Ver revisiones anteriores</button>}
   </section>

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ApiError } from '../api/ApiError'
 import styles from './DashboardPendingPage.module.css'
 import { Link } from 'react-router-dom'
+import { LoadingStatus } from '../components/LoadingStatus'
 
 export function DashboardPendingPage() {
   const { user, session } = useAuth()
@@ -56,7 +57,7 @@ export function DashboardPendingPage() {
           <button className="button" type="button" disabled={loading} onClick={() => void refreshProfile()}>
             {loading ? 'Actualizando…' : 'Actualizar perfil'}
           </button>
-          {loading && <p role="status">Consultando tu perfil…</p>}
+          {loading && <LoadingStatus label="Consultando tu perfil…" />}
           {feedback && <p role="status">{feedback}</p>}
           {error && <p role="alert">{error}</p>}
         </section>
