@@ -25,6 +25,7 @@ import { NotFoundPage } from '../pages/NotFoundPage'
 import { LoginPage } from '../pages/LoginPage'
 import { RegisterPage } from '../pages/RegisterPage'
 import { DashboardPendingPage } from '../pages/DashboardPendingPage'
+import { ProfilePage } from '../pages/ProfilePage'
 import { QuestionnairePage } from '../pages/QuestionnairePage'
 import { ProtectedRoute } from './ProtectedRoute'
 import { GuestRoute } from './GuestRoute'
@@ -71,6 +72,7 @@ export function AppRoutes() {
             <Route path="app/subjects/new" element={<SubjectCreatePage />} />
             <Route path="app/subjects/:subjectId" element={<SubjectDetailPage />} />
             <Route path="dashboard" element={<DashboardPendingPage />} />
+            <Route path="app/profile" element={<ProfilePage />} />
             <Route path="app/questionnaire" element={<QuestionnairePage />} />
           </Route>
         </Route>

@@ -1,35 +1,9 @@
-import { useAuth } from '../hooks/useAuth'
-import { useEffect, useRef, useState } from 'react'
-import { ApiError } from '../api/ApiError'
-import styles from './DashboardPendingPage.module.css'
 import { Link } from 'react-router-dom'
-import { LoadingStatus } from '../components/LoadingStatus'
+import { useAuth } from '../hooks/useAuth'
+import styles from './DashboardPendingPage.module.css'
 
 export function DashboardPendingPage() {
-  const { user, session } = useAuth()
-  const [loading, setLoading] = useState(false)
-  const [feedback, setFeedback] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const pending = useRef<AbortController | null>(null)
-  useEffect(() => () => pending.current?.abort(), [])
-
-  const refreshProfile = async () => {
-    if (pending.current) return
-    const controller = new AbortController()
-    pending.current = controller
-    setLoading(true)
-    setError(null)
-    setFeedback(null)
-    try {
-      await session.reloadProfile(controller.signal)
-      if (!controller.signal.aborted) setFeedback('Tu perfil está actualizado.')
-    } catch (failure) {
-      if (!controller.signal.aborted) setError(failure instanceof ApiError ? failure.message : 'No pudimos actualizar tu perfil. Inténtalo de nuevo.')
-    } finally {
-      pending.current = null
-      if (!controller.signal.aborted) setLoading(false)
-    }
-  }
+  const { user } = useAuth()
 
   return (
     <section className={styles.dashboard} aria-labelledby="dashboard-title">
@@ -41,34 +15,14 @@ export function DashboardPendingPage() {
         </div>
         <span className={styles.badge}>Sesión iniciada</span>
       </div>
-      <p className={styles.sessionNote}>Has iniciado sesión correctamente.</p>
-      <div className={styles.grid}>
-        <section className={styles.card} aria-labelledby="profile-title">
-          <div className={styles.cardHeading}>
-            <h2 id="profile-title">Tu perfil académico</h2>
-            <span className={styles.initial} aria-hidden="true">{user?.name.slice(0, 1).toLocaleUpperCase('es')}</span>
-          </div>
-          <dl className={styles.profile}>
-            <div><dt>Nombre</dt><dd>{user?.name}</dd></div>
-            <div><dt>Correo</dt><dd>{user?.email}</dd></div>
-            <div><dt>Carrera</dt><dd>{user?.degree_program || 'Sin carrera registrada'}</dd></div>
-            <div><dt>Semestre</dt><dd>{user?.semester}</dd></div>
-          </dl>
-          <button className="button" type="button" disabled={loading} onClick={() => void refreshProfile()}>
-            {loading ? 'Actualizando…' : 'Actualizar perfil'}
-          </button>
-          {loading && <LoadingStatus label="Consultando tu perfil…" />}
-          {feedback && <p role="status">{feedback}</p>}
-          {error && <p role="alert">{error}</p>}
-        </section>
-        <section className={`${styles.card} ${styles.goal}`} aria-labelledby="goal-title">
-          <p className="eyebrow">TU NORTE</p>
-          <h2 id="goal-title">Lo que quieres lograr</h2>
-          <p className={styles.goalText}>Tu percepción inicial ya forma parte de tu recorrido.</p>
-          <p className={styles.muted}>Podrás consultar y actualizar tus respuestas conservando las revisiones anteriores.</p>
-          <Link to="/app/questionnaire">Consultar mi percepción</Link>
-        </section>
-      </div>
+      <section className={styles.perception} aria-labelledby="perception-title">
+        <div>
+          <p className="eyebrow">TU RECORRIDO</p>
+          <h2 id="perception-title">Tu percepción inicial forma parte de tu proceso.</h2>
+          <p>Puedes volver a tus respuestas y revisar cómo cambia tu perspectiva con el tiempo.</p>
+        </div>
+        <Link to="/app/questionnaire">Consultar mi percepción <span aria-hidden="true">→</span></Link>
+      </section>
       <section className={styles.next} aria-labelledby="next-title">
         <div className={styles.nextHeading}>
           <div><span className={styles.release}>UN SIGUIENTE PASO, A TU ELECCIÓN</span><h2 id="next-title">¿Qué quieres avanzar hoy?</h2></div>

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-export type IconName = 'home' | 'book' | 'activity' | 'calendar' | 'timer' | 'layers' | 'sparkles' | 'chart' | 'more' | 'logout' | 'orbit'
+export type IconName = 'home' | 'book' | 'activity' | 'calendar' | 'timer' | 'layers' | 'sparkles' | 'chart' | 'more' | 'logout' | 'orbit' | 'user'
 
 const symbols: Record<IconName, ReactNode> = {
   home: <><path d="m3 10 9-7 9 7" /><path d="M5 9v11h14V9" /><path d="M9 20v-6h6v6" /></>,
@@ -14,6 +14,7 @@ const symbols: Record<IconName, ReactNode> = {
   more: <><circle cx="5" cy="12" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /></>,
   logout: <><path d="M10 17l5-5-5-5M15 12H3" /><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" /></>,
   orbit: <><circle cx="12" cy="12" r="2" /><ellipse cx="12" cy="12" rx="9" ry="4.2" transform="rotate(-28 12 12)" /><path d="m18.5 4 .6 1.7 1.7.6-1.7.6-.6 1.7-.6-1.7-1.7-.6 1.7-.6z" /></>,
+  user: <><circle cx="12" cy="8" r="3.5" /><path d="M5 20a7 7 0 0 1 14 0" /></>,
 }
 
 interface IconProps {

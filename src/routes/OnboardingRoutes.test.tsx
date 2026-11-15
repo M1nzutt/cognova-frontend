@@ -49,7 +49,7 @@ describe('explicit onboarding navigation',()=>{
   })
   it.each(['/onboarding/academic-profile','/onboarding/questionnaire'])('complete user leaves %s',async path=>{
     mount(path,user)
-    expect(await screen.findByText('Has iniciado sesión correctamente.')).toBeVisible()
+    expect(await screen.findByRole('heading',{name:'Hola, Sara.'})).toBeVisible()
   })
   it('logs incomplete users in to their pending step and supports logout',async()=>{
     const {fetch}=mount('/login',pending,false)

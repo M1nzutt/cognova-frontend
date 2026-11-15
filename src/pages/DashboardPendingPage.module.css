@@ -3,20 +3,13 @@
 .heading h1 { max-width: 24ch; margin: .15rem 0 .45rem; font-size: clamp(2.25rem, 4vw, 3.25rem); }
 .heading p { max-width: 48ch; margin: .4rem 0 0; color: var(--muted); }
 .badge { padding: .42rem .85rem; border: 1px solid var(--color-border-strong); border-radius: var(--radius-pill); color: var(--color-plum-900); background: var(--color-lilac-100); font-size: .76rem; font-weight: 700; white-space: nowrap; }
-.sessionNote { margin: -.6rem 0 0; color: var(--muted); font-size: .8rem; }
-.grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); gap: 1.15rem; margin-top: .25rem; }
-.card { min-width: 0; padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-soft); }
-.card h2, .next h2 { margin: 0; font-size: 1.1rem; font-weight: 700; letter-spacing: -.025em; }
-.cardHeading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-.initial { display: grid; width: 44px; height: 44px; flex: 0 0 auto; place-items: center; border: 1px solid var(--color-border-strong); border-radius: 50%; color: var(--color-plum-900); background: var(--color-lilac-100); font-weight: 750; }
-.profile { display: grid; gap: .9rem; margin: 1.25rem 0 1.45rem; }
-.profile div { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: .65rem; }
-.profile dt { color: var(--muted); font-size: .82rem; }
-.profile dd { min-width: 0; margin: 0; font-size: .88rem; font-weight: 600; overflow-wrap: anywhere; }
-.goal { border-color: var(--color-lilac-200); background: var(--color-lilac-100); }
-.goalText { max-width: 30ch; margin: 1rem 0 .65rem; font-family: var(--font-display); font-size: clamp(1.35rem, 2vw, 1.75rem); line-height: 1.32; letter-spacing: -.025em; }
-.muted { color: var(--muted); font-size: .86rem; }
-.goal a:not(.button) { display: inline-flex; align-items: center; min-height: 42px; margin-top: .5rem; color: var(--color-plum-900); font-weight: 700; }
+.perception { display: flex; align-items: center; justify-content: space-between; gap: 1.4rem; padding: 1.15rem 1.3rem; border: 1px solid var(--color-lilac-200); border-radius: var(--radius-lg); background: linear-gradient(110deg, var(--color-lilac-100), var(--surface)); }
+.perception > div { max-width: 62ch; }
+.perception .eyebrow { margin-bottom: .35rem; }
+.perception h2, .next h2 { margin: 0; font-size: 1.1rem; font-weight: 700; letter-spacing: -.025em; }
+.perception p:last-child { margin: .3rem 0 0; color: var(--muted); font-size: .82rem; }
+.perception a { display: inline-flex; min-height: 42px; flex: 0 0 auto; align-items: center; gap: .45rem; padding: .5rem .75rem; border: 1px solid var(--color-border-strong); border-radius: var(--radius-pill); color: var(--color-plum-900); background: var(--surface); font-size: .78rem; font-weight: 700; text-decoration: none; }
+.perception a:hover { border-color: var(--color-orchid-500); background: var(--color-surface-hover); }
 .next { display: grid; gap: 1.2rem; padding: clamp(1.2rem, 3vw, 1.8rem); border: 1px solid var(--color-border-strong); border-radius: var(--radius-lg); background: linear-gradient(125deg, var(--color-lilac-100), #fff 76%); }
 .nextHeading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
 .nextHeading > div { display: grid; gap: .55rem; }
@@ -32,6 +25,6 @@
 .featuredAction small { color: rgb(255 255 255 / .82); }
 .featuredAction:hover { border-color: var(--color-plum-950); background: var(--color-plum-950); }
 .arrow { flex: 0 0 auto; font-size: 1.05rem; }
-@media (max-width: 850px) { .grid { grid-template-columns: minmax(0, 1fr); } }
-@media (max-width: 520px) { .heading { align-items: flex-start; } .heading h1 { font-size: 2.25rem; } .card { padding: 1.15rem; } .profile div { grid-template-columns: 1fr; gap: .1rem; } .nextHeading { align-items: flex-start; flex-direction: column; } .quickActions { grid-template-columns: minmax(0, 1fr); } .quickAction { min-height: 68px; } }
+@media (max-width: 650px) { .perception { align-items: flex-start; flex-direction: column; } .heading { align-items: flex-start; } .nextHeading { align-items: flex-start; flex-direction: column; } }
+@media (max-width: 520px) { .heading h1 { font-size: 2.25rem; } .perception { padding: 1rem; } .quickActions { grid-template-columns: minmax(0, 1fr); } .quickAction { min-height: 68px; } }
 @media (prefers-reduced-motion: reduce) { .quickAction { transition: none; } }

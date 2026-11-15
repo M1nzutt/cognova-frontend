@@ -57,8 +57,9 @@ export function AppShell() {
         : pathname.startsWith('/app/study-plans') ? 'Planes y retos'
           : pathname.startsWith('/app/calendar') ? 'Calendario'
             : pathname.startsWith('/app/behavior') ? 'IA y reflexiones'
-              : pathname.startsWith('/app/analytics') ? 'Análisis'
-                : pathname.startsWith('/app/questionnaire') ? 'Tu percepción'
+            : pathname.startsWith('/app/analytics') ? 'Análisis'
+              : pathname.startsWith('/app/profile') ? 'Perfil'
+              : pathname.startsWith('/app/questionnaire') ? 'Tu percepción'
                   : pathname === '/dashboard' ? 'Inicio'
                     : 'Tu espacio'
   const secondarySectionActive = secondaryLinks.some(item => pathname.startsWith(item.to))
@@ -101,6 +102,7 @@ export function AppShell() {
             {authenticated && <span className={styles.currentSection} aria-current="location">{currentSection}</span>}
           </div>
           <div className={styles.headerActions}>
+            {authenticated && <NavLink className={styles.profileLink} to="/app/profile" aria-label="Perfil" title="Perfil"><Icon name="user" /><span>Perfil</span></NavLink>}
             {authenticated && <button className={styles.logout} type="button" onClick={logout}><Icon name="logout" size={18} /><span>Cerrar sesión</span></button>}
           </div>
         </header>
