@@ -3,13 +3,17 @@
 Se reconstruyó el Frontend local y se recorrió `scripts/academicUxLocalBrowser.ts`
 en Chrome contra `http://localhost:8080`. El flujo pasó por registro y onboarding
 normales, recursos académicos de prueba, Calendario mes/semana, y los módulos
-académicos ya cubiertos por el smoke. Se comprobó `pageErrors` vacío y ausencia
-de overflow horizontal a 1440, 768 y 390 px. Las capturas comparables del
-calendario incluyen mes/escritorio, semana/escritorio, semana/tablet,
-semana/móvil y mes/móvil, en `.local/academic-ux/` (ignorado por Git).
+académicos ya cubiertos por el smoke. Se capturaron login, registro, onboarding
+(perfil y cuestionario), Dashboard y las seis pantallas académicas disponibles a
+1440, 768 y 390 px. Se comprobó `pageErrors` vacío y ausencia de overflow
+horizontal en los tres tamaños. Las capturas comparables del calendario incluyen
+mes/escritorio, semana/escritorio, semana/tablet, semana/móvil y mes/móvil, en
+`.local/academic-ux/` (ignorado por Git).
 
-La cuenta y los recursos sintéticos generados quedan retenidos; no se borraron
+Las cuentas y los recursos sintéticos generados quedan retenidos; no se borraron
 datos existentes, no se llamó a Gemini y no se ejecutó ningún smoke productivo.
+No se abrió la pantalla de observaciones IA porque su carga solicita un análisis
+real al Backend.
 Validación de código: lint, TypeScript/build y 389/389 pruebas en 50 archivos.
 Vite conserva el warning no fatal de PostCSS `from`.
 

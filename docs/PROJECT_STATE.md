@@ -12,11 +12,14 @@ La vista mensual/semanal se adaptó a la referencia `REFERENCIAS/asa.jpeg`:
   `prefers-reduced-motion`.
 
 La evidencia final de Chrome local está en `.local/academic-ux/` (ignorado por
-Git): `calendar-month-desktop.png`, `calendar-week-desktop.png`,
-`calendar-week-tablet.png`, `calendar-week-mobile.png` y
-`calendar-month-mobile.png`. El smoke no reportó errores JavaScript ni overflow
-horizontal; las cuentas y recursos sintéticos creados mediante el flujo normal
-se retienen y no se limpiaron.
+Git): capturas desktop/tablet/móvil de login, registro, perfil académico de
+onboarding, cuestionario y Dashboard; capturas desktop/tablet/móvil de Materias,
+Actividades, Sesiones, Planes y Analytics; y `calendar-month-desktop.png`,
+`calendar-week-desktop.png`, `calendar-week-tablet.png`,
+`calendar-week-mobile.png` y `calendar-month-mobile.png`. El smoke no reportó
+errores JavaScript ni overflow horizontal; las cuentas y recursos sintéticos
+creados mediante el flujo normal se retienen y no se limpiaron. No se abrió la
+pantalla de análisis IA para evitar disparar una llamada real al servicio.
 
 Validación del bloque: `npm run lint`, `npm run build` y **389/389 pruebas en 50
 archivos** aprobadas. Vite mantiene el warning conocido de PostCSS `from`.

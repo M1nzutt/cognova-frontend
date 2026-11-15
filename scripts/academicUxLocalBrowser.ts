@@ -19,6 +19,17 @@ const screenshots: string[] = []
 const registerResponses: string[] = []
 const registerIssues: string[] = []
 const operations: string[] = []
+const captureResponsive = async (prefix: string) => {
+  for (const [size, width, height] of [['desktop', 1440, 1000], ['tablet', 768, 1024], ['mobile', 390, 844]] as const) {
+    await page.setViewportSize({ width, height })
+    await page.waitForTimeout(150)
+    const dimensions = await page.evaluate(() => ({ viewport: window.innerWidth, document: document.documentElement.scrollWidth }))
+    if (dimensions.document > dimensions.viewport) throw new Error(`Overflow horizontal en ${prefix} ${size}: ${JSON.stringify(dimensions)}`)
+    const filename = `${prefix}-${size}.png`
+    await page.screenshot({ path: `${output}/${filename}`, fullPage: true })
+    screenshots.push(filename)
+  }
+}
 page.on('pageerror', error => errors.push(error.message))
 page.on('response', response => {
   const pathname = new URL(response.url()).pathname
@@ -34,6 +45,13 @@ page.on('response', response => {
 try {
   const email = `ux${randomUUID().replaceAll('-', '').slice(0, 8)}@example.com`
   const password = `Cgno${randomUUID().replaceAll('-', '').slice(0, 4)}`
+
+  await page.goto(`${baseURL}/login`)
+  await expect(page.getByRole('heading', { name: 'Inicia sesión', exact: true })).toBeVisible()
+  await captureResponsive('login')
+  await page.goto(`${baseURL}/register`)
+  await expect(page.getByRole('heading', { name: 'Crea tu cuenta', exact: true })).toBeVisible()
+  await captureResponsive('register')
 
   await page.goto(`${baseURL}/register`)
   await page.getByLabel('Nombre', { exact: true }).fill('Estudiante de prueba')
@@ -52,11 +70,15 @@ try {
     await Promise.resolve()
     throw new Error(`Registro detenido; respuestas HTTP: ${registerResponses.join(',') || 'ninguna'}; contrato: ${registerIssues.join(',') || 'sin código'}; aviso: ${publicError.join(' ') || 'ninguno'}`)
   }
+  await captureResponsive('onboarding-profile')
+  await page.setViewportSize({ width: 1440, height: 1000 })
   await page.getByLabel('Carrera', { exact: true }).fill('Ciencias de datos')
   await page.getByLabel('Semestre', { exact: true }).fill('3')
   await page.getByRole('button', { name: 'Guardar y continuar' }).click()
 
   await expect(page.getByRole('heading', { name: 'Conozcamos cómo estudias' })).toBeVisible()
+  await captureResponsive('onboarding-questionnaire')
+  await page.setViewportSize({ width: 1440, height: 1000 })
   for (let step = 0; step < 10; step++) {
     const firstChoice = page.locator('fieldset input[type="radio"], fieldset input[type="checkbox"]').first()
     await expect(firstChoice).toBeVisible()
@@ -149,6 +171,12 @@ try {
   await page.reload()
   await expect(page.getByRole('button', { name: 'Cerrar sesión' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Análisis', exact: true })).toBeVisible()
+  await page.getByRole('link', { name: 'Inicio', exact: true }).first().click()
+  await expect(page.getByRole('heading', { name: 'Hola, Estudiante de prueba.', exact: true })).toBeVisible()
+  await captureResponsive('dashboard')
+  await page.setViewportSize({ width: 1440, height: 1000 })
+  await page.getByRole('link', { name: 'Análisis', exact: true }).first().click()
+  await expect(page.getByRole('heading', { name: 'Análisis', exact: true })).toBeVisible()
   await page.getByLabel('Buscar por nombre').fill(subjectName)
   await expect(page.getByRole('link', { name: subjectName, exact: true })).toBeVisible()
   operations.push('refresh:analytics,busqueda')
@@ -170,6 +198,10 @@ try {
     await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Cerrar sesión' })).toBeVisible()
     await expect(page.getByRole('status').filter({ hasText: /Cargando|Comprobando tu sesión/ })).toHaveCount(0, { timeout: 30_000 })
+    if (name === 'subjects') await expect(page.getByText(subjectName, { exact: true })).toBeVisible({ timeout: 30_000 })
+    if (name === 'activities') await expect(page.getByRole('link', { name: new RegExp(activityTitle) })).toBeVisible({ timeout: 30_000 })
+    if (name === 'sessions') await expect(page.getByRole('link', { name: new RegExp(subjectName) })).toBeVisible({ timeout: 30_000 })
+    if (name === 'plans') await expect(page.getByRole('link', { name: new RegExp(planName) })).toBeVisible({ timeout: 30_000 })
     if (name === 'calendar') {
       await page.getByRole('button', { name: 'Mes', exact: true }).click()
       await expect(page.getByRole('region', { name: 'Vista mensual' })).toBeVisible()
