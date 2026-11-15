@@ -1,3 +1,27 @@
+## Rediseño visual del calendario — bloque completado — 2026-11-15
+
+La vista mensual/semanal se adaptó a la referencia `REFERENCIAS/asa.jpeg`:
+
+- navegación compacta, selección de día persistida en el `date` existente de la
+  URL y atajos de teclado con flechas/Home/End;
+- cuadrícula mensual despejada, eventos compactos diferenciados por tipo,
+  filtros más densos y agenda contextual para ampliar datos del día;
+- agenda de solo lectura con enlaces a las Actividades/Sesiones reales; no se
+  crean eventos ficticios ni se modifican contratos o recursos del Backend;
+- layouts adaptados a escritorio, tablet y móvil y animaciones reducidas según
+  `prefers-reduced-motion`.
+
+La evidencia final de Chrome local está en `.local/academic-ux/` (ignorado por
+Git): `calendar-month-desktop.png`, `calendar-week-desktop.png`,
+`calendar-week-tablet.png`, `calendar-week-mobile.png` y
+`calendar-month-mobile.png`. El smoke no reportó errores JavaScript ni overflow
+horizontal; las cuentas y recursos sintéticos creados mediante el flujo normal
+se retienen y no se limpiaron.
+
+Validación del bloque: `npm run lint`, `npm run build` y **389/389 pruebas en 50
+archivos** aprobadas. Vite mantiene el warning conocido de PostCSS `from`.
+El rediseño integral de las demás secciones sigue en curso.
+
 ## Mejora UX académica — completada — 2026-11-15
 
 Se actualizaron los cinco módulos académicos autenticados:

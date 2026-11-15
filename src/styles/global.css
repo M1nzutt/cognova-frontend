@@ -62,6 +62,7 @@ h3 { font-size: var(--text-lg); font-weight: 650; line-height: 1.35; }
 .button:disabled { box-shadow: none; }
 
 .eyebrow { margin: 0 0 var(--space-2); color: var(--color-orchid-600); font-size: var(--text-xs); font-weight: 750; letter-spacing: .12em; line-height: 1.35; text-transform: uppercase; }
+.visually-hidden { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; clip-path: inset(50%) !important; }
 .skip-link { position: fixed; z-index: 1000; top: .5rem; left: .75rem; padding: .75rem 1rem; transform: translateY(-160%); border-radius: var(--radius-sm); color: var(--color-plum-950); background: var(--surface); box-shadow: var(--shadow-popover); }
 .skip-link:focus { transform: translateY(0); }
 [role="alert"] { color: var(--color-danger); }

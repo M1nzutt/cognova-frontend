@@ -1,6 +1,5 @@
-.page { width: 100%; max-width: 1440px; min-width: 0; margin: 0 auto; }
-.intro { position: relative; display: flex; min-height: 158px; align-items: center; justify-content: space-between; gap: 1.5rem; overflow: hidden; padding: clamp(1.2rem, 3vw, 1.8rem); margin-bottom: 1.2rem; border: 1px solid var(--color-lilac-200); border-radius: var(--radius-lg); background: linear-gradient(110deg, #eef5f2, var(--surface) 72%); }
-.intro::after { position: absolute; right: -2.2rem; bottom: -7rem; width: 16rem; height: 16rem; border: 1px solid #d4e4dc; border-radius: 50%; box-shadow: 0 0 0 1.15rem var(--surface), 0 0 0 1.2rem #d4e4dc, 0 0 0 2.35rem var(--surface), 0 0 0 2.4rem #d4e4dc; content: ""; opacity: .65; pointer-events: none; }
+.page { width: 100%; max-width: 1500px; min-width: 0; margin: 0 auto; }
+.intro { display: flex; min-height: 0; align-items: center; justify-content: space-between; gap: 1.5rem; padding: .1rem .1rem .65rem; margin-bottom: .5rem; border-bottom: 1px solid var(--border); }
 .introCopy, .introAction { position: relative; z-index: 1; }
 .introCopy { max-width: 55rem; }
 .introCopy > :global(.eyebrow) { margin: 0 0 .5rem; }
@@ -12,9 +11,36 @@
 .readOnly { padding: .3rem .6rem; border: 1px solid #cddfd5; border-radius: var(--radius-pill); color: #345a48; background: #f6fbf8; font-size: .68rem; font-weight: 750; letter-spacing: .07em; }
 .zone { display: flex; align-items: center; gap: .5rem; padding-left: .75rem; margin: .65rem 0 0 !important; border-left: 2px solid var(--color-orchid-500); color: var(--muted); font-size: .78rem !important; }
 .page input { max-width: 100%; color: var(--text); background: var(--surface); }
-.filters { margin: .8rem 0 1rem; }
-.calendarCount { color: var(--muted); font-size: .82rem; }
+.page .filters { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .35rem .7rem; padding: .65rem .8rem; margin: .55rem 0 .4rem; border-radius: var(--radius-md); box-shadow: none; }
+.page .filters .filterForm { width: 100%; max-width: none; grid-column: 1 / -1; margin: 0; }
+.page .filters .filterColumns { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .55rem .65rem; }
+.filters :global(small), .filters :global(p) { color: var(--muted); font-size: .68rem; }
+.filters :global(small) { grid-column: 1; }
+.filters :global(p) { grid-column: 1 / -1; margin: .1rem 0 0; }
+.filters :global(button) { grid-column: 2; grid-row: 2; min-height: 34px; padding: .35rem .65rem; font-size: .72rem; }
+.filters :global(label) { gap: .25rem; font-size: .72rem; }
+.filters :global(select) { min-height: 36px; padding: .35rem .6rem; font-size: .74rem; }
+.calendarCount { display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin: .65rem 0 .4rem; color: var(--muted); font-size: .72rem; }
+.legend { display: inline-flex; align-items: center; gap: .35rem; }
+.legend > span { width: .55rem; height: .55rem; margin-left: .35rem; border-radius: 50%; background: var(--color-orchid-600); }
+.legend > span[data-kind="session"] { border: 1px dashed var(--color-plum-800); background: var(--color-lilac-100); }
+.calendarLayout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(250px, 290px); align-items: start; gap: .8rem; }
+.calendarMain { min-width: 0; }
 @media (max-width: 650px) {
-  .intro { align-items: flex-start; flex-direction: column; }
+  .intro { align-items: flex-start; flex-direction: row; }
   .introAction { justify-items: start; }
+  .page .filters { padding: .6rem; }
+  .page .filters .filterColumns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .calendarCount { align-items: flex-start; flex-direction: column; }
+  .calendarLayout { grid-template-columns: minmax(0, 1fr); gap: .65rem; }
+}
+@media (max-width: 420px) {
+  .intro { gap: .5rem; }
+  .introAction > a { min-height: 40px; padding: .5rem .65rem; font-size: .72rem; }
+}
+@media (max-width: 480px) {
+  .page .filters .filterColumns { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 380px) {
+  .intro { align-items: flex-start; flex-direction: column; }
 }

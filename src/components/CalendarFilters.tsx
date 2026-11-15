@@ -3,9 +3,9 @@ import type { Subject } from '../types/subject'
 import { activityPriorities, activityStatuses } from '../types/activity'
 import { priorityLabels, statusLabels } from '../utils/activityPresentation'
 import styles from './Activities.module.css'
-export function CalendarFilters({ value, subjects, onChange }: { value: Filters; subjects: Subject[]; onChange: (value: Filters) => void }) {
-  return <form className={styles.filters} aria-label="Filtros del calendario" onSubmit={e => e.preventDefault()}>
-    <div className={styles.form}><div className={styles.columns}>
+export function CalendarFilters({ value, subjects, onChange, className, formClassName, columnsClassName }: { value: Filters; subjects: Subject[]; onChange: (value: Filters) => void; className?: string; formClassName?: string; columnsClassName?: string }) {
+  return <form className={[styles.filters, className].filter(Boolean).join(' ')} aria-label="Filtros del calendario" onSubmit={e => e.preventDefault()}>
+    <div className={[styles.form, formClassName].filter(Boolean).join(' ')}><div className={[styles.columns, columnsClassName].filter(Boolean).join(' ')}>
       <label>Tipo<select aria-label="Filtrar por tipo" aria-describedby="calendar-type-help" value={value.type ?? 'all'} onChange={e => {
         const type = e.target.value as CalendarFilterType
         onChange({ ...value, type, ...(type === 'study_session' ? { status:undefined, priority:undefined } : {}) })

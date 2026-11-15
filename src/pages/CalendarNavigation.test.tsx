@@ -1,4 +1,5 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { expect, it } from 'vitest'
 import { calendarSetup } from '../test/calendarSetup'
 import { calendarItem, calendarSession } from '../test/calendarFixtures'
@@ -83,4 +84,16 @@ it('restores date and filters after a fresh mount equivalent to route refresh', 
   expect(await screen.findByRole('region', { name:'Vista semanal' })).toBeVisible()
   expect(screen.getByLabelText('Ir a fecha')).toHaveValue('2032-02-29')
   expect(screen.getByLabelText('Filtrar por estado')).toHaveValue('completed')
+})
+it('moves the selected calendar date with arrow keys and keeps it in the URL', async () => {
+  calendarSetup({
+    path:'/app/calendar?date=2030-01-15',
+    calendar:async () => jsonResponse({ items:[],next_cursor:null }),
+  })
+  const selectedDay = await screen.findByRole('button', { name:/martes, 15 de enero de 2030/i })
+  expect(selectedDay).toHaveAttribute('aria-pressed', 'true')
+  selectedDay.focus()
+  await userEvent.keyboard('{ArrowRight}')
+  expect(await screen.findByRole('button', { name:/miércoles, 16 de enero de 2030/i })).toHaveAttribute('aria-pressed', 'true')
+  expect(screen.getByTestId('location')).toHaveTextContent('date=2030-01-16')
 })
