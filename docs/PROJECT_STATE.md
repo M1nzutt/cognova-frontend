@@ -1,3 +1,34 @@
+## Auditoría funcional local — estado actualizado — 2026-11-15
+
+La auditoría autenticada previa contra Docker, con el usuario sintético local
+existente, recorrió Dashboard, Materias, Actividades, Sesiones y temporizador,
+Calendario, Planes/Retos y Analytics. Se validaron lecturas y operaciones
+académicas manuales; no se invocó Gemini. La evidencia previa incluye Analytics
+(overview, study-time, timeline y search), vistas mes/semana, deadline e
+historial de Actividades, y transiciones/intervalos del temporizador. El detalle
+de esa corrida está en `cognova-backend` y Engram; no hay un nuevo archivo de
+evidencia de navegador generado en esta continuación.
+
+La corrida anterior dejó datos sintéticos locales retenidos: Materia 9,
+Actividad 9, Sesión 8, Plan 7 y Reto 5. En esta continuación no se hicieron
+escrituras de negocio, borrados, limpieza ni cambios de volúmenes. Tampoco se
+repitió el recorrido autenticado: no había credenciales de smoke disponibles y
+los scripts históricos de cierre eliminan recursos, operación que ahora está
+prohibida. Por tanto, el estado autenticado se informa como evidencia previa,
+no como una nueva corrida.
+
+Verificación repetida en esta continuación: `npm run verify` aprobó lint,
+TypeScript, build y **386 pruebas en 49 archivos**. Los servicios locales
+Backend/Frontend/PostgreSQL quedaron healthy; readiness por proxy y frontend
+respondieron HTTP 200. El backend pasó **341 pruebas, 1 omitida**, Ruff check y
+formato. No hubo push, merge ni despliegue.
+
+La generación real con Gemini permanece explícitamente pendiente. El flujo
+manual de Planes y Retos no depende de Gemini. No se hizo ninguna solicitud al
+proveedor; los commits locales `03be785` y `cdfd41a` registran los ajustes
+previamente pendientes de reintentos y timeout, sin demostrar que Google
+responda.
+
 ## Docker integrado — stack integrado validado localmente — 2026-11-12
 
 La imagen Nginx de producción se construyó y quedó healthy en el Compose real. El Dockerfile usa la sintaxis exec válida de HEALTHCHECK para /healthz; mantiene fallback de React Router y proxy same-origin /api/*. No hubo deploy a Netlify.

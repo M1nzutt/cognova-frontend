@@ -1,3 +1,27 @@
+## Auditoría funcional Docker — actualización local — 2026-11-15
+
+La evidencia autenticada previa con el usuario sintético local cubre Dashboard,
+Materias, Actividades, Sesiones/temporizador, Calendario, Planes/Retos y
+Analytics. Incluye los endpoints analíticos, calendario mes/semana, historial
+de deadline y persistencia del estado/intervalos del temporizador. Las
+operaciones manuales de Planes y Retos se recorrieron sin invocar Gemini.
+Quedaron retenidos localmente los datos sintéticos Materia 9, Actividad 9,
+Sesión 8, Plan 7 y Reto 5.
+
+No se repitió el recorrido autenticado en esta continuación: no se dispuso de
+credenciales de smoke y los scripts de navegador existentes realizan limpieza
+destructiva de fixtures. No se ejecutaron esos scripts para respetar la
+instrucción de no borrar datos. Esta sección conserva la evidencia previa y no
+afirma una nueva corrida UI.
+
+Verificado nuevamente: `npm run verify` con 386/386 tests, lint, TypeScript y
+build; los tres contenedores locales healthy; `/api/v1/ready` y `/` devolvieron
+200. No se llamó al proveedor Gemini, no hubo escrituras/borrados académicos,
+ni operación de volúmenes, push, merge o despliegue. Los commits locales
+`03be785` y `cdfd41a` registran el límite de reintentos del SDK y el timeout
+específico del frontend; la generación real sigue pendiente por timeout del
+proveedor sin respuesta HTTP concluyente.
+
 # Docker Frontend — build y smoke local completados — 2026-11-12
 
 docker compose build incluyó Frontend y pasó; el servicio Nginx quedó healthy en /healthz y el proxy /api/* llegó al Backend. El Dockerfile ahora usa la forma JSON exec válida de Docker HEALTHCHECK CMD y conserva el endpoint. No se desplegó a Netlify.
