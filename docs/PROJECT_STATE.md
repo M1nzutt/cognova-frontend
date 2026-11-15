@@ -17,6 +17,17 @@ no se realizó un nuevo smoke visual autenticado por falta de credenciales
 disponibles. Esta es la primera fase; falta revisar/pulir sistemáticamente el
 resto de pantallas.
 
+### IA y reflexiones — segundo bloque
+
+La pantalla de observaciones ahora hace explícitos el origen de señales, la
+evidencia, el umbral de cinco sesiones finalizadas para hablar de patrones y los
+límites de cada lectura. Observaciones, evidencia, preguntas y enlaces siguen
+proviniendo exclusivamente de la respuesta real del Backend. Se ordenaron los
+estados de carga/error/vacío y se mejoró la jerarquía visual; los errores de
+proveedor siguen usando mensajes seguros existentes. `StudyPlansPage.test.tsx`
+aprueba sus 39 pruebas; lint, TypeScript y build también aprobaron. No se llamó
+a Gemini.
+
 ## Auditoría funcional local — estado actualizado — 2026-11-15
 
 La auditoría autenticada previa contra Docker, con el usuario sintético local

@@ -11,6 +11,11 @@ negocio o llamadas Gemini. Sigue pendiente smoke visual autenticado y revisión
 integral de los módulos restantes. Vite conserva el warning conocido de
 PostCSS `from`.
 
+La pantalla de IA y reflexiones conserva el contenido real y los errores seguros
+del contrato. Su suite focalizada pasó 39/39; se agregó jerarquía visual a
+estados de carga, disponibilidad, evidencia y recursos relacionados. No se
+invocó Gemini ni se simuló resultado real.
+
 ## Auditoría funcional Docker — actualización local — 2026-11-15
 
 La evidencia autenticada previa con el usuario sintético local cubre Dashboard,
