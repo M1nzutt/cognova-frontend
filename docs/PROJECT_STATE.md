@@ -1,3 +1,21 @@
+## Mejora UX académica — en curso — 2026-11-15
+
+Primera iteración visual en Materias y Actividades: Materias ahora destaca el
+cupo real de espacios activos en una cabecera editorial y conserva la navegación
+Activas/Archivadas; Actividades jerarquiza su acción principal, filtros, chips
+de estado/prioridad y ofrece un acceso directo al formulario desde el estado
+vacío. Se mantiene intacta la lógica y los contratos.
+
+El smoke visual local se ejecuta solo contra `http://localhost:8080`, crea una
+cuenta con el formulario normal y completa perfil/cuestionario. La cuenta y sus
+registros no se limpian. Las capturas iniciales en `.local/academic-ux` son
+referencia de estados vacíos, anteriores a esta iteración; falta repetir el
+recorrido y verificar operaciones/persistencia para las cinco pantallas. Ningún
+script de smoke productivo ni generación Gemini fue ejecutado.
+
+Verificación de este bloque: 29/29 pruebas focalizadas, lint, TypeScript y build
+aprobados; se conserva el warning preexistente de PostCSS `from`.
+
 ## Mejora UX/UI — primer bloque completado — 2026-11-15
 
 Se mejoró la navegación autenticada con contexto de sección actual, indicador

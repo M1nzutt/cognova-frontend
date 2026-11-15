@@ -1,3 +1,20 @@
+## Mejora UX académica — en curso — 2026-11-15
+
+El recorrido local `scripts/academicUxLocalBrowser.ts` registró una cuenta
+sintética nueva desde `/register`, completó perfil y cuestionario desde la UI,
+y abrió las rutas de Materias, Actividades, Sesiones, Calendario, Planes y
+Analytics. Las capturas de referencia y el reporte sin credenciales están en
+`.local/academic-ux/` (ruta ignorada por Git). No se hicieron limpiezas ni
+borrados.
+
+La primera captura reveló que el smoke no esperaba a que terminaran las consultas;
+se corrigió la espera antes de generar las referencias. Las recargas repetidas
+entre rutas protegidas pueden terminar en login en esta corrida, por lo que aún
+no se considera validada la restauración visual de todas las pantallas. Tampoco
+se recorrieron todavía operaciones académicas. El smoke de escritura real y la
+evidencia final quedan pendientes. Materias y Actividades recibieron la primera
+iteración visual; 29/29 pruebas focalizadas, lint, TypeScript y build aprobaron.
+
 ## Revisión visual UX/UI — primer bloque — 2026-11-15
 
 Chrome headless sobre el Frontend local: landing a 1440×900, 768×900 y

@@ -118,7 +118,9 @@ describe('Subjects routes and state', () => {
   it('lists archived subjects separately without reducing capacity', async () => {
     setup('/app/subjects/archived', { items: [{ ...item, status: 'archived' }] })
     expect(await screen.findByRole('heading', { name: 'Álgebra' })).toBeVisible()
-    expect(screen.getByText('0 de 5 materias activas. Las archivadas no ocupan cupo.')).toBeVisible()
+    expect(screen.getByText('0')).toBeVisible()
+    expect(screen.getByText('de 5 espacios', { exact: false })).toBeVisible()
+    expect(screen.getByText('Las archivadas no ocupan espacio activo.')).toBeVisible()
   })
   it('shows a retry after a read failure', async () => {
     const { recover } = setup('/app/subjects', { fail: true })
