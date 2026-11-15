@@ -198,15 +198,13 @@
 }
 
 .exampleLabel { margin: 0 0 1rem; color: #8b7d90; font-size: .62rem; font-weight: 750; letter-spacing: .12em; }
-.observation, .question { padding-left: .85rem; border-left: 2px solid #986da7; }
-.observation span, .question span { color: var(--color-orchid-600); font-size: .6rem; font-weight: 750; letter-spacing: .1em; }
-.observation p, .question p { margin: .28rem 0 0; color: #382e3d; font-family: var(--font-display); font-size: 1.02rem; font-weight: 600; line-height: 1.4; }
-.evidence { gap: .6rem; margin: .95rem 0 1rem; padding: .65rem .8rem; border-radius: .7rem; background: #f5f1e8; }
-.evidenceTick { display: grid; width: 22px; height: 22px; flex: 0 0 auto; place-items: center; border-radius: 50%; color: #5f705d; background: #e5ecdf; font-size: .72rem; font-weight: 800; }
-.evidence p { margin: 0; color: #625d50; font-size: .7rem; line-height: 1.45; }
-.evidence strong { color: #4f4a40; font-size: .67rem; }
-.exampleFooter { justify-content: space-between; gap: .75rem; margin-top: 1.15rem; padding-top: .8rem; border-top: 1px solid #eee8f0; color: #817786; font-size: .67rem; }
+.aiDetails { display: grid; gap: .1rem; margin: 0; }
+.aiDetail { display: grid; grid-template-columns: minmax(6.5rem, .38fr) minmax(0, 1fr); gap: .75rem; padding: .7rem 0; border-bottom: 1px solid #eee8f0; }
+.aiDetail dt { color: var(--color-plum-800); font-size: .75rem; font-weight: 750; }
+.aiDetail dd { margin: 0; color: #5f5664; font-size: .76rem; line-height: 1.5; }
+.exampleFooter { align-items: flex-start; justify-content: space-between; gap: .75rem; margin-top: 1rem; padding-top: .8rem; border-top: 1px solid #eee8f0; color: #716875; font-size: .67rem; line-height: 1.5; }
 .decisionTag { padding: .31rem .52rem; border: 1px solid #e6d9eb; border-radius: 999px; color: var(--color-plum-800); font-size: .58rem; font-weight: 750; letter-spacing: .08em; white-space: nowrap; }
+.aiAvailability { margin: .8rem 0 0; padding: .65rem .75rem; border-radius: .7rem; color: #5f5664; background: #f7f3f8; font-size: .68rem; line-height: 1.55; }
 
 @media (max-width: 980px) {
   .hero { min-height: 420px; grid-template-columns: minmax(0, .95fr) minmax(370px, 1.05fr); gap: 2rem; }
@@ -261,4 +259,5 @@
   .reflectionCopy h2 { font-size: 2rem; }
   .reflectionCopy > p:not(.eyebrow) { font-size: .86rem; }
   .example { padding: 1.1rem .9rem; }
+  .aiDetail { grid-template-columns: minmax(5.7rem, .4fr) minmax(0, 1fr); gap: .5rem; }
 }

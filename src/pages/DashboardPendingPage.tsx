@@ -69,11 +69,24 @@ export function DashboardPendingPage() {
         </section>
       </div>
       <section className={styles.next} aria-labelledby="next-title">
-        <span className={styles.release}>AVANCE INICIAL</span>
-        <h2 id="next-title">Dale espacio a lo que aprendes</h2>
-        <div className="actions"><Link to="/app/subjects">Organizar mis materias</Link><Link to="/app/activities">Organizar mis actividades</Link><Link to="/app/calendar">Ver mi calendario</Link></div>
-        <p>Tus materias ya tienen un lugar en Cognova. Organiza hasta cinco activas y conserva las demás archivadas.</p>
-        <p className={styles.muted}>Puedes crear, editar, archivar y consultar tus materias desde tu espacio.</p>
+        <div className={styles.nextHeading}>
+          <div><span className={styles.release}>UN SIGUIENTE PASO, A TU ELECCIÓN</span><h2 id="next-title">¿Qué quieres avanzar hoy?</h2></div>
+          <p>Accede directamente a tus herramientas. Elige por dónde empezar.</p>
+        </div>
+        <div className={styles.quickActions}>
+          <Link className={`${styles.quickAction} ${styles.featuredAction}`} to="/app/sessions/new">
+            <span><strong>Agendar una sesión</strong><small>Reserva un espacio para estudiar</small></span><span className={styles.arrow} aria-hidden="true">↗</span>
+          </Link>
+          <Link className={styles.quickAction} to="/app/activities/new">
+            <span><strong>Crear una actividad</strong><small>Registra algo que necesitas hacer</small></span><span className={styles.arrow} aria-hidden="true">↗</span>
+          </Link>
+          <Link className={styles.quickAction} to="/app/calendar">
+            <span><strong>Ver calendario</strong><small>Consulta sesiones y fechas límite</small></span><span className={styles.arrow} aria-hidden="true">↗</span>
+          </Link>
+          <Link className={styles.quickAction} to="/app/behavior">
+            <span><strong>Revisar reflexiones</strong><small>Explora observaciones de tu recorrido</small></span><span className={styles.arrow} aria-hidden="true">↗</span>
+          </Link>
+        </div>
       </section>
     </section>
   )

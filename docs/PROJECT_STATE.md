@@ -1,3 +1,22 @@
+## Mejora UX/UI — primer bloque completado — 2026-11-15
+
+Se mejoró la navegación autenticada con contexto de sección actual, indicador
+activo para “Más” en móvil y scroll interno de la barra lateral en ventanas
+bajas. El Dashboard ahora prioriza accesos directos a sesión, actividad,
+calendario y reflexiones, sin presentar estadísticas académicas inexistentes.
+La landing mantiene el preview de producto marcado como ejemplo, pero reemplaza
+la reflexión ficticia con cifras por una explicación de datos, propuestas,
+decisiones del estudiante, límites y disponibilidad segura de IA. No se llamó a
+Gemini.
+
+Validación de este bloque: lint, TypeScript, build y 386/386 pruebas aprobadas.
+Landing revisada en Chrome a 1440, 768 y 390 px; sin overflow horizontal,
+errores JS ni sidebar pública. El build conserva el warning existente de
+PostCSS (`from`). Dashboard autenticado tiene tests de integración React, pero
+no se realizó un nuevo smoke visual autenticado por falta de credenciales
+disponibles. Esta es la primera fase; falta revisar/pulir sistemáticamente el
+resto de pantallas.
+
 ## Auditoría funcional local — estado actualizado — 2026-11-15
 
 La auditoría autenticada previa contra Docker, con el usuario sintético local

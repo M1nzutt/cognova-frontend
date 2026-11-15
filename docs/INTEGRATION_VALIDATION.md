@@ -1,3 +1,16 @@
+## Revisión visual UX/UI — primer bloque — 2026-11-15
+
+Chrome headless sobre el Frontend local: landing a 1440×900, 768×900 y
+390×900; `document.scrollWidth` coincidió con el viewport en los tres tamaños,
+no se encontró sidebar y no hubo errores JavaScript. Las pruebas automatizadas
+verificaron contexto de navegación en Dashboard, navegación secundaria móvil,
+accesos del Dashboard y explicación de IA sin resultados simulados. `npm run
+lint`, `npm run typecheck`, `npm run build` y `npm test` pasaron; suite total
+386/386 en 49 archivos. No se usaron credenciales ni se hicieron escrituras de
+negocio o llamadas Gemini. Sigue pendiente smoke visual autenticado y revisión
+integral de los módulos restantes. Vite conserva el warning conocido de
+PostCSS `from`.
+
 ## Auditoría funcional Docker — actualización local — 2026-11-15
 
 La evidencia autenticada previa con el usuario sintético local cubre Dashboard,

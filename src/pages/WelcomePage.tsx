@@ -96,24 +96,31 @@ export function WelcomePage() {
           <p>Cognova relaciona señales de tu recorrido para ayudarte a mirar tu proceso desde otra perspectiva. No decide por ti ni reemplaza tu criterio.</p>
           <p className={styles.reflectionPrinciple}>La tecnología aporta contexto; tú interpretas y decides.</p>
         </div>
-        <aside className={styles.example} aria-label="Ejemplo de reflexión con evidencia">
-          <p className={styles.exampleLabel}>EJEMPLO DE REFLEXIÓN</p>
-          <div className={styles.observation}>
-            <span>OBSERVACIÓN</span>
-            <p>Has aplazado Física varias veces esta semana.</p>
-          </div>
-          <div className={styles.evidence}>
-            <span className={styles.evidenceTick} aria-hidden="true">✓</span>
-            <p><strong>Evidencia</strong><br />3 aplazamientos registrados</p>
-          </div>
-          <div className={styles.question}>
-            <span>PREGUNTA</span>
-            <p>¿Qué hace más difícil empezar?</p>
-          </div>
+        <aside className={styles.example} aria-label="Cómo funciona la inteligencia artificial en Cognova">
+          <p className={styles.exampleLabel}>CÓMO FUNCIONA, SIN RESULTADOS SIMULADOS</p>
+          <dl className={styles.aiDetails}>
+            <div className={styles.aiDetail}>
+              <dt>Qué observa</dt>
+              <dd>Lo que registras en tus sesiones, actividades y reflexiones.</dd>
+            </div>
+            <div className={styles.aiDetail}>
+              <dt>Qué utiliza</dt>
+              <dd>Tu información académica disponible y vinculada al recorrido.</dd>
+            </div>
+            <div className={styles.aiDetail}>
+              <dt>Qué propone</dt>
+              <dd>Ideas revisables con contexto para que valores si te sirven.</dd>
+            </div>
+            <div className={styles.aiDetail}>
+              <dt>Qué decides</dt>
+              <dd>Aceptar, editar o rechazar; ninguna propuesta se aplica sola.</dd>
+            </div>
+          </dl>
           <div className={styles.exampleFooter}>
-            <span>Una invitación a reflexionar</span>
-            <span className={styles.decisionTag}>TÚ DECIDES</span>
+            <span>Las observaciones dependen de lo que registras y no explican por sí solas tus motivos.</span>
+            <span className={styles.decisionTag}>TU CRITERIO</span>
           </div>
+          <p className={styles.aiAvailability}>Si el servicio de generación no está disponible, Cognova te lo indica; no presenta una respuesta inventada.</p>
         </aside>
       </section>
     </div>

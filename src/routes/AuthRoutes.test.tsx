@@ -211,12 +211,16 @@ describe('authentication routes and forms', () => {
     expect(screen.getByRole('link', { name: 'Materias' })).toBeVisible()
     expect(screen.getByRole('link', { name: 'Planes' })).toBeVisible()
     expect(screen.queryByRole('link', { name: 'Sesiones' })).not.toBeInTheDocument()
+    expect(screen.getByText('Inicio', { selector: '[aria-current="location"]' })).toBeVisible()
     expect(screen.queryByRole('button', { name: /modo oscuro/i })).not.toBeInTheDocument()
 
     await userEvent.click(screen.getByText('Más'))
     expect(screen.getByRole('link', { name: 'Sesiones' })).toBeVisible()
     expect(screen.getByRole('link', { name: 'IA y reflexiones' })).toBeVisible()
     expect(screen.getByRole('link', { name: 'Análisis' })).toBeVisible()
+    await userEvent.click(screen.getByRole('link', { name: 'Análisis' }))
+    expect(await screen.findByText('Análisis', { selector: '[aria-current="location"]' })).toBeVisible()
+    expect(document.querySelector('a[href="/app/analytics"]')).toHaveAttribute('aria-current', 'page')
   })
   it('shows real profile data and keeps it visible on a refresh error', async () => {
     document.cookie = 'cognova_csrf=csrf; Path=/'
@@ -227,6 +231,9 @@ describe('authentication routes and forms', () => {
     expect(await screen.findByText(user.email)).toBeVisible()
     expect(screen.getByText(user.degree_program!)).toBeVisible()
     expect(screen.getByText(/Tu percepción inicial ya/)).toBeVisible()
+    expect(screen.getByRole('heading', { name: '¿Qué quieres avanzar hoy?' })).toBeVisible()
+    expect(screen.getByRole('link', { name: /Agendar una sesión/ })).toHaveAttribute('href', '/app/sessions/new')
+    expect(screen.getByRole('link', { name: /Crear una actividad/ })).toHaveAttribute('href', '/app/activities/new')
     fetchMock.mockResolvedValueOnce(jsonResponse({ error: { code: 'HTTP_ERROR' } }, 503))
     await userEvent.click(screen.getByRole('button', { name: 'Actualizar perfil' }))
     expect(await screen.findByRole('alert')).toHaveTextContent('El servidor no está disponible')

@@ -25,14 +25,18 @@ describe('public welcome page', () => {
     }
   })
 
-  it('frames AI as evidence and a question while keeping the decision with the student', () => {
+  it('explains AI inputs, proposals, student choices and availability without simulating a result', () => {
     render(<MemoryRouter><WelcomePage /></MemoryRouter>)
 
     expect(screen.getByRole('heading', { name: 'Una IA que observa y pregunta. Tú eliges.' })).toBeVisible()
-    expect(screen.getByText('EJEMPLO DE REFLEXIÓN')).toBeVisible()
-    expect(screen.getByText('3 aplazamientos registrados')).toBeVisible()
-    expect(screen.getByText('¿Qué hace más difícil empezar?')).toBeVisible()
-    expect(screen.getByText('TÚ DECIDES')).toBeVisible()
+    const explanation = screen.getByRole('complementary', { name: 'Cómo funciona la inteligencia artificial en Cognova' })
+    expect(within(explanation).getByText('Qué observa')).toBeVisible()
+    expect(within(explanation).getByText('Qué utiliza')).toBeVisible()
+    expect(within(explanation).getByText('Qué propone')).toBeVisible()
+    expect(within(explanation).getByText('Qué decides')).toBeVisible()
+    expect(within(explanation).getByText(/aceptar, editar o rechazar/i)).toBeVisible()
+    expect(within(explanation).getByText(/no presenta una respuesta inventada/i)).toBeVisible()
+    expect(within(explanation).queryByText(/aplazamientos registrados/i)).not.toBeInTheDocument()
     expect(screen.getByText(/No decide por ti/)).toBeVisible()
   })
 })

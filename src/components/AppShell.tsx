@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { Icon, type IconName } from './Icon'
 import styles from './AppShell.module.css'
@@ -34,6 +34,7 @@ function RouteLinkItem({ to, label, icon, end, onSelect }: RouteLink & { onSelec
 
 export function AppShell() {
   const { status, user, session } = useAuth()
+  const { pathname } = useLocation()
   const navigate = useNavigate()
   const [isCompact, setIsCompact] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches)
   const [moreOpen, setMoreOpen] = useState(false)
@@ -50,6 +51,17 @@ export function AppShell() {
 
   const logout = () => { void session.logout(); navigate('/login', { replace: true }) }
   const authenticated = status === 'authenticated'
+  const currentSection = pathname.startsWith('/app/subjects') ? 'Materias'
+    : pathname.startsWith('/app/activities') ? 'Actividades'
+      : pathname.startsWith('/app/sessions') ? 'Sesiones de estudio'
+        : pathname.startsWith('/app/study-plans') ? 'Planes y retos'
+          : pathname.startsWith('/app/calendar') ? 'Calendario'
+            : pathname.startsWith('/app/behavior') ? 'IA y reflexiones'
+              : pathname.startsWith('/app/analytics') ? 'Análisis'
+                : pathname.startsWith('/app/questionnaire') ? 'Tu percepción'
+                  : pathname === '/dashboard' ? 'Inicio'
+                    : 'Tu espacio'
+  const secondarySectionActive = secondaryLinks.some(item => pathname.startsWith(item.to))
 
   return (
     <div className={styles.shell}>
@@ -62,7 +74,7 @@ export function AppShell() {
         <p className={styles.caption}>TU ESPACIO DE ESTUDIO</p>
         {authenticated ? <nav className={styles.navigation} aria-label="Navegación principal">
           <div className={styles.primaryLinks}>{mainLinks.map(item => <RouteLinkItem key={item.to} {...item} />)}</div>
-          <details className={styles.more} open={!isCompact || moreOpen} onToggle={event => {
+          <details className={`${styles.more} ${secondarySectionActive ? styles.moreActive : ''}`} open={!isCompact || moreOpen} onToggle={event => {
             if (isCompact) setMoreOpen(event.currentTarget.open)
           }}>
             <summary aria-label="Más secciones"><Icon name="more" /><span>Más</span></summary>
@@ -84,7 +96,10 @@ export function AppShell() {
 
       <div className={styles.workspace}>
         <header className={styles.header}>
-          <span className={styles.headerText}>Un espacio para observar y aprender</span>
+          <div className={styles.headerContext}>
+            <span className={styles.headerText}>Un espacio para observar y aprender</span>
+            {authenticated && <span className={styles.currentSection} aria-current="location">{currentSection}</span>}
+          </div>
           <div className={styles.headerActions}>
             {authenticated && <button className={styles.logout} type="button" onClick={logout}><Icon name="logout" size={18} /><span>Cerrar sesión</span></button>}
           </div>
