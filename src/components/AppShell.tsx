@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { Icon, type IconName } from './Icon'
@@ -38,17 +38,40 @@ export function AppShell() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const [isCompact, setIsCompact] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches)
-  const [moreOpen, setMoreOpen] = useState(false)
+  const [menu, setMenu] = useState({ pathname, open: false })
+  const moreOpen = menu.pathname === pathname && menu.open
+  const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const query = window.matchMedia('(max-width: 900px)')
     const update = (event: MediaQueryListEvent) => {
       setIsCompact(event.matches)
-      setMoreOpen(false)
+      setMenu({ pathname: window.location.pathname, open: false })
     }
     query.addEventListener?.('change', update)
     return () => query.removeEventListener?.('change', update)
   }, [])
+
+  useEffect(() => {
+    if (!isCompact || !moreOpen) return
+    const closeOutside = (event: PointerEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setMenu({ pathname, open: false })
+      }
+    }
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMenu({ pathname, open: false })
+        menuRef.current?.querySelector('button')?.focus()
+      }
+    }
+    document.addEventListener('pointerdown', closeOutside)
+    document.addEventListener('keydown', closeOnEscape)
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside)
+      document.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [isCompact, moreOpen, pathname])
 
   const logout = () => { void session.logout(); navigate('/login', { replace: true }) }
   const authenticated = status === 'authenticated'
@@ -77,14 +100,14 @@ export function AppShell() {
         <p className={styles.caption}>TU ESPACIO DE ESTUDIO</p>
         {authenticated ? <nav className={styles.navigation} aria-label="Navegación principal">
           <div className={styles.primaryLinks}>{mainLinks.map(item => <RouteLinkItem key={item.to} {...item} />)}</div>
-          <details className={`${styles.more} ${secondarySectionActive ? styles.moreActive : ''}`} open={!isCompact || moreOpen} onToggle={event => {
-            if (isCompact) setMoreOpen(event.currentTarget.open)
-          }}>
-            <summary aria-label="Más secciones"><Icon name="more" /><span>Más</span></summary>
-            <div className={styles.moreLinks} hidden={isCompact && !moreOpen}>
-              {secondaryLinks.map(item => <RouteLinkItem key={item.to} {...item} onSelect={() => setMoreOpen(false)} />)}
+          <div className={`${styles.more} ${secondarySectionActive ? styles.moreActive : ''}`} ref={menuRef}>
+            <button type="button" className={styles.moreButton} aria-label="Más secciones" aria-expanded={isCompact ? moreOpen : undefined} aria-controls="more-sections" onClick={() => setMenu({ pathname, open: !moreOpen })}>
+              <Icon name="more" /><span>Más</span>
+            </button>
+            <div className={styles.moreLinks} id="more-sections" hidden={isCompact && !moreOpen}>
+              {secondaryLinks.map(item => <RouteLinkItem key={item.to} {...item} onSelect={() => setMenu({ pathname, open: false })} />)}
             </div>
-          </details>
+          </div>
         </nav> : <nav className={`${styles.navigation} ${styles.guestNavigation}`} aria-label="Navegación principal">
           <RouteLinkItem to="/" label="Inicio" icon="home" end />
           <RouteLinkItem to="/login" label="Iniciar sesión" icon="orbit" />

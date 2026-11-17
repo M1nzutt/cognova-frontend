@@ -11,11 +11,10 @@
 .navLink[aria-current="page"] { color: var(--color-sidebar-text); background: var(--color-sidebar-active); font-weight: 700; }
 .navLink[aria-current="page"] > svg { color: var(--color-sidebar-text); }
 .more { margin-top: .35rem; }
-.more summary { display: none; }
-.moreActive summary { color: var(--color-sidebar-text); background: var(--color-sidebar-active); }
+.moreButton { display: none; }
+.moreActive .moreButton { color: var(--color-sidebar-text); background: var(--color-sidebar-active); }
 .moreLinks { padding-top: .3rem; }
 .moreLinks[hidden] { display: none; }
-.more:not([open]) > .moreLinks { display: grid; }
 .profile { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: .1rem .7rem; margin-top: auto; padding: .9rem .7rem .35rem; border-top: 1px solid var(--color-sidebar-border); }
 .avatar { display: grid; grid-row: span 2; width: 40px; height: 40px; place-items: center; border-radius: 50%; color: var(--color-plum-900); background: var(--color-lilac-200); font-weight: 750; }
 .profileName { overflow: hidden; color: var(--color-sidebar-text); font-size: .86rem; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
@@ -43,7 +42,7 @@
 
 @media (max-width: 900px) {
   .shell { display: block; }
-  .sidebar { position: fixed; z-index: 50; inset: auto 0 0; width: 100%; height: auto; min-height: 0; padding: .45rem max(.7rem, env(safe-area-inset-right)) calc(.45rem + env(safe-area-inset-bottom)) max(.7rem, env(safe-area-inset-left)); border-top: 1px solid var(--border); border-right: 0; color: var(--text); background: var(--color-paper-glass-solid); box-shadow: var(--shadow-bottom-nav); backdrop-filter: blur(12px); }
+  .sidebar { position: fixed; z-index: 50; inset: auto 0 0; width: 100%; height: auto; min-height: 0; overflow: visible; padding: .45rem max(.7rem, env(safe-area-inset-right)) calc(.45rem + env(safe-area-inset-bottom)) max(.7rem, env(safe-area-inset-left)); border-top: 1px solid var(--border); border-right: 0; color: var(--text); background: var(--color-paper-glass-solid); box-shadow: var(--shadow-bottom-nav); backdrop-filter: blur(12px); }
    .brand, .caption, .profile { display: none; }
  .navigation { width: min(100%, 720px); grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: center; gap: .1rem; margin: 0 auto; }
   .primaryLinks { display: contents; }
@@ -53,11 +52,11 @@
   .navLink[aria-current="page"] { color: var(--color-plum-950); background: var(--color-lilac-100); }
   .navLink[aria-current="page"] > svg { color: var(--accent); }
   .more { position: relative; margin: 0; }
-  .more summary { display: flex; min-height: 56px; flex-direction: column; align-items: center; justify-content: center; gap: .2rem; border-radius: .75rem; color: var(--muted); font-size: .66rem; line-height: 1.1; list-style: none; cursor: pointer; }
-  .more summary::-webkit-details-marker { display: none; }
-  .more summary svg { width: 20px; height: 20px; }
-   .more[open] summary, .moreActive summary { color: var(--color-plum-950); background: var(--color-lilac-100); }
-  .moreLinks, .more:not([open]) > .moreLinks { position: absolute; right: -2px; bottom: calc(100% + .7rem); left: auto; width: min(280px, calc(100vw - 1.5rem)); grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .3rem; padding: .65rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-popover); }
+   .moreButton { display: flex; width: 100%; min-height: 56px; flex-direction: column; align-items: center; justify-content: center; gap: .2rem; padding: .35rem .1rem; border: 0; border-radius: .75rem; color: var(--muted); background: transparent; font-size: .66rem; line-height: 1.1; cursor: pointer; }
+   .moreButton svg { width: 20px; height: 20px; }
+   .moreButton[aria-expanded="true"], .moreActive .moreButton { color: var(--color-plum-950); background: var(--color-lilac-100); }
+   .moreLinks { position: absolute; right: -2px; bottom: calc(100% + .7rem); left: auto; display: grid; width: min(280px, calc(100vw - 1.5rem)); max-height: calc(100dvh - 100px - env(safe-area-inset-bottom)); overflow-y: auto; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .3rem; padding: .65rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-popover); }
+   .moreLinks[hidden] { display: none; }
   .moreLinks .navLink { min-height: 64px; flex-direction: row; justify-content: flex-start; gap: .55rem; padding: .65rem; font-size: .8rem; text-align: left; }
   .moreLinks .navLink > svg { width: 18px; height: 18px; }
   .header { min-height: 62px; padding: .7rem 1.15rem; }
