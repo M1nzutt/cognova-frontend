@@ -7,8 +7,8 @@ import { AnalyticsPage } from './AnalyticsPage'
 
 const mocks=vi.hoisted(()=>({overview:vi.fn(),studyTime:vi.fn(),timeline:vi.fn(),search:vi.fn()}))
 vi.mock('../hooks/useAnalyticsService',()=>({useAnalyticsService:()=>mocks}))
-const overview:AnalyticsOverview={total_studied_seconds:'10800.000000',total_studied_minutes:'180.000000',finished_sessions:3,completed_sessions:2,partial_sessions:1,postponed_sessions:0,cancelled_sessions:0,subjects_with_activity:2,completed_activities:4,pending_activities:2,in_progress_activities:1,active_plans:1,completed_plans:1,completed_challenges:2,failed_challenges:1}
-const study:AnalyticsStudyTime={from:'2030-04-15T00:00:00Z',to:'2030-04-22T00:00:00Z',timezone:'UTC',granularity:'day',total_seconds:'10800.000000',total_minutes:'180.000000',sessions_count:3,by_subject:[{subject_id:4,name:'Física',seconds:'7200.000000',minutes:'120.000000',sessions_count:2}],buckets:[{from:'2030-04-15T00:00:00Z',to:'2030-04-16T00:00:00Z',seconds:'3600.000000',minutes:'60.000000'}]}
+const overview:AnalyticsOverview={total_studied_seconds:'10800.000000',total_studied_minutes:'180.000000',cancelled_session_seconds:'0.000000',cancelled_session_minutes:'0.000000',finished_sessions:3,completed_sessions:2,partial_sessions:1,postponed_sessions:0,cancelled_sessions:0,subjects_with_activity:2,completed_activities:4,pending_activities:2,in_progress_activities:1,active_plans:1,completed_plans:1,completed_challenges:2,failed_challenges:1}
+const study:AnalyticsStudyTime={from:'2030-04-15T00:00:00Z',to:'2030-04-22T00:00:00Z',timezone:'UTC',granularity:'day',total_seconds:'10800.000000',total_minutes:'180.000000',cancelled_seconds:'0.000000',cancelled_minutes:'0.000000',cancelled_sessions_count:0,sessions_count:3,by_subject:[{subject_id:4,name:'Física',seconds:'7200.000000',minutes:'120.000000',sessions_count:2}],buckets:[{from:'2030-04-15T00:00:00Z',to:'2030-04-16T00:00:00Z',seconds:'3600.000000',minutes:'60.000000'}]}
 const event=(id:string,category:AnalyticsCategory,title:string)=>({
  event_id:id,occurred_at:'2030-04-15T10:00:00Z',category,event_type:category==='decision'?'decision':'created',
  resource_type:category==='decision'||category==='plan'?'study_plan':category==='challenge'?'study_challenge':category,
@@ -27,6 +27,9 @@ describe('AnalyticsPage',()=>{
  it('shows descriptive overview, charts and mixed events without causal claims',async()=>{
   mount()
   expect(await screen.findByRole('heading',{name:'Análisis'})).toBeVisible()
+  const searchHeading=screen.getByRole('heading',{name:'Buscar en tu espacio académico'})
+  const overviewHeading=screen.getByRole('heading',{name:'Resumen general'})
+  expect(searchHeading.compareDocumentPosition(overviewHeading)&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   expect(await screen.findAllByText('3 h')).toHaveLength(2)
   expect(screen.getByText('Actividades pendientes')).toBeVisible()
   expect(await screen.findByLabelText(/Física: 2 h/)).toBeInTheDocument()
@@ -34,7 +37,7 @@ describe('AnalyticsPage',()=>{
   expect(screen.getByRole('link',{name:'Sesión de estudio'})).toHaveAttribute('href','/app/sessions/2')
   expect(screen.queryByText(/porque/i)).not.toBeInTheDocument()
  })
- it('sends the browser timezone and date range, and applies category filters',async()=>{
+  it('sends the browser timezone and date range, and applies category filters',async()=>{
   mount()
   await waitFor(()=>expect(mocks.studyTime).toHaveBeenCalled())
   const query=mocks.studyTime.mock.calls[0][0]
@@ -42,7 +45,13 @@ describe('AnalyticsPage',()=>{
   expect(query.from).toMatch(/Z$/);expect(query.to).toMatch(/Z$/)
   fireEvent.change(screen.getByLabelText('Tipo de evento'),{target:{value:'activity'}})
   await waitFor(()=>expect(mocks.timeline).toHaveBeenCalledWith(expect.objectContaining({category:'activity'}),expect.any(AbortSignal)))
- })
+  })
+  it('labels cancelled timer duration separately from studied time',async()=>{
+   mocks.studyTime.mockResolvedValue({...study,cancelled_seconds:'45662.422572',cancelled_minutes:'761.040376',cancelled_sessions_count:1})
+   mount()
+   expect(await screen.findByRole('note')).toHaveTextContent('12 h 41 min')
+   expect(screen.getByText(/excluido del tiempo estudiado/)).toBeVisible()
+  })
  it('preserves backend order and passes the timeline cursor',async()=>{
   mocks.timeline.mockResolvedValueOnce(timeline).mockResolvedValueOnce({items:[event('3','activity','Siguiente evento')],next_cursor:null})
   mount()
@@ -89,9 +98,9 @@ describe('AnalyticsPage',()=>{
   expect(mocks.search).toHaveBeenNthCalledWith(2,'Fisica',undefined,'search-cursor')
  })
  it('does not search an empty query and displays an empty-account overview',async()=>{
-  mocks.overview.mockResolvedValue({...overview,total_studied_seconds:'0.000000',total_studied_minutes:'0.000000',finished_sessions:0,completed_sessions:0,partial_sessions:0,postponed_sessions:0,cancelled_sessions:0,subjects_with_activity:0,completed_activities:0,pending_activities:0,in_progress_activities:0,active_plans:0,completed_plans:0,completed_challenges:0,failed_challenges:0})
+  mocks.overview.mockResolvedValue({...overview,total_studied_seconds:'0.000000',total_studied_minutes:'0.000000',cancelled_session_seconds:'0.000000',cancelled_session_minutes:'0.000000',finished_sessions:0,completed_sessions:0,partial_sessions:0,postponed_sessions:0,cancelled_sessions:0,subjects_with_activity:0,completed_activities:0,pending_activities:0,in_progress_activities:0,active_plans:0,completed_plans:0,completed_challenges:0,failed_challenges:0})
   mount()
-  expect(await screen.findByText('0 s')).toBeVisible()
+   expect(await screen.findAllByText('0 s')).toHaveLength(2)
   expect(mocks.search).not.toHaveBeenCalled()
  })
  it('shows service errors and blocks a custom range over 366 days',async()=>{

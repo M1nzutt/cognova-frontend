@@ -3,7 +3,7 @@ import { ApiClient } from '../api/client'
 import { jsonResponse } from '../test/authFixtures'
 import { AnalyticsService } from './AnalyticsService'
 
-const overview={total_studied_seconds:'3600.000000',total_studied_minutes:'60.000000',finished_sessions:1,completed_sessions:1,partial_sessions:0,postponed_sessions:0,cancelled_sessions:0,subjects_with_activity:1,completed_activities:2,pending_activities:3,in_progress_activities:1,active_plans:1,completed_plans:0,completed_challenges:2,failed_challenges:0}
+const overview={total_studied_seconds:'3600.000000',total_studied_minutes:'60.000000',cancelled_session_seconds:'0.000000',cancelled_session_minutes:'0.000000',finished_sessions:1,completed_sessions:1,partial_sessions:0,postponed_sessions:0,cancelled_sessions:0,subjects_with_activity:1,completed_activities:2,pending_activities:3,in_progress_activities:1,active_plans:1,completed_plans:0,completed_challenges:2,failed_challenges:0}
 const service=()=>new AnalyticsService(new ApiClient('/api/v1',()=> 'memory',vi.fn()))
 describe('AnalyticsService',()=>{
  it('requests overview through the authenticated no-store client and validates metrics',async()=>{
@@ -15,7 +15,7 @@ describe('AnalyticsService',()=>{
   expect(options.headers.get('Authorization')).toBe('Bearer memory')
  })
  it('sends range, granularity and explicit IANA timezone',async()=>{
-  const result={from:'2030-01-01T05:00:00Z',to:'2030-01-08T05:00:00Z',timezone:'America/Bogota',granularity:'day',total_seconds:'60.000000',total_minutes:'1.000000',sessions_count:1,by_subject:[{subject_id:4,name:'Física',seconds:'60.000000',minutes:'1.000000',sessions_count:1}],buckets:[{from:'2030-01-01T05:00:00Z',to:'2030-01-02T05:00:00Z',seconds:'60.000000',minutes:'1.000000'}]}
+  const result={from:'2030-01-01T05:00:00Z',to:'2030-01-08T05:00:00Z',timezone:'America/Bogota',granularity:'day',total_seconds:'60.000000',total_minutes:'1.000000',cancelled_seconds:'0.000000',cancelled_minutes:'0.000000',cancelled_sessions_count:0,sessions_count:1,by_subject:[{subject_id:4,name:'Física',seconds:'60.000000',minutes:'1.000000',sessions_count:1}],buckets:[{from:'2030-01-01T05:00:00Z',to:'2030-01-02T05:00:00Z',seconds:'60.000000',minutes:'1.000000'}]}
   const fetch=vi.fn().mockResolvedValue(jsonResponse(result));vi.stubGlobal('fetch',fetch)
   await service().studyTime({from:result.from,to:result.to,timezone:result.timezone,granularity:'day'})
   const query=new URL(fetch.mock.calls[0][0],'https://test').searchParams

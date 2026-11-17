@@ -131,6 +131,19 @@ try {
   }
   await view('/app/analytics', 'Análisis', 'analytics')
   await expect(page.getByRole('heading', { name: 'Tiempo de estudio' })).toBeVisible()
+  const overview = await api<{
+    total_studied_seconds: string
+    cancelled_session_seconds: string
+  }>('analytics/overview')
+  check(overview.total_studied_seconds === '840.735370',
+    'Analytics studied-time total differs from controlled rehearsals')
+  check(overview.cancelled_session_seconds === '45662.422572',
+    'Cancelled timer duration is not reported separately')
+  await expect(page.getByText('Tiempo total estudiado', { exact: true })).toBeVisible()
+  await expect(page.getByText('Tiempo en sesiones canceladas (excluido)', {
+    exact: true,
+  })).toBeVisible()
+  checks.push('Analytics separates 840.735370 study seconds from 45662.422572 cancelled')
   await page.getByRole('combobox', { name: 'Periodo', exact: true }).selectOption('custom')
   const start = new Date(state.reference + 'T12:00:00Z')
   start.setUTCDate(start.getUTCDate() - 35)
@@ -161,7 +174,8 @@ try {
   const report = { at: new Date().toISOString(), base, user_id: state.user_id,
     checks, pending_modules: pending, complete: pending.length === 0,
     page_errors: pageErrors, api_errors: errors, gemini_calls: 0,
-    warnings: state.recovery_incidents?.length ? ['analytics_includes_technical_interruption'] : [],
+    warnings: state.recovery_incidents?.length
+      ? ['cancelled_timer_duration_reported_separately_from_study'] : [],
     seed_does_not_backdate_usage: true }
   await writeFile(`${output}/browser-report.json`, JSON.stringify(report, null, 2))
   console.log(JSON.stringify(report, null, 2))

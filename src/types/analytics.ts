@@ -1,5 +1,6 @@
 export interface AnalyticsOverview {
   total_studied_seconds: string; total_studied_minutes: string
+  cancelled_session_seconds: string; cancelled_session_minutes: string
   finished_sessions: number; completed_sessions: number; partial_sessions: number
   postponed_sessions: number; cancelled_sessions: number; subjects_with_activity: number
   completed_activities: number; pending_activities: number; in_progress_activities: number
@@ -11,6 +12,7 @@ export interface AnalyticsStudyTimeSubject { subject_id: number; name: string; s
 export interface AnalyticsStudyTimeBucket { from: string; to: string; seconds: string; minutes: string }
 export interface AnalyticsStudyTime extends AnalyticsStudyTimeQuery {
   total_seconds: string; total_minutes: string; sessions_count: number
+  cancelled_seconds: string; cancelled_minutes: string; cancelled_sessions_count: number
   by_subject: AnalyticsStudyTimeSubject[]; buckets: AnalyticsStudyTimeBucket[]
 }
 export const analyticsCategories = ['activity', 'study_session', 'decision', 'plan', 'challenge'] as const

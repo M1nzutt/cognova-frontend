@@ -24,8 +24,8 @@ function localTime(value:string,withDate=true):string {
 }
 function count(value:number):string { return new Intl.NumberFormat().format(value) }
 const metricGroups:{title:string;items:[keyof AnalyticsOverview,string,boolean][]}[]=[
- {title:'Sesiones registradas',items:[
-  ['total_studied_seconds','Tiempo total estudiado',true],['finished_sessions','Sesiones finalizadas',false],
+  {title:'Sesiones registradas',items:[
+   ['total_studied_seconds','Tiempo total estudiado',true],['cancelled_session_seconds','Tiempo en sesiones canceladas (excluido)',true],['finished_sessions','Sesiones finalizadas',false],
   ['completed_sessions','Sesiones completadas',false],['partial_sessions','Sesiones parciales',false],
   ['postponed_sessions','Sesiones postergadas',false],['cancelled_sessions','Sesiones canceladas',false],
  ]},
@@ -137,10 +137,16 @@ export function AnalyticsPage() {
 
  return <section className={styles.page}>
   <header className={styles.heading}><div><p className="eyebrow">TU RECORRIDO ACADÉMICO</p><h1>Análisis</h1><p>Consulta lo que has registrado y observa cómo se distribuye tu tiempo de estudio.</p></div><button className="button" onClick={()=>setRefresh(n=>n+1)}>Actualizar</button></header>
+  <section className={`${styles.section} ${styles.searchSection}`} aria-labelledby="search-title"><h2 id="search-title">Buscar en tu espacio académico</h2><label className={styles.searchField}>Buscar por nombre<input type="search" maxLength={64} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Materia, actividad, plan o reto"/></label>
+    {search.loading&&<LoadingStatus label="Buscando…" />}{search.error&&<p role="alert">{search.error}</p>}
+   {search.searched&&!search.loading&&!search.error&&!search.items.length&&<p>No encontramos recursos con ese prefijo.</p>}
+   <div className={styles.searchGroups}>{Object.entries(groups).map(([name,items])=><section key={name} aria-label={name}><h3>{name}</h3><ul>{items.map(item=>{const href=searchHref(item);return <li key={item.type+'-'+item.id}>{href?<Link to={href}>{item.title}</Link>:<span>{item.title}</span>}{item.status&&<small>Estado: {statusText(item.status)}</small>}</li>})}</ul></section>)}</div>
+   {search.cursor&&<button className="button" disabled={search.loading} onClick={()=>void loadMoreSearch()}>{search.loading?'Cargando…':'Ver más resultados'}</button>}
+  </section>
   <section className={styles.section} aria-labelledby="overview-title"><div className={styles.sectionHeading}><div><h2 id="overview-title">Resumen general</h2><p>Una lectura de los registros disponibles en tu espacio.</p></div></div>
     {overview.loading&&<LoadingStatus label="Cargando resumen…" />}
    {overview.error&&<div role="alert"><p>{overview.error}</p><button className="button" onClick={()=>setRefresh(n=>n+1)}>Intentar de nuevo</button></div>}
-    {overview.data&&<div className={styles.metricGroups}>{metricGroups.map(group=><section className={styles.metricGroup} key={group.title} aria-label={group.title}><h3>{group.title}</h3><dl className={styles.metrics}>{group.items.map(([key,label,isDuration])=><div className={styles.metric} key={key}><dt>{label}</dt><dd>{isDuration?duration(overview.data!.total_studied_seconds):count(overview.data![key] as number)}</dd></div>)}</dl></section>)}</div>}
+     {overview.data&&<div className={styles.metricGroups}>{metricGroups.map(group=><section className={styles.metricGroup} key={group.title} aria-label={group.title}><h3>{group.title}</h3><dl className={styles.metrics}>{group.items.map(([key,label,isDuration])=><div className={styles.metric} key={key}><dt>{label}</dt><dd>{isDuration?duration(overview.data![key] as string):count(overview.data![key] as number)}</dd></div>)}</dl></section>)}</div>}
   </section>
   <section className={styles.section} aria-labelledby="study-title"><div className={styles.sectionHeading}><div><h2 id="study-title">Tiempo de estudio</h2><p>Zona horaria local: {timezone}.</p></div><label>Periodo<select value={preset} onChange={e=>setPreset(e.target.value as AnalyticsRangePreset)}><option value="day">Día</option><option value="week">Semana</option><option value="month">Mes</option><option value="custom">Rango personalizado</option></select></label></div>
    {preset==='custom'&&<div className={styles.rangeFields}><label>Desde (incluido)<input type="date" value={fromDate} onChange={e=>setFromDate(e.target.value)}/></label><label>Hasta (exclusivo)<input type="date" value={toDate} onChange={e=>setToDate(e.target.value)}/></label></div>}
@@ -148,7 +154,7 @@ export function AnalyticsPage() {
    <label className={styles.granularity}>Agrupar por<select value={granularity} onChange={e=>setGranularity(e.target.value as typeof granularity)}><option value="day">Día</option><option value="week">Semana</option><option value="month">Mes</option></select></label>
     {study.loading&&<LoadingStatus label="Cargando tiempo de estudio…" />}
    {study.error&&!range.error&&<div role="alert"><p>{study.error}</p><button className="button" onClick={()=>setRefresh(n=>n+1)}>Intentar de nuevo</button></div>}
-   {study.data&&<div><p><strong>{duration(study.data.total_seconds)}</strong> en {count(study.data.sessions_count)} sesiones.</p><div className={styles.charts}>
+    {study.data&&<div><p><strong>{duration(study.data.total_seconds)}</strong> en {count(study.data.sessions_count)} sesiones.</p>{study.data.cancelled_sessions_count>0&&<p role="note">{duration(study.data.cancelled_seconds)} en {count(study.data.cancelled_sessions_count)} sesiones canceladas, excluido del tiempo estudiado.</p>}<div className={styles.charts}>
     <section aria-labelledby="bucket-title"><h3 id="bucket-title">Tiempo a lo largo del periodo</h3>{study.data.buckets.length===0?<p>No hay intervalos en este periodo.</p>:<ol className={styles.chartList}>{study.data.buckets.map((bucket,i)=><li key={bucket.from+'-'+i}><span>{localTime(bucket.from,false)}</span><progress aria-label={localTime(bucket.from,false)+': '+duration(bucket.seconds)} max={maxBucket} value={Number(bucket.seconds)}/><strong>{duration(bucket.seconds)}</strong></li>)}</ol>}</section>
     <section aria-labelledby="subject-title"><h3 id="subject-title">Distribución por materia</h3>{study.data.by_subject.length===0?<p>No hay materias con tiempo registrado en este periodo.</p>:<ol className={styles.chartList}>{study.data.by_subject.map(subject=><li key={subject.subject_id}><span>{subject.name}</span><progress aria-label={subject.name+': '+duration(subject.seconds)} max={maxSubject} value={Number(subject.seconds)}/><strong>{duration(subject.seconds)}</strong></li>)}</ol>}</section>
    </div></div>}
@@ -159,12 +165,6 @@ export function AnalyticsPage() {
    {!range.error&&!timeline.loading&&!timeline.error&&timeline.items.length===0&&<p>No hay eventos para este periodo.</p>}
    {timeline.items.length>0&&<ol className={styles.timeline} aria-label="Cronología académica">{timeline.items.map(item=>{const href=eventHref(item);return <li key={item.event_id}><time dateTime={item.occurred_at}>{localTime(item.occurred_at)}</time><span className={styles.kind}>{categories[item.category]}</span>{href?<Link to={href}>{item.title}</Link>:<strong>{item.title}</strong>}<p>{eventDescription(item)}{item.subject_name?' Materia: '+item.subject_name+'.':''}</p></li>})}</ol>}
    {timeline.cursor&&<button className="button" disabled={timelineMore} onClick={()=>void loadMoreTimeline()}>{timelineMore?'Cargando…':'Ver más eventos'}</button>}
-  </section>
-  <section className={styles.section} aria-labelledby="search-title"><h2 id="search-title">Buscar en tu espacio académico</h2><label className={styles.searchField}>Buscar por nombre<input type="search" maxLength={64} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Materia, actividad, plan o reto"/></label>
-    {search.loading&&<LoadingStatus label="Buscando…" />}{search.error&&<p role="alert">{search.error}</p>}
-   {search.searched&&!search.loading&&!search.error&&!search.items.length&&<p>No encontramos recursos con ese prefijo.</p>}
-   <div className={styles.searchGroups}>{Object.entries(groups).map(([name,items])=><section key={name} aria-label={name}><h3>{name}</h3><ul>{items.map(item=>{const href=searchHref(item);return <li key={item.type+'-'+item.id}>{href?<Link to={href}>{item.title}</Link>:<span>{item.title}</span>}{item.status&&<small>Estado: {statusText(item.status)}</small>}</li>})}</ul></section>)}</div>
-   {search.cursor&&<button className="button" disabled={search.loading} onClick={()=>void loadMoreSearch()}>{search.loading?'Cargando…':'Ver más resultados'}</button>}
   </section>
  </section>
 }

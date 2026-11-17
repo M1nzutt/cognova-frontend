@@ -14,12 +14,12 @@ const record = (v: unknown): v is Record<string, unknown> => v !== null && typeo
 const cursor = (v: unknown): v is string | null => v === null || (text(v) && v.length <= 2048)
 export function readAnalyticsOverview(value: unknown): AnalyticsOverview {
  const row=object(value), keys=['finished_sessions','completed_sessions','partial_sessions','postponed_sessions','cancelled_sessions','subjects_with_activity','completed_activities','pending_activities','in_progress_activities','active_plans','completed_plans','completed_challenges','failed_challenges'] as const
- if(!decimal(row.total_studied_seconds)||!decimal(row.total_studied_minutes)||keys.some(key=>!count(row[key]))) return invalid()
+  if(!decimal(row.total_studied_seconds)||!decimal(row.total_studied_minutes)||!decimal(row.cancelled_session_seconds)||!decimal(row.cancelled_session_minutes)||keys.some(key=>!count(row[key]))) return invalid()
  return row as unknown as AnalyticsOverview
 }
 export function readAnalyticsStudyTime(value: unknown): AnalyticsStudyTime {
  const row=object(value)
- if(!date(row.from)||!date(row.to)||!text(row.timezone)||!(['day','week','month'] as const).some(x=>x===row.granularity)||!decimal(row.total_seconds)||!decimal(row.total_minutes)||!count(row.sessions_count)||!Array.isArray(row.by_subject)||!Array.isArray(row.buckets)) return invalid()
+  if(!date(row.from)||!date(row.to)||!text(row.timezone)||!(['day','week','month'] as const).some(x=>x===row.granularity)||!decimal(row.total_seconds)||!decimal(row.total_minutes)||!decimal(row.cancelled_seconds)||!decimal(row.cancelled_minutes)||!count(row.cancelled_sessions_count)||!count(row.sessions_count)||!Array.isArray(row.by_subject)||!Array.isArray(row.buckets)) return invalid()
  const subjects=row.by_subject.every(v=>record(v)&&id(v.subject_id)&&text(v.name)&&decimal(v.seconds)&&decimal(v.minutes)&&count(v.sessions_count))
  const buckets=row.buckets.every(v=>record(v)&&date(v.from)&&date(v.to)&&decimal(v.seconds)&&decimal(v.minutes))
  if(!subjects||!buckets) return invalid()
