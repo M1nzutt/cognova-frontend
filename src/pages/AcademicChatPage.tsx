@@ -162,6 +162,14 @@ export function AcademicChatPage() {
     }
   }
 
+  const keepComposerVisible = () => {
+    if (window.matchMedia('(max-width: 900px)').matches) {
+      window.requestAnimationFrame(() => {
+        textareaRef.current?.scrollIntoView({ block: 'center', behavior: 'instant' })
+      })
+    }
+  }
+
   const selected = conversations.find(item => item.id === selectedId)
 
   return (
@@ -255,6 +263,7 @@ export function AcademicChatPage() {
               value={draft}
               onChange={event => setDraft(event.target.value)}
               onKeyDown={onComposerKeyDown}
+              onFocus={keepComposerVisible}
               maxLength={4000}
               rows={1}
               placeholder="Cuéntame en qué quieres que te apoye hoy…"
