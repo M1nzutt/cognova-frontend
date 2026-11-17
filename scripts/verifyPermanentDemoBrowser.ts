@@ -104,6 +104,15 @@ try {
   await expect(page.getByText('Tiempo efectivo', { exact: true }).first()).toBeVisible()
   await page.screenshot({ path: `${output}/measured-session.png`, fullPage: true })
   checks.push('completed session and real timer intervals visible')
+  const technicalSession = await api<{
+    status: string; actual_duration: string; intervals: { started_at: string; ended_at: string | null }[]
+  }>(`sessions/${id('interrupted-rehearsal-bd')}`)
+  check(technicalSession.status === 'cancelled'
+    && technicalSession.actual_duration === '45662.422572'
+    && technicalSession.intervals.length === 1
+    && technicalSession.intervals[0].ended_at !== null,
+  'Cancelled technical interval was not preserved')
+  checks.push('cancelled technical timer interval remains preserved')
   await view('/app/calendar', 'Calendario', 'calendar-month')
   await page.getByLabel('Ir a fecha', { exact: true }).fill(state.reference)
   await page.getByRole('button', { name: 'Semana', exact: true }).click()
@@ -143,6 +152,8 @@ try {
   await expect(page.getByText('Tiempo en sesiones canceladas (excluido)', {
     exact: true,
   })).toBeVisible()
+  await expect(page.getByText('14 min', { exact: true })).toBeVisible()
+  await expect(page.getByText('12 h 41 min', { exact: true })).toBeVisible()
   checks.push('Analytics separates 840.735370 study seconds from 45662.422572 cancelled')
   await page.getByRole('combobox', { name: 'Periodo', exact: true }).selectOption('custom')
   const start = new Date(state.reference + 'T12:00:00Z')
@@ -153,8 +164,16 @@ try {
   await page.getByLabel('Hasta (exclusivo)').fill(end.toISOString().slice(0, 10))
   await page.getByRole('combobox', { name: 'Agrupar por' }).selectOption('week')
   await page.waitForLoadState('networkidle')
+  const rangeAnalytics = await api<{
+    total_seconds: string; cancelled_seconds: string; cancelled_sessions_count: number
+  }>(`analytics/study-time?from=${encodeURIComponent(start.toISOString())}`
+    + `&to=${encodeURIComponent(end.toISOString())}&timezone=UTC&granularity=week`)
+  check(rangeAnalytics.total_seconds === '840.735370'
+    && rangeAnalytics.cancelled_seconds === '45662.422572'
+    && rangeAnalytics.cancelled_sessions_count === 1,
+  'Range Analytics does not separate controlled and cancelled time')
   await page.screenshot({ path: `${output}/analytics-six-week-range.png`, fullPage: true })
-  checks.push('six-week analytics range; actual time is not backdated')
+  checks.push('six-week range separates studied/cancelled time; no backdated usage')
   const persistentId = id('ai-initial') ?? id('manual-route')
   const original = await api<StudyPlan>(`study-plans/${persistentId}`)
   const [logout] = await Promise.all([
