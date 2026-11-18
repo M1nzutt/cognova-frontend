@@ -14,10 +14,16 @@ describe('AI contract readers', () => {
     expect(() => readAiPlanGeneration({ plan: { ...aiPlanFixture, status: 'active' }, explanation: aiProposalFixture.explanation, reasoning_summary: aiProposalFixture.reasoning_summary })).toThrow()
   })
 
-  it('allows factual low-history analysis but rejects an inconsistent eligibility threshold', () => {
-    const lowHistory = { finished_session_count: 3, pattern_eligible: false, observations: [] }
+  it('accepts factual observations without a minimum-pattern threshold', () => {
+    const lowHistory = { completed_session_count: 0, reviewed_session_count: 0, state: 'insufficient_data', observations: [] }
     expect(readBehaviorAnalysis(lowHistory).observations).toEqual([])
-    expect(readBehaviorAnalysis(behaviorFixture).pattern_eligible).toBe(true)
-    expect(() => readBehaviorAnalysis({ ...lowHistory, pattern_eligible: true })).toThrow()
+    expect(readBehaviorAnalysis(behaviorFixture).state).toBe('factual_summary')
+    expect(() => readBehaviorAnalysis({ ...lowHistory, completed_session_count: 1 })).toThrow()
+    expect(() => readBehaviorAnalysis({ ...behaviorFixture, observations: [{ ...behaviorFixture.observations[0], related_resources: [
+      ...behaviorFixture.observations[0].related_resources,
+      behaviorFixture.observations[0].related_resources[0],
+    ] }] })).toThrow()
+    expect(() => readBehaviorAnalysis({ ...behaviorFixture, observations: [{ ...behaviorFixture.observations[0], related_resources:
+      behaviorFixture.observations[0].related_resources.filter(resource => resource.kind !== 'session') }] })).toThrow()
   })
 })

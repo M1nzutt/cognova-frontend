@@ -200,38 +200,41 @@ describe('study plans', () => {
   it('shows no pattern claim with zero completed sessions', async () => {
     const { fetch } = studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: 0 })
     expect(await screen.findByRole('heading', { name: 'Observaciones de tus sesiones' })).toBeVisible()
-    expect(await screen.findByText(/hacen falta sesiones para identificar patrones/i)).toBeVisible()
-    expect(screen.getByText('0', { selector: 'span' })).toBeVisible()
-    expect(screen.getByText('sesiones finalizadas registradas')).toBeVisible()
-    expect(screen.getByText('Sigue registrando tus sesiones')).toBeVisible()
+    expect(await screen.findByText(/sin inferir hábitos/i)).toBeVisible()
+    expect(screen.getByText('0', { selector: 'strong' })).toBeVisible()
+    expect(screen.getByText('sesiones completadas')).toBeVisible()
+    expect(screen.getByText('Aún no hay registros para comparar')).toBeVisible()
     expect(fetch.mock.calls.some(([url, request]) => String(url).endsWith('/analysis/behavior') && request?.method === 'POST')).toBe(true)
   })
 
-  it.each([1, 4])('shows factual entries and questions with %i sessions, without calling them a pattern', async count => {
+  it.each([1, 4])('shows factual entries and questions with %i records, without calling them a pattern', async count => {
     studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: count })
-    expect(await screen.findByText(`Tienes ${count} sesiones finalizadas registradas.`)).toBeVisible()
-    expect(screen.getByRole('heading', { name: 'Dato de tus sesiones' })).toBeVisible()
-    expect(screen.getByText('¿Qué notas al revisar estas sesiones?')).toBeVisible()
-    expect(screen.getByText(/todavía no identifica un patrón/)).toBeVisible()
-    expect(screen.queryByText('Una observación para reflexionar')).not.toBeInTheDocument()
+    expect(await screen.findByText(/Hay un registro con tiempo planificado|1 min frente a 10 min planificados/)).toBeVisible()
+    expect(screen.getByRole('list', { name: 'Observaciones de tus sesiones' }).textContent)
+      .toContain('ni permiten concluir que sea un hábito')
+    expect(screen.getByText(/¿Qué contexto ayudaría a entender/)).toBeVisible()
+    expect(screen.queryByText(/patrón de estudio/)).not.toBeInTheDocument()
   })
 
-  it.each([5, 7])('shows evidence-based observations with %i completed sessions', async count => {
+  it.each([5, 7])('shows factual observations with %i records, without Gemini pattern claims', async count => {
     studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: count })
-    expect(await screen.findByRole('heading', { name: 'Una observación para reflexionar' })).toBeVisible()
-    expect(screen.getByText(/Dos sesiones comenzaron/)).toBeVisible()
-    expect(screen.getByText(/Qué te ayudó a empezar/)).toBeVisible()
-    expect(screen.getByText(/se apoya en dos sesiones/)).toBeVisible()
+    expect(await screen.findByRole('heading', { name: /1 min frente a 10 min planificados/ })).toBeVisible()
+    expect(screen.getByText(/Estos datos describen solo las sesiones/)).toBeVisible()
+    expect(screen.getByText(/Se basa en/)).toBeVisible()
   })
 
-  it('presents behavior observations, evidence, questions and related resource links', async () => {
+  it('presents concise facts and expandable traceable evidence with named deduplicated links', async () => {
     studyPlanSetup({ path: '/app/behavior' })
-    expect(await screen.findByText(/empezaste con más tiempo/)).toBeVisible()
-    expect(screen.getByText(/Dos sesiones comenzaron/)).toBeVisible()
-    expect(screen.getByText(/Qué te ayudó a empezar/)).toBeVisible()
-    expect(screen.getByRole('link', { name: 'Abrir materia relacionada 1' })).toHaveAttribute('href', '/app/subjects/1')
-    expect(screen.getByRole('link', { name: 'Abrir actividad relacionada 1' })).toHaveAttribute('href', `/app/activities/${planFixture.activities[0].id}`)
-    expect(screen.getByRole('link', { name: 'Abrir sesión relacionada 1' })).toHaveAttribute('href', `/app/sessions/${planFixture.study_sessions[0].id}`)
+    expect(await screen.findByText(/5 de 5 registros se registró cerca de 1 min frente a 10 min planificados/)).toBeVisible()
+    const evidence = screen.getByText('Ver los 5 registros que lo respaldan')
+    expect(evidence.closest('details')).not.toHaveAttribute('open')
+    await userEvent.click(evidence)
+    expect(evidence.closest('details')).toHaveAttribute('open')
+    expect(screen.getAllByText(/10 min planificados; se registraron 1 min/)).toHaveLength(5)
+    expect(screen.getByRole('link', { name: 'Biología' })).toHaveAttribute('href', '/app/subjects/1')
+    expect(screen.getByRole('link', { name: planFixture.activities[0].title })).toHaveAttribute('href', `/app/activities/${planFixture.activities[0].id}`)
+    expect(screen.getAllByRole('link', { name: /Sesión/ })).toHaveLength(5)
+    expect(screen.queryByRole('link', { name: /Materia relacionada|Actividad relacionada|Sesión relacionada/ })).not.toBeInTheDocument()
   })
 
   it('distinguishes an AI mission and shows its explanation, evidence, condition and linked resource', async () => {

@@ -129,10 +129,29 @@ function readAiSnapshot(value: unknown): AiPlanProposalSnapshot {
 function readBehaviorObservation(value: unknown): BehaviorObservation {
   const row = object(value)
   const evidence = row.evidence
-  if (!text(row.observation, 1000) || !Array.isArray(evidence) || evidence.length < 1 || evidence.length > 5
-    || evidence.some(item => !text(item, 1000)) || !text(row.question, 500)
-    || !text(row.confidence_basis, 500) || !ids(row.related_subject_ids)
-    || !ids(row.related_activity_ids) || !ids(row.related_session_ids)) return invalid()
+  if (!text(row.observation, 1000) || !text(row.interpretation, 1000)
+    || !Array.isArray(evidence) || evidence.length < 1 || evidence.length > 10
+    || evidence.some(item => {
+      const entry = object(item)
+      return !integer(entry.session_id) || !integer(entry.planned_minutes, 1)
+        || typeof entry.actual_seconds !== 'string'
+        || !/^\d+(?:\.\d+)?$/.test(entry.actual_seconds)
+        || !['completed', 'partial'].includes(String(entry.result))
+        || !text(entry.summary, 500)
+    }) || !text(row.question, 500) || !text(row.confidence_basis, 500)
+    || !Array.isArray(row.related_resources) || row.related_resources.length > 30) return invalid()
+  const resources = row.related_resources.map(item => {
+    const resource = object(item)
+    const kind = resource.kind
+    const route = kind === 'subject' ? 'subjects' : kind === 'activity' ? 'activities' : kind === 'session' ? 'sessions' : null
+    if (!route || !integer(resource.id) || !text(resource.label, 100)
+      || resource.href !== `/app/${route}/${resource.id}`) return invalid()
+    return resource
+  })
+  const keys = resources.map(resource => `${resource.kind}:${resource.id}`)
+  if (new Set(keys).size !== keys.length) return invalid()
+  const linkedSessions = new Set(resources.filter(resource => resource.kind === 'session').map(resource => resource.id))
+  if (evidence.some(item => !linkedSessions.has(object(item).session_id as number))) return invalid()
   return row as unknown as BehaviorObservation
 }
 
@@ -148,10 +167,16 @@ export function readAiPlanGeneration(value: unknown): AiPlanGenerationResponse {
 
 export function readBehaviorAnalysis(value: unknown): BehaviorAnalysis {
   const row = object(value)
-  if (!integer(row.finished_session_count, 0) || typeof row.pattern_eligible !== 'boolean'
-    || row.pattern_eligible !== (row.finished_session_count >= 5)
-    || !Array.isArray(row.observations) || row.observations.length > 5) return invalid()
-  return { finished_session_count: row.finished_session_count, pattern_eligible: row.pattern_eligible,
+  if (!integer(row.completed_session_count, 0) || !integer(row.reviewed_session_count, 0)
+    || row.completed_session_count > row.reviewed_session_count
+    || !['factual_summary', 'insufficient_data'].includes(String(row.state))
+    || !Array.isArray(row.observations) || row.observations.length > 1
+    || (row.state === 'insufficient_data'
+      && (row.observations.length !== 0 || row.reviewed_session_count !== 0))
+    || (row.state === 'factual_summary'
+      && (row.observations.length !== 1 || row.reviewed_session_count === 0))) return invalid()
+  return { completed_session_count: row.completed_session_count,
+    reviewed_session_count: row.reviewed_session_count, state: row.state as BehaviorAnalysis['state'],
     observations: row.observations.map(readBehaviorObservation) }
 }
 

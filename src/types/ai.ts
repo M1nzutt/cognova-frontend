@@ -44,16 +44,31 @@ export interface AiPlanGenerationResponse {
 
 export interface BehaviorObservation {
   observation: string
-  evidence: string[]
+  interpretation: string
+  evidence: BehaviorEvidence[]
   question: string
   confidence_basis: string
-  related_subject_ids: number[]
-  related_activity_ids: number[]
-  related_session_ids: number[]
+  related_resources: BehaviorRelatedResource[]
+}
+
+export interface BehaviorEvidence {
+  session_id: number
+  planned_minutes: number
+  actual_seconds: string
+  result: 'completed' | 'partial'
+  summary: string
+}
+
+export interface BehaviorRelatedResource {
+  kind: 'subject' | 'activity' | 'session'
+  id: number
+  label: string
+  href: string
 }
 
 export interface BehaviorAnalysis {
-  finished_session_count: number
-  pattern_eligible: boolean
+  completed_session_count: number
+  reviewed_session_count: number
+  state: 'factual_summary' | 'insufficient_data'
   observations: BehaviorObservation[]
 }

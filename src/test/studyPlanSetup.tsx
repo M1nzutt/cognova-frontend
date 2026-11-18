@@ -28,8 +28,25 @@ export const aiProposalFixture: NonNullable<StudyPlan['ai_proposal_snapshot']> =
 }
 export const aiPlanFixture: StudyPlan = { ...planFixture, source: 'ai', ai_proposal_snapshot: aiProposalFixture }
 export const behaviorFixture = {
-  finished_session_count: 5, pattern_eligible: true,
-  observations: [{ observation: 'En algunas sesiones recientes empezaste con más tiempo del que planeabas.', evidence: ['Dos sesiones comenzaron antes de la hora prevista.'], question: '¿Qué te ayudó a empezar en esos momentos?', confidence_basis: 'La observación se apoya en dos sesiones de las cinco finalizadas.', related_subject_ids: [1], related_activity_ids: [activity.id], related_session_ids: [sessionSummary.id] }],
+  completed_session_count: 5, reviewed_session_count: 5, state: 'factual_summary',
+  observations: [{
+    observation: 'En 5 de 5 registros se registró cerca de 1 min frente a 10 min planificados.',
+    interpretation: 'Estos datos describen solo las sesiones registradas; no explican la diferencia ni permiten concluir que sea un hábito.',
+    evidence: Array.from({ length: 5 }, (_, index) => ({
+      session_id: sessionSummary.id + index, planned_minutes: 10, actual_seconds: '60.140789',
+      result: 'completed', summary: `Biología · Repaso ${index + 1}: 10 min planificados`,
+    })),
+    question: '¿Qué contexto ayudaría a entender la diferencia entre el tiempo previsto y el registrado?',
+    confidence_basis: 'Se basa en 5 registros finalizados o parciales; las sesiones parciales se identifican por separado y no cuentan como completadas.',
+    related_resources: [
+      { kind: 'subject', id: 1, label: 'Biología', href: '/app/subjects/1' },
+      { kind: 'activity', id: activity.id, label: activity.title, href: `/app/activities/${activity.id}` },
+      ...Array.from({ length: 5 }, (_, index) => ({
+        kind: 'session', id: sessionSummary.id + index, label: `Sesión ${index + 1}`,
+        href: `/app/sessions/${sessionSummary.id + index}`,
+      })),
+    ],
+  }],
 }
 export const challengeFixture: StudyChallenge = {
   id: 8, plan_id: 4, subject_id: 1, activity_id: null, study_session_id: null,
@@ -51,14 +68,29 @@ export function studyPlanSetup(options: { path?: string; plans?: StudyPlan[]; ch
     if (path === '/api/v1/activities') return response({ items: [{ ...activity, subject_id: 1 }], next_after_id: null })
     if (path === '/api/v1/sessions') return response({ items: [sessionSummary], next_cursor: null })
     if (path === '/api/v1/analysis/behavior' && method === 'POST') {
-      if (options.behaviorStatus) return response({ error: { code: options.behaviorCode ?? 'GEMINI_RATE_LIMIT', message: 'private detail' } }, options.behaviorStatus, options.behaviorCode === 'GEMINI_RATE_LIMIT' || !options.behaviorCode ? { 'Retry-After': '30' } : {})
-      const count = options.behaviorSessionCount ?? behaviorFixture.finished_session_count
-      const observations = count >= 5 ? behaviorFixture.observations : count === 0 ? [] : [{
-        observation: `Tienes ${count} sesiones finalizadas registradas.`, evidence: [`Cognova encontró ${count} sesiones finalizadas.`],
-        question: '¿Qué notas al revisar estas sesiones?', confidence_basis: `Este dato describe ${count} sesiones; todavía no identifica un patrón.`,
-        related_subject_ids: [], related_activity_ids: [], related_session_ids: [],
-      }]
-      return response({ ...behaviorFixture, finished_session_count: count, pattern_eligible: count >= 5, observations })
+      if (options.behaviorStatus) return response(
+        { error: { code: options.behaviorCode ?? 'GEMINI_RATE_LIMIT', message: 'private detail' } },
+        options.behaviorStatus,
+        options.behaviorCode === 'GEMINI_RATE_LIMIT' || !options.behaviorCode
+          ? { 'Retry-After': '30' }
+          : {},
+      )
+      const count = options.behaviorSessionCount ?? behaviorFixture.completed_session_count
+      const evidenceCount = Math.min(count, 5)
+      const observation = structuredClone(behaviorFixture.observations[0])
+      observation.evidence = observation.evidence.slice(0, evidenceCount)
+      observation.related_resources = observation.related_resources
+        .filter(resource => resource.kind !== 'session' || resource.id < sessionSummary.id + evidenceCount)
+      observation.observation = count === 1
+        ? 'Hay un registro con tiempo planificado y tiempo real para comparar.'
+        : `En ${evidenceCount} de ${evidenceCount} registros se registró cerca de 1 min frente a 10 min planificados.${count > evidenceCount ? ` Se muestran los más recientes de ${count} registros.` : ''}`
+      observation.confidence_basis = `Se basa en ${evidenceCount} ${evidenceCount === 1 ? 'registro' : 'registros'} finalizados o parciales; las sesiones parciales se identifican por separado y no cuentan como completadas.`
+      return response({
+        completed_session_count: count,
+        reviewed_session_count: count,
+        state: count ? 'factual_summary' : 'insufficient_data',
+        observations: count ? [observation] : [],
+      })
     }
     if (path === '/api/v1/study-plans/generate' && method === 'POST') {
       await options.generateGate

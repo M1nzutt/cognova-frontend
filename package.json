@@ -19,7 +19,8 @@
     "smoke:auth": "node --experimental-strip-types scripts/smokeAuth.ts",
     "smoke:calendar": "node --experimental-strip-types scripts/smokeCalendarStudySessionsBrowser.ts",
     "smoke:sessions": "node --experimental-strip-types scripts/smokeStudySessionsBrowser.ts",
-    "smoke:mobile": "node --experimental-strip-types scripts/mobileResponsiveBrowser.ts"
+    "smoke:mobile": "node --experimental-strip-types scripts/mobileResponsiveBrowser.ts",
+    "smoke:behavior-browser": "node --experimental-strip-types scripts/behaviorObservationsBrowser.ts"
   },
   "dependencies": {
     "react": "^19.3.0",
