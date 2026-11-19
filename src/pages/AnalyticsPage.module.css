@@ -8,6 +8,8 @@
 .heading p:last-child, .sectionHeading p { color: var(--muted); }
 .heading > div { max-width: 70ch; }
 .section { min-width: 0; padding: clamp(1.1rem, 2.6vw, 1.55rem); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-soft); }
+.searchSection { border-color: var(--color-border-strong); background: linear-gradient(112deg, var(--color-lilac-100), var(--surface) 76%); }
+.searchSection .searchField { width: min(100%, 720px); }
 .section h2 { margin: 0 0 .85rem; font-size: 1.1rem; }
 .sectionHeading { align-items: flex-end; margin-bottom: 1rem; }
 .sectionHeading h2 { margin: 0 0 .2rem; }
