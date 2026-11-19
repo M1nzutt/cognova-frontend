@@ -22,7 +22,7 @@ function dateLabel(value: string): string {
 export function AcademicChatPage({
   variant = 'page',
 }: {
-  variant?: 'page' | 'embedded'
+  variant?: 'page' | 'sidebar'
 } = {}) {
   const service = useAcademicChatService()
   const [conversations, setConversations] = useState<AcademicConversation[]>([])
@@ -175,7 +175,7 @@ export function AcademicChatPage({
   }
 
   const selected = conversations.find(item => item.id === selectedId)
-  const embedded = variant === 'embedded'
+  const embedded = variant === 'sidebar'
 
   return (
     <section

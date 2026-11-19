@@ -97,11 +97,17 @@ try {
     const assistant = page.locator('[data-assistant-section]')
     const flow = await assistant.evaluate(node => ({
       position: getComputedStyle(node).position,
+      left: node.getBoundingClientRect().left,
       top: node.getBoundingClientRect().top,
+      statsRight: node.parentElement?.querySelector('[data-statistics-column]')?.getBoundingClientRect().right ?? -1,
       overviewBottom: node.parentElement?.querySelector('[aria-labelledby="overview-title"]')?.getBoundingClientRect().bottom ?? -1,
     }))
-    if (flow.position !== 'static' || flow.overviewBottom < 0 || flow.top < flow.overviewBottom) {
-      throw new Error(`Assistant is not integrated into document flow at ${width}px`)
+    if (width > 760) {
+      if (flow.position !== 'sticky' || flow.statsRight < 0 || flow.left <= flow.statsRight) {
+        throw new Error(`Assistant is not fixed in the right sidebar at ${width}px`)
+      }
+    } else if (flow.position !== 'static' || flow.overviewBottom < 0 || flow.top < flow.overviewBottom) {
+      throw new Error(`Assistant is not stacked in the mobile Analytics flow at ${width}px`)
     }
     await assistant.scrollIntoViewIfNeeded()
     if (screenshotDir && [390, 768, 1440].includes(width)) {

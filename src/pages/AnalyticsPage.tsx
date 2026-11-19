@@ -149,7 +149,8 @@ export function AnalyticsPage() {
  const maxBucket=Math.max(1,...(study.data?.buckets.map(x=>Number(x.seconds))||[]))
  const groups=useMemo(()=>search.items.reduce<Record<string,AnalyticsSearchItem[]>>((all,item)=>{const name=searchNames[item.type];(all[name]??=[]).push(item);return all},{}),[search.items])
 
- return <section className={styles.page}>
+ return <div className={styles.analysisLayout}>
+  <section className={`${styles.page} ${styles.statisticsTop}`} data-statistics-column>
    <header className={styles.heading}><div><p className="eyebrow">TU RECORRIDO ACADÉMICO</p><h1>Análisis</h1><p>Consulta lo que has registrado y observa cómo se distribuye tu tiempo de estudio.</p></div><button className="button" onClick={()=>setRefresh(n=>n+1)}>Actualizar</button></header>
   <section className={`${styles.section} ${styles.searchSection}`} aria-labelledby="search-title"><h2 id="search-title">Buscar en tu espacio académico</h2><label className={styles.searchField}>Buscar por nombre<input type="search" maxLength={64} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Materia, actividad, plan o reto"/></label>
     {search.loading&&<LoadingStatus label="Buscando…" />}{search.error&&<p role="alert">{search.error}</p>}
@@ -162,15 +163,17 @@ export function AnalyticsPage() {
    {overview.error&&<div role="alert"><p>{overview.error}</p><button className="button" onClick={()=>setRefresh(n=>n+1)}>Intentar de nuevo</button></div>}
      {overview.data&&<div className={styles.metricGroups}>{metricGroups.map(group=><section className={styles.metricGroup} key={group.title} aria-label={group.title}><h3>{group.title}</h3><dl className={styles.metrics}>{group.items.map(([key,label,isDuration])=><div className={styles.metric} key={key}><dt>{label}</dt><dd>{isDuration?duration(overview.data![key] as string):count(overview.data![key] as number)}</dd></div>)}</dl></section>)}</div>}
    </section>
-   <section
+  </section>
+  <aside
     ref={assistantSectionRef}
-    className={`${styles.section} ${styles.assistantSection}`}
+    className={styles.assistantSidebar}
     aria-labelledby="chat-title"
     data-assistant-section
     tabIndex={-1}
    >
-    <AcademicChatPage variant="embedded"/>
-   </section>
+    <AcademicChatPage variant="sidebar"/>
+  </aside>
+  <section className={`${styles.page} ${styles.statisticsBottom}`}>
   <section className={styles.section} aria-labelledby="study-title"><div className={styles.sectionHeading}><div><h2 id="study-title">Tiempo de estudio</h2><p>Zona horaria local: {timezone}.</p></div><label>Periodo<select value={preset} onChange={e=>setPreset(e.target.value as AnalyticsRangePreset)}><option value="day">Día</option><option value="week">Semana</option><option value="month">Mes</option><option value="custom">Rango personalizado</option></select></label></div>
    {preset==='custom'&&<div className={styles.rangeFields}><label>Desde (incluido)<input type="date" value={fromDate} onChange={e=>setFromDate(e.target.value)}/></label><label>Hasta (exclusivo)<input type="date" value={toDate} onChange={e=>setToDate(e.target.value)}/></label></div>}
    {range.error&&<p className={styles.notice} role="alert">{range.error}</p>}
@@ -189,5 +192,6 @@ export function AnalyticsPage() {
    {timeline.items.length>0&&<ol className={styles.timeline} aria-label="Cronología académica">{timeline.items.map(item=>{const href=eventHref(item);return <li key={item.event_id}><time dateTime={item.occurred_at}>{localTime(item.occurred_at)}</time><span className={styles.kind}>{categories[item.category]}</span>{href?<Link to={href}>{item.title}</Link>:<strong>{item.title}</strong>}<p>{eventDescription(item)}{item.subject_name?' Materia: '+item.subject_name+'.':''}</p></li>})}</ol>}
    {timeline.cursor&&<button className="button" disabled={timelineMore} onClick={()=>void loadMoreTimeline()}>{timelineMore?'Cargando…':'Ver más eventos'}</button>}
   </section>
- </section>
+  </section>
+ </div>
 }

@@ -97,8 +97,14 @@ try {
             let parent = node.parentElement
             while (parent) {
               const style = getComputedStyle(parent)
+              const bounds = parent.getBoundingClientRect()
+              if (style.overflowX === 'auto' || style.overflowX === 'scroll') {
+                if (rect.left < bounds.left - 2 || rect.right > bounds.right + 2) break
+              }
+              if (style.overflowY === 'auto' || style.overflowY === 'scroll') {
+                if (rect.top < bounds.top - 2 || rect.bottom > bounds.bottom + 2) break
+              }
               if (style.overflowX === 'hidden' || style.overflowY === 'hidden') {
-                const bounds = parent.getBoundingClientRect()
                 if (rect.left < bounds.left - 2 || rect.right > bounds.right + 2 ||
                   rect.top < bounds.top - 2 || rect.bottom > bounds.bottom + 2) return true
               }
@@ -126,18 +132,28 @@ try {
     }
     await expect(page.getByRole('heading', { name: /IA Cognova/ })).toBeVisible()
     const assistant = page.locator('[data-assistant-section]')
-    const flowPosition = await assistant.evaluate(node => getComputedStyle(node).position)
-    if (flowPosition !== 'static') findings.push({ width, route: '/app/analytics', overflow: 0, elements: ['assistant is not in document flow'] })
+    const placement = await assistant.evaluate(node => ({
+      position: getComputedStyle(node).position,
+      left: node.getBoundingClientRect().left,
+      statisticsRight: node.parentElement?.querySelector('[data-statistics-column]')?.getBoundingClientRect().right ?? -1,
+    }))
+    if (width > 760 && (placement.position !== 'sticky' || placement.left <= placement.statisticsRight)) {
+      findings.push({ width, route: '/app/analytics', overflow: 0, elements: ['assistant is not fixed in the right sidebar'] })
+    }
+    if (width <= 760 && placement.position !== 'static') {
+      findings.push({ width, route: '/app/analytics', overflow: 0, elements: ['assistant is not stacked in the mobile document flow'] })
+    }
     const composer = page.getByLabel('Escribe tu consulta académica')
-    if (width <= 760) {
-      await expect(page.getByRole('dialog')).toHaveCount(0)
+    if (width <= 900) {
+      if (width <= 760) await expect(page.getByRole('dialog')).toHaveCount(0)
       await composer.fill('Una consulta de prueba que no se enviará.')
+      await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => resolve())))
       const usable = await composer.evaluate(node => {
         const input = node.getBoundingClientRect()
         const nav = document.querySelector('nav[aria-label="Navegación principal"]')!.getBoundingClientRect()
         return input.bottom <= nav.top && input.left >= 0 && input.right <= innerWidth
       })
-      if (!usable) findings.push({ width, route: '/app/analytics', overflow: 0, elements: ['chat composer clipped in inline section'] })
+      if (!usable) findings.push({ width, route: '/app/analytics', overflow: 0, elements: ['chat composer clipped by navigation or viewport'] })
     } else {
       await expect(page.getByRole('heading', { name: 'Análisis' })).toBeVisible()
       await expect(page.getByRole('dialog')).toHaveCount(0)
