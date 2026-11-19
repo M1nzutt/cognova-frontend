@@ -200,7 +200,7 @@ describe('study plans', () => {
   it('shows no pattern claim with zero completed sessions', async () => {
     const { fetch } = studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: 0 })
     expect(await screen.findByRole('heading', { name: 'Observaciones de tus sesiones' })).toBeVisible()
-    expect(await screen.findByText(/sin inferir hábitos/i)).toBeVisible()
+    expect(await screen.findByText(/sesiones finalizadas con duración registrada/i)).toBeVisible()
     expect(screen.getByText('0', { selector: 'strong' })).toBeVisible()
     expect(screen.getByText('sesiones completadas')).toBeVisible()
     expect(screen.getByText('Aún no hay registros para comparar')).toBeVisible()
@@ -210,8 +210,8 @@ describe('study plans', () => {
   it.each([1, 4])('shows factual entries and questions with %i records, without calling them a pattern', async count => {
     studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: count })
     expect(await screen.findByText(/Hay un registro con tiempo planificado|1 min frente a 10 min planificados/)).toBeVisible()
-    expect(screen.getByRole('list', { name: 'Observaciones de tus sesiones' }).textContent)
-      .toContain('ni permiten concluir que sea un hábito')
+    expect(screen.getByText(/Los registros no indican por qué ocurrió/)).toBeVisible()
+    expect(screen.getByText(/Si fueron sesiones de estudio reales/)).toBeVisible()
     expect(screen.getByText(/¿Qué contexto ayudaría a entender/)).toBeVisible()
     expect(screen.queryByText(/patrón de estudio/)).not.toBeInTheDocument()
   })
@@ -219,7 +219,8 @@ describe('study plans', () => {
   it.each([5, 7])('shows factual observations with %i records, without Gemini pattern claims', async count => {
     studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: count })
     expect(await screen.findByRole('heading', { name: /1 min frente a 10 min planificados/ })).toBeVisible()
-    expect(screen.getByText(/Estos datos describen solo las sesiones/)).toBeVisible()
+    expect(screen.getByText(/La diferencia puede ser relevante/)).toBeVisible()
+    expect(screen.getByText(/Los registros no indican por qué ocurrió/)).toBeVisible()
     expect(screen.getByText(/Se basa en/)).toBeVisible()
   })
 

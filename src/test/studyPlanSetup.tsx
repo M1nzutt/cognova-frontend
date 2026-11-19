@@ -29,9 +29,14 @@ export const aiProposalFixture: NonNullable<StudyPlan['ai_proposal_snapshot']> =
 export const aiPlanFixture: StudyPlan = { ...planFixture, source: 'ai', ai_proposal_snapshot: aiProposalFixture }
 export const behaviorFixture = {
   completed_session_count: 5, reviewed_session_count: 5, state: 'factual_summary',
+  insufficient_data_guidance: 'Aún faltan sesiones finalizadas con duración registrada.',
   observations: [{
+    conclusion: 'En 5 de 5 registros se registró cerca de 1 min frente a 10 min planificados.',
     observation: 'En 5 de 5 registros se registró cerca de 1 min frente a 10 min planificados.',
-    interpretation: 'Estos datos describen solo las sesiones registradas; no explican la diferencia ni permiten concluir que sea un hábito.',
+    interpretation: 'La diferencia puede ser relevante para valorar el tamaño de los bloques previstos.',
+    uncertainty: 'Los registros no indican por qué ocurrió ni bastan para concluir que sea un patrón estable.',
+    suggestion: 'Si fueron sesiones de estudio reales, podrías probar un bloque más breve.',
+    interpretation_source: 'factual_fallback',
     evidence: Array.from({ length: 5 }, (_, index) => ({
       session_id: sessionSummary.id + index, planned_minutes: 10, actual_seconds: '60.140789',
       result: 'completed', summary: `Biología · Repaso ${index + 1}: 10 min planificados`,
@@ -84,11 +89,13 @@ export function studyPlanSetup(options: { path?: string; plans?: StudyPlan[]; ch
       observation.observation = count === 1
         ? 'Hay un registro con tiempo planificado y tiempo real para comparar.'
         : `En ${evidenceCount} de ${evidenceCount} registros se registró cerca de 1 min frente a 10 min planificados.${count > evidenceCount ? ` Se muestran los más recientes de ${count} registros.` : ''}`
+      observation.conclusion = observation.observation
       observation.confidence_basis = `Se basa en ${evidenceCount} ${evidenceCount === 1 ? 'registro' : 'registros'} finalizados o parciales; las sesiones parciales se identifican por separado y no cuentan como completadas.`
       return response({
         completed_session_count: count,
         reviewed_session_count: count,
         state: count ? 'factual_summary' : 'insufficient_data',
+        insufficient_data_guidance: 'Aún faltan sesiones finalizadas con duración registrada.',
         observations: count ? [observation] : [],
       })
     }

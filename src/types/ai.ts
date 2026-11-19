@@ -43,8 +43,12 @@ export interface AiPlanGenerationResponse {
 }
 
 export interface BehaviorObservation {
+  conclusion: string
   observation: string
   interpretation: string
+  uncertainty: string
+  suggestion: string
+  interpretation_source: 'gemini' | 'factual_fallback'
   evidence: BehaviorEvidence[]
   question: string
   confidence_basis: string
@@ -70,5 +74,6 @@ export interface BehaviorAnalysis {
   completed_session_count: number
   reviewed_session_count: number
   state: 'factual_summary' | 'insufficient_data'
+  insufficient_data_guidance: string
   observations: BehaviorObservation[]
 }

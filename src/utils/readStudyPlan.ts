@@ -129,7 +129,10 @@ function readAiSnapshot(value: unknown): AiPlanProposalSnapshot {
 function readBehaviorObservation(value: unknown): BehaviorObservation {
   const row = object(value)
   const evidence = row.evidence
-  if (!text(row.observation, 1000) || !text(row.interpretation, 1000)
+  if (!text(row.conclusion, 1000) || !text(row.observation, 1000)
+    || !text(row.interpretation, 500) || !text(row.uncertainty, 500)
+    || !text(row.suggestion, 500)
+    || !['gemini', 'factual_fallback'].includes(String(row.interpretation_source))
     || !Array.isArray(evidence) || evidence.length < 1 || evidence.length > 10
     || evidence.some(item => {
       const entry = object(item)
@@ -168,6 +171,7 @@ export function readAiPlanGeneration(value: unknown): AiPlanGenerationResponse {
 export function readBehaviorAnalysis(value: unknown): BehaviorAnalysis {
   const row = object(value)
   if (!integer(row.completed_session_count, 0) || !integer(row.reviewed_session_count, 0)
+    || !text(row.insufficient_data_guidance, 500)
     || row.completed_session_count > row.reviewed_session_count
     || !['factual_summary', 'insufficient_data'].includes(String(row.state))
     || !Array.isArray(row.observations) || row.observations.length > 1
@@ -177,6 +181,7 @@ export function readBehaviorAnalysis(value: unknown): BehaviorAnalysis {
       && (row.observations.length !== 1 || row.reviewed_session_count === 0))) return invalid()
   return { completed_session_count: row.completed_session_count,
     reviewed_session_count: row.reviewed_session_count, state: row.state as BehaviorAnalysis['state'],
+    insufficient_data_guidance: row.insufficient_data_guidance,
     observations: row.observations.map(readBehaviorObservation) }
 }
 

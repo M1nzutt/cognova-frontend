@@ -15,7 +15,7 @@ describe('AI contract readers', () => {
   })
 
   it('accepts factual observations without a minimum-pattern threshold', () => {
-    const lowHistory = { completed_session_count: 0, reviewed_session_count: 0, state: 'insufficient_data', observations: [] }
+    const lowHistory = { completed_session_count: 0, reviewed_session_count: 0, state: 'insufficient_data', insufficient_data_guidance: 'Faltan registros.', observations: [] }
     expect(readBehaviorAnalysis(lowHistory).observations).toEqual([])
     expect(readBehaviorAnalysis(behaviorFixture).state).toBe('factual_summary')
     expect(() => readBehaviorAnalysis({ ...lowHistory, completed_session_count: 1 })).toThrow()

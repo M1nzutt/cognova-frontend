@@ -25,9 +25,14 @@ const fixture = {
   completed_session_count: 1,
   reviewed_session_count: 5,
   state: 'factual_summary',
+  insufficient_data_guidance: 'Aún faltan sesiones finalizadas con duración registrada.',
   observations: [{
+    conclusion: 'En 4 de 5 registros se registró cerca de 1 min frente a 10 min planificados.',
     observation: 'En 5 de 5 registros se registró cerca de 1 min frente a 10 min planificados.',
-    interpretation: 'Estos datos describen solo las sesiones registradas; no explican la diferencia ni permiten concluir que sea un hábito.',
+    interpretation: 'La diferencia puede ser relevante para valorar el tamaño de los bloques previstos.',
+    uncertainty: 'Los registros muestran la diferencia, pero no indican por qué ocurrió ni bastan para concluir que sea un patrón estable.',
+    suggestion: 'Si fueron sesiones de estudio reales, podrías probar un bloque inicial más breve y comparar después el tiempo previsto con el que te resulta viable.',
+    interpretation_source: 'factual_fallback',
     evidence,
     question: '¿Qué contexto ayudaría a entender la diferencia entre el tiempo previsto y el registrado?',
     confidence_basis: 'Se basa en 5 registros finalizados o parciales; las sesiones parciales se identifican por separado y no cuentan como completadas.',
@@ -42,7 +47,7 @@ const fixture = {
   }],
 }
 const behavior = process.env.BEHAVIOR_DEMO_RESPONSE_PATH
-  ? JSON.parse(await readFile(process.env.BEHAVIOR_DEMO_RESPONSE_PATH, 'utf8'))
+  ? JSON.parse((await readFile(process.env.BEHAVIOR_DEMO_RESPONSE_PATH, 'utf8')).replace(/^\uFEFF/, ''))
   : fixture
 
 await page.route('**/api/v1/**', async route => {
@@ -67,7 +72,9 @@ try {
   await expect(page.getByRole('heading', { name: 'Observaciones de tus sesiones' })).toBeVisible()
   const observation = behavior.observations[0]
   if (!observation) throw new Error('Browser behavior scenario needs one factual observation')
-  await expect(page.getByRole('heading', { name: observation.observation })).toBeVisible()
+  await expect(page.getByRole('heading', { name: observation.conclusion })).toBeVisible()
+  await expect(page.getByText(/no indican por qué ocurrió/)).toBeVisible()
+  await expect(page.getByText(/Si fueron sesiones de estudio reales/)).toBeVisible()
   const summary = page.getByText(`Ver los ${observation.evidence.length} registros que lo respaldan`)
 
   for (const width of [320, 360, 375, 390, 414, 768, 1440]) {

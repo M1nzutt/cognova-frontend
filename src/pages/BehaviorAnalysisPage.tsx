@@ -28,14 +28,16 @@ export function BehaviorAnalysisPage() {
       {analysis.state === 'insufficient_data' || !analysis.observations.length
         ? <div className={styles.empty}>
           <h2>Aún no hay registros para comparar</h2>
-          <p>Cuando haya sesiones finalizadas con duración registrada, mostraremos los datos disponibles sin inferir hábitos.</p>
+          <p>{analysis.insufficient_data_guidance}</p>
           <Link className={styles.emptyAction} to="/app/sessions">Ver mis sesiones</Link>
         </div>
         : <ul className={styles.list} aria-label="Observaciones de tus sesiones">
           {analysis.observations.map(item => <li className={styles.observation} key={item.observation}>
-            <span className={styles.eyebrow}>DATO DE TUS REGISTROS</span>
-            <h2>{item.observation}</h2>
-            <p className={styles.interpretation}><strong>Qué puede significar:</strong> {item.interpretation}</p>
+            <span className={styles.eyebrow}>CONCLUSIÓN BASADA EN TUS REGISTROS</span>
+            <h2>{item.conclusion}</h2>
+            <p className={styles.interpretation}><strong>Interpretación:</strong> {item.interpretation}</p>
+            <p className={styles.interpretation}><strong>Lo que aún no sabemos:</strong> {item.uncertainty}</p>
+            <p className={styles.interpretation}><strong>Sugerencia:</strong> {item.suggestion}</p>
             <details className={styles.evidence}>
               <summary>Ver {item.evidence.length === 1 ? 'el registro' : `los ${item.evidence.length} registros`} que lo respaldan</summary>
               <ul>{item.evidence.map(entry => <li key={entry.session_id}>
