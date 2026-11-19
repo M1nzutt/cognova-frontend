@@ -53,7 +53,11 @@ export function StudyPlansPage() {
           {page.items.map(plan => <li key={plan.id}><Link className={styles.card} to={`/app/study-plans/${plan.id}`}>
             <div className={styles.cardTop}><h2>{plan.name}</h2><span className={styles.badge}>{planStatusLabels[plan.status]}</span></div>
             <p>{plan.objective}</p>
-            <div className={styles.meta}><span>{sourceLabels[plan.source]}</span><span><time dateTime={plan.start_at}>{localDateTime(plan.start_at)}</time> → <time dateTime={plan.end_at}>{localDateTime(plan.end_at)}</time></span></div>
+            <div className={styles.meta}>
+              <span>{sourceLabels[plan.source]}</span>
+              <span>Creado el <time dateTime={plan.created_at}>{localDateTime(plan.created_at)}</time></span>
+              <span>Periodo: <time dateTime={plan.start_at}>{localDateTime(plan.start_at)}</time> → <time dateTime={plan.end_at}>{localDateTime(plan.end_at)}</time></span>
+            </div>
           </Link></li>)}
         </ul>
         {page.next_after_id !== null && <button className="button" type="button" disabled={more.busy} onClick={() => void more.run(

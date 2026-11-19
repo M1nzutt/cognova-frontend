@@ -60,6 +60,21 @@ describe('study plans', () => {
     expect(await screen.findByRole('heading', { name: 'Preparar examen' })).toBeVisible()
   })
 
+  it('shows the persisted creation timestamp separately from the planned period', async () => {
+    const createdAt = '2029-12-20T14:30:00Z'
+    studyPlanSetup({ plans: [{ ...planFixture, created_at: createdAt }] })
+    const card = await screen.findByRole('link', { name: /Preparar examen/ })
+    expect(card).toHaveTextContent('Creado el')
+    expect(card).toHaveTextContent('Periodo:')
+    expect(card.querySelector(`time[datetime="${createdAt}"]`)).toBeInTheDocument()
+    expect(card.querySelector(`time[datetime="${planFixture.start_at}"]`)).toBeInTheDocument()
+
+    await userEvent.click(card)
+    expect(await screen.findByRole('heading', { name: 'Tu objetivo' })).toBeVisible()
+    const createdLabel = screen.getByText('Creado', { exact: true })
+    expect(createdLabel.nextElementSibling?.querySelector(`time[datetime="${createdAt}"]`)).toBeInTheDocument()
+  })
+
   it('continues plan generation across navigation and links to its result without duplicating the request', async () => {
     let release!: () => void
     const gate = new Promise<void>(resolve => { release = resolve })

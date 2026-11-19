@@ -26,7 +26,7 @@ const evidence = Array.from({ length: 4 }, (_, index) => ({
 
 let interpretationSource: 'gemini' | 'deterministic' | 'fallback' = 'gemini'
 let generationRequests = 0
-let releaseGeneration: (() => Promise<void>) | null = null
+const generationGate: { release?: () => void } = {}
 let failNextGeneration = false
 let failedGenerationRequests = 0
 const generationRequestFailures: string[] = []
@@ -108,6 +108,17 @@ const generatedPlan = {
   candidate_slots: [],
   schedule_conflict: false,
 }
+const existingPlan = {
+  id: 20,
+  name: 'Plan ya existente',
+  objective: 'Preparar el examen final',
+  start_at: '2030-01-01T10:00:00Z',
+  end_at: '2030-02-01T10:00:00Z',
+  status: 'active',
+  source: 'manual',
+  created_at: '2026-11-17T15:30:00Z',
+  updated_at: '2026-11-17T15:30:00Z',
+}
 
 await page.route('**/api/v1/**', async route => {
   const request = route.request()
@@ -145,7 +156,7 @@ await page.route('**/api/v1/**', async route => {
       failedGenerationRequests += 1
       await json({ error: { code: 'STUDY_PLAN_GENERATION_UNAVAILABLE' } }, 503)
     } else {
-      await new Promise<void>(resolve => { releaseGeneration = resolve })
+      await new Promise<void>(resolve => { generationGate.release = resolve })
       await json({
         plan: generatedPlan,
         explanation: 'Propuesta simulada para verificar la navegación.',
@@ -153,7 +164,7 @@ await page.route('**/api/v1/**', async route => {
       }, 201)
     }
   } else if (path.endsWith('/study-plans') && request.method() === 'GET') {
-    await json({ items: [], next_after_id: null })
+    await json({ items: [existingPlan], next_after_id: null })
   } else {
     throw new Error(`Unexpected API request during browser verification: ${request.method()} ${path}`)
   }
@@ -190,6 +201,11 @@ try {
 
   await page.getByRole('link', { name: 'Planes' }).click()
   await expect(page.getByRole('heading', { name: 'Planes de estudio' })).toBeVisible()
+  const existingPlanCard = page.getByRole('link', { name: /Plan ya existente/ })
+  await expect(existingPlanCard).toContainText('Creado el')
+  await expect(existingPlanCard).toContainText('Periodo:')
+  expect(existingPlanCard.locator(`time[datetime="${existingPlan.created_at}"]`)).toHaveCount(1)
+  expect(existingPlanCard.locator(`time[datetime="${existingPlan.start_at}"]`)).toHaveCount(1)
   const firstRequest = page.waitForRequest(request => (
     new URL(request.url()).pathname.endsWith('/study-plans/generate')
     && request.method() === 'POST'
@@ -205,8 +221,9 @@ try {
   expect(generationRequests).toBe(1)
 
   await page.getByRole('link', { name: 'IA y reflexiones' }).click()
-  if (!releaseGeneration) throw new Error('Mock generation did not reach its pending state')
-  await releaseGeneration()
+  const resumeGeneration = generationGate.release
+  if (!resumeGeneration) throw new Error('Mock generation did not reach its pending state')
+  resumeGeneration()
   await expect(page.getByRole('link', { name: 'Abrir resultado' })).toHaveAttribute('href', '/app/study-plans/10')
   await expect(page.getByRole('status').filter({ hasText: 'Tu plan está listo' })).toBeVisible()
   expect(generationRequests).toBe(1)
@@ -226,6 +243,7 @@ try {
     result: 'passed',
     origin,
     observation_sources: ['gemini', 'deterministic', 'fallback'],
+    plan_card_dates: 'creation timestamp and planned period are displayed separately',
     session_states: ['completed', 'partial', 'cancelled'],
     responsive_widths: [320, 375, 390, 768, 1440],
     simulated_generation_requests: generationRequests,

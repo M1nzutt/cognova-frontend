@@ -31,6 +31,7 @@ export function StudyPlanOverview({ plan }: { plan: StudyPlan }) {
       <dl className={styles.summary}>
         <dt>Estado</dt><dd>{planStatusLabels[plan.status]}</dd>
         <dt>Origen</dt><dd>{sourceLabels[plan.source]}</dd>
+        <dt>Creado</dt><dd><time dateTime={plan.created_at}>{localDateTime(plan.created_at)}</time></dd>
         <dt>Inicio</dt><dd><time dateTime={plan.start_at}>{localDateTime(plan.start_at)}</time></dd>
         <dt>Fin</dt><dd><time dateTime={plan.end_at}>{localDateTime(plan.end_at)}</time></dd>
       </dl>
