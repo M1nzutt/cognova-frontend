@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { ApiError } from '../api/ApiError'
+import { AcademicChatPage } from './AcademicChatPage'
 import { useAnalyticsService } from '../hooks/useAnalyticsService'
 import { analyticsCategories, type AnalyticsCategory, type AnalyticsOverview, type AnalyticsSearchItem, type AnalyticsStudyTime, type AnalyticsTimelineItem } from '../types/analytics'
 import { analyticsTimezone, buildAnalyticsRange, initialRangeDates, rangeDatesForPreset, type AnalyticsRangePreset } from '../utils/analyticsTime'
@@ -72,6 +73,12 @@ function searchHref(item:AnalyticsSearchItem):string|null {
 
 export function AnalyticsPage() {
  const service=useAnalyticsService()
+ const [searchParams,setSearchParams]=useSearchParams()
+ const [assistantOpen,setAssistantOpen]=useState(false)
+ const [assistantMounted,setAssistantMounted]=useState(false)
+ const [assistantExpanded,setAssistantExpanded]=useState(false)
+ const [isMobile,setIsMobile]=useState(()=>window.matchMedia('(max-width: 760px)')?.matches??false)
+ const assistantToggleRef=useRef<HTMLButtonElement>(null)
  const [preset,setPreset]=useState<AnalyticsRangePreset>('week')
  const [granularity,setGranularity]=useState<'day'|'week'|'month'>('day')
  const [initialDates]=useState(()=>initialRangeDates('week'))
@@ -87,6 +94,30 @@ export function AnalyticsPage() {
  const [search,setSearch]=useState<{items:AnalyticsSearchItem[];cursor:string|null;loading:boolean;error:string;searched:boolean}>({items:[],cursor:null,loading:false,error:'',searched:false})
  const dates=rangeDatesForPreset(preset,fromDate,toDate)
  const range=buildAnalyticsRange(dates[0],dates[1],timezone)
+
+ useEffect(()=>{
+  if(searchParams.get('assistant')!=='open')return
+  setAssistantMounted(true)
+  setAssistantOpen(true)
+  const next=new URLSearchParams(searchParams)
+  next.delete('assistant')
+  setSearchParams(next,{replace:true})
+ },[searchParams,setSearchParams])
+ useEffect(()=>{
+  const compact=window.matchMedia('(max-width: 1200px)')?.matches??false
+  if(!assistantOpen||!compact)return
+  const previous=document.body.style.overflow
+  document.body.style.overflow='hidden'
+  return ()=>{document.body.style.overflow=previous}
+ },[assistantOpen])
+ useEffect(()=>{
+  const query=window.matchMedia('(max-width: 760px)')
+  const update=(event:MediaQueryListEvent)=>setIsMobile(event.matches)
+  query.addEventListener?.('change',update)
+  return ()=>query.removeEventListener?.('change',update)
+ },[])
+ const openAssistant=()=>{setAssistantMounted(true);setAssistantOpen(true)}
+ const closeAssistant=()=>{setAssistantOpen(false);window.requestAnimationFrame(()=>assistantToggleRef.current?.focus())}
 
  useEffect(()=>{
   const controller=new AbortController();setOverview(emptyState())
@@ -135,8 +166,10 @@ export function AnalyticsPage() {
  const maxBucket=Math.max(1,...(study.data?.buckets.map(x=>Number(x.seconds))||[]))
  const groups=useMemo(()=>search.items.reduce<Record<string,AnalyticsSearchItem[]>>((all,item)=>{const name=searchNames[item.type];(all[name]??=[]).push(item);return all},{}),[search.items])
 
- return <section className={styles.page}>
-  <header className={styles.heading}><div><p className="eyebrow">TU RECORRIDO ACADÉMICO</p><h1>Análisis</h1><p>Consulta lo que has registrado y observa cómo se distribuye tu tiempo de estudio.</p></div><button className="button" onClick={()=>setRefresh(n=>n+1)}>Actualizar</button></header>
+  return <div className={styles.analysisShell} data-assistant-open={assistantOpen} data-assistant-expanded={assistantExpanded}>
+   <div className={styles.statistics} inert={assistantOpen&&isMobile}>
+   <section className={styles.page}>
+   <header className={styles.heading}><div><p className="eyebrow">TU RECORRIDO ACADÉMICO</p><h1>Análisis</h1><p>Consulta lo que has registrado y observa cómo se distribuye tu tiempo de estudio.</p></div><div className={styles.headingActions}><button className="button" onClick={()=>setRefresh(n=>n+1)}>Actualizar</button><button ref={assistantToggleRef} className={`button ${styles.assistantToggle}`} type="button" onClick={assistantOpen?closeAssistant:openAssistant}>{assistantOpen?'Ocultar asistente':'Abrir IA Cognova'}</button></div></header>
   <section className={`${styles.section} ${styles.searchSection}`} aria-labelledby="search-title"><h2 id="search-title">Buscar en tu espacio académico</h2><label className={styles.searchField}>Buscar por nombre<input type="search" maxLength={64} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Materia, actividad, plan o reto"/></label>
     {search.loading&&<LoadingStatus label="Buscando…" />}{search.error&&<p role="alert">{search.error}</p>}
    {search.searched&&!search.loading&&!search.error&&!search.items.length&&<p>No encontramos recursos con ese prefijo.</p>}
@@ -166,5 +199,9 @@ export function AnalyticsPage() {
    {timeline.items.length>0&&<ol className={styles.timeline} aria-label="Cronología académica">{timeline.items.map(item=>{const href=eventHref(item);return <li key={item.event_id}><time dateTime={item.occurred_at}>{localTime(item.occurred_at)}</time><span className={styles.kind}>{categories[item.category]}</span>{href?<Link to={href}>{item.title}</Link>:<strong>{item.title}</strong>}<p>{eventDescription(item)}{item.subject_name?' Materia: '+item.subject_name+'.':''}</p></li>})}</ol>}
    {timeline.cursor&&<button className="button" disabled={timelineMore} onClick={()=>void loadMoreTimeline()}>{timelineMore?'Cargando…':'Ver más eventos'}</button>}
   </section>
- </section>
-}
+   </section></div>
+   {assistantMounted&&<aside className={styles.assistantPane} hidden={!assistantOpen} aria-label="Asistente IA Cognova">
+    <AcademicChatPage variant="panel" onClose={closeAssistant} active={assistantOpen} isModal={assistantOpen&&isMobile} expanded={assistantExpanded} onToggleExpanded={()=>setAssistantExpanded(value=>!value)}/>
+   </aside>}
+  </div>
+ }

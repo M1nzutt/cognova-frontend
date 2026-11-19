@@ -46,6 +46,7 @@ describe('mobile More navigation', () => {
     const { nav, more } = setup()
     expect(more).toHaveAttribute('aria-expanded', 'false')
     expect(within(nav).queryByRole('link', { name: 'Actividades' })).not.toBeInTheDocument()
+    expect(within(nav).queryByRole('link', { name: 'IA Cognova' })).not.toBeInTheDocument()
     fireEvent.click(more)
     expect(more).toHaveAttribute('aria-expanded', 'true')
     for (const label of ['Actividades', 'Sesiones', 'IA y reflexiones', 'Análisis']) {

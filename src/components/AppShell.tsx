@@ -16,7 +16,6 @@ const mainLinks: RouteLink[] = [
   { to: '/app/calendar', label: 'Calendario', icon: 'calendar' },
   { to: '/app/subjects', label: 'Materias', icon: 'book' },
   { to: '/app/study-plans', label: 'Planes', icon: 'layers' },
-  { to: '/app/companion', label: 'IA Cognova', icon: 'chat' },
 ]
 
 const secondaryLinks: RouteLink[] = [
@@ -82,7 +81,6 @@ export function AppShell() {
           : pathname.startsWith('/app/calendar') ? 'Calendario'
             : pathname.startsWith('/app/behavior') ? 'IA y reflexiones'
       : pathname.startsWith('/app/analytics') ? 'Análisis'
-              : pathname.startsWith('/app/companion') ? 'IA Cognova'
               : pathname.startsWith('/app/profile') ? 'Perfil'
               : pathname.startsWith('/app/questionnaire') ? 'Tu percepción'
                   : pathname === '/dashboard' ? 'Inicio'

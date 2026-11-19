@@ -5,8 +5,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { AnalyticsCategory, AnalyticsOverview, AnalyticsStudyTime, AnalyticsTimelinePage } from '../types/analytics'
 import { AnalyticsPage } from './AnalyticsPage'
 
-const mocks=vi.hoisted(()=>({overview:vi.fn(),studyTime:vi.fn(),timeline:vi.fn(),search:vi.fn()}))
+const mocks=vi.hoisted(()=>({overview:vi.fn(),studyTime:vi.fn(),timeline:vi.fn(),search:vi.fn(),listConversations:vi.fn(),createConversation:vi.fn(),messages:vi.fn(),send:vi.fn()}))
 vi.mock('../hooks/useAnalyticsService',()=>({useAnalyticsService:()=>mocks}))
+vi.mock('../hooks/useAcademicChatService',()=>({useAcademicChatService:()=>mocks}))
 const overview:AnalyticsOverview={total_studied_seconds:'10800.000000',total_studied_minutes:'180.000000',cancelled_session_seconds:'0.000000',cancelled_session_minutes:'0.000000',finished_sessions:3,completed_sessions:2,partial_sessions:1,postponed_sessions:0,cancelled_sessions:0,subjects_with_activity:2,completed_activities:4,pending_activities:2,in_progress_activities:1,active_plans:1,completed_plans:1,completed_challenges:2,failed_challenges:1}
 const study:AnalyticsStudyTime={from:'2030-04-15T00:00:00Z',to:'2030-04-22T00:00:00Z',timezone:'UTC',granularity:'day',total_seconds:'10800.000000',total_minutes:'180.000000',cancelled_seconds:'0.000000',cancelled_minutes:'0.000000',cancelled_sessions_count:0,sessions_count:3,by_subject:[{subject_id:4,name:'Física',seconds:'7200.000000',minutes:'120.000000',sessions_count:2}],buckets:[{from:'2030-04-15T00:00:00Z',to:'2030-04-16T00:00:00Z',seconds:'3600.000000',minutes:'60.000000'}]}
 const event=(id:string,category:AnalyticsCategory,title:string)=>({
@@ -16,13 +17,18 @@ const event=(id:string,category:AnalyticsCategory,title:string)=>({
  details:category==='decision'?{action:'accepted'}:category==='challenge'?{plan_id:10}:{},
 })
 const timeline:AnalyticsTimelinePage={items:[event('1','activity','Entrega de ensayo'),event('2','study_session','Sesión de estudio')],next_cursor:'next'}
-function mount(){return render(<MemoryRouter><AnalyticsPage/></MemoryRouter>)}
+function mount(initial='/app/analytics'){return render(<MemoryRouter initialEntries={[initial]}><AnalyticsPage/></MemoryRouter>)}
 
 describe('AnalyticsPage',()=>{
  beforeEach(()=>{
   vi.resetAllMocks()
   mocks.overview.mockResolvedValue(overview);mocks.studyTime.mockResolvedValue(study)
   mocks.timeline.mockResolvedValue(timeline);mocks.search.mockResolvedValue({items:[],next_cursor:null})
+  mocks.listConversations.mockResolvedValue([])
+  mocks.createConversation.mockResolvedValue({id:12,title:'Nueva conversación',created_at:'2030-04-15T10:00:00Z',updated_at:'2030-04-15T10:00:00Z'})
+  mocks.messages.mockResolvedValue({items:[],next_before_id:null})
+  mocks.send.mockResolvedValue({conversation:{id:12,title:'Chat contextual',created_at:'2030-04-15T10:00:00Z',updated_at:'2030-04-15T10:01:00Z'},user_message:{id:3,role:'user',content:'¿Cómo priorizo?',evidence:[],created_at:'2030-04-15T10:00:30Z'},assistant_message:{id:4,role:'assistant',content:'Podemos revisar tus pendientes.',evidence:['Actividad pendiente'],created_at:'2030-04-15T10:01:00Z'}})
+  vi.stubGlobal('matchMedia',vi.fn().mockReturnValue({matches:false,addEventListener:vi.fn(),removeEventListener:vi.fn()}))
  })
  it('shows descriptive overview, charts and mixed events without causal claims',async()=>{
   mount()
@@ -112,7 +118,7 @@ describe('AnalyticsPage',()=>{
   fireEvent.change(screen.getByLabelText('Hasta (exclusivo)'),{target:{value:'2031-02-02'}})
   expect(screen.getByText('El rango máximo es de 366 días.')).toBeVisible()
  })
- it('keeps keyboard controls reachable and Analytics content present at phone, tablet and desktop widths',async()=>{
+  it('keeps keyboard controls reachable and Analytics content present at phone, tablet and desktop widths',async()=>{
   const user=userEvent.setup(),view=mount(),refreshButton=await screen.findByRole('button',{name:'Actualizar'})
   await user.tab()
   expect(document.activeElement).toBe(refreshButton)
@@ -125,5 +131,57 @@ describe('AnalyticsPage',()=>{
    expect(screen.getByRole('searchbox',{name:'Buscar por nombre'})).toBeInTheDocument()
    responsive.unmount()
   }
+  })
+  it('opens, expands, hides and reopens the reusable chat with simulated history and messages',async()=>{
+   const user=userEvent.setup()
+   const conversation={id:7,title:'Historial guardado',created_at:'2030-04-14T10:00:00Z',updated_at:'2030-04-15T10:00:00Z'}
+   mocks.listConversations.mockResolvedValue([conversation])
+   mocks.messages.mockResolvedValueOnce({items:[{id:9,role:'assistant',content:'Respuesta anterior guardada.',evidence:['Sesión 3'],created_at:'2030-04-15T10:00:00Z'}],next_before_id:5})
+    .mockResolvedValueOnce({items:[{id:5,role:'user',content:'Mensaje anterior.',evidence:[],created_at:'2030-04-14T10:00:00Z'}],next_before_id:null})
+   mount()
+   const open=await screen.findByRole('button',{name:'Abrir IA Cognova'})
+   await user.click(open)
+   expect(await screen.findByRole('heading',{name:/IA Cognova/})).toBeVisible()
+   expect(await screen.findByRole('button',{name:/Historial guardado/})).toBeVisible()
+   await user.click(screen.getByRole('button',{name:/Historial guardado/}))
+   expect(await screen.findByText('Respuesta anterior guardada.')).toBeVisible()
+   await user.click(screen.getByRole('button',{name:'Ver mensajes anteriores'}))
+   expect(await screen.findByText('Mensaje anterior.')).toBeVisible()
+   const composer=screen.getByLabelText('Escribe tu consulta académica')
+   await user.type(composer,'¿Cómo priorizo?')
+   await user.click(screen.getByRole('button',{name:'Enviar mensaje'}))
+   expect(await screen.findByText('Podemos revisar tus pendientes.')).toBeVisible()
+   expect(mocks.send).toHaveBeenCalledWith(7,'¿Cómo priorizo?')
+   await user.click(screen.getByRole('button',{name:'Nueva conversación'}))
+   expect(mocks.createConversation).toHaveBeenCalledOnce()
+   expect(await screen.findByRole('heading',{name:'Nueva conversación'})).toBeVisible()
+   await user.click(screen.getByRole('button',{name:'Expandir panel de IA Cognova'}))
+   expect(screen.getByRole('button',{name:'Reducir panel de IA Cognova'})).toHaveAttribute('aria-pressed','true')
+   await user.click(screen.getByRole('button',{name:'Volver a las estadísticas'}))
+   expect(screen.queryByRole('heading',{name:/IA Cognova/})).not.toBeInTheDocument()
+   expect(screen.getByRole('heading',{name:'Análisis'})).toBeVisible()
+   await user.click(screen.getByRole('button',{name:'Abrir IA Cognova'}))
+   expect(await screen.findByRole('heading',{name:'Nueva conversación'})).toBeVisible()
+   expect(mocks.listConversations).toHaveBeenCalledTimes(2)
+  })
+  it('presents an accessible full-screen chat dialog on mobile and returns focus to Analytics',async()=>{
+   vi.stubGlobal('matchMedia',vi.fn().mockReturnValue({matches:true,addEventListener:vi.fn(),removeEventListener:vi.fn()}))
+   const user=userEvent.setup()
+   mount()
+   const open=await screen.findByRole('button',{name:'Abrir IA Cognova'})
+   await user.click(open)
+   const dialog=await screen.findByRole('dialog',{name:/IA Cognova/})
+   expect(dialog).toHaveAttribute('aria-modal','true')
+   expect(screen.getByRole('button',{name:'Volver a las estadísticas'})).toHaveFocus()
+   await user.keyboard('{Escape}')
+   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+   expect(screen.getByRole('heading',{name:'Análisis'})).toBeVisible()
+   await waitFor(()=>expect(open).toHaveFocus())
+  })
+  it('opens the assistant when returning from its former standalone route',async()=>{
+   mount('/app/analytics?assistant=open')
+   expect(await screen.findByRole('heading',{name:/IA Cognova/})).toBeVisible()
+   expect(screen.getByRole('heading',{name:'Análisis'})).toBeVisible()
+   expect(screen.getByRole('button',{name:'Volver a las estadísticas'})).toBeVisible()
+  })
  })
-})
