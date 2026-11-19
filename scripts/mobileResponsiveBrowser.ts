@@ -115,39 +115,32 @@ try {
       }
     }
     console.log('width findings', width, findings.filter(f => f.width === width))
-    await visit('/app/analytics')
     const historyResponsePromise = page.waitForResponse(response =>
       response.url().includes('/api/v1/academic-chat/conversations') &&
       response.request().method() === 'GET',
     )
-    await page.getByRole('button', { name: 'Abrir IA Cognova' }).click()
+    await visit('/app/analytics')
     const historyResponse = await historyResponsePromise
     if (!historyResponse.ok() || !Array.isArray((await historyResponse.json()).items)) {
       throw new Error(`Authenticated conversation history read failed: HTTP ${historyResponse.status()}`)
     }
     await expect(page.getByRole('heading', { name: /IA Cognova/ })).toBeVisible()
+    const assistant = page.locator('[data-assistant-section]')
+    const flowPosition = await assistant.evaluate(node => getComputedStyle(node).position)
+    if (flowPosition !== 'static') findings.push({ width, route: '/app/analytics', overflow: 0, elements: ['assistant is not in document flow'] })
     const composer = page.getByLabel('Escribe tu consulta académica')
     if (width <= 760) {
-      await expect(page.getByRole('dialog', { name: /IA Cognova/ })).toBeVisible()
+      await expect(page.getByRole('dialog')).toHaveCount(0)
       await composer.fill('Una consulta de prueba que no se enviará.')
       const usable = await composer.evaluate(node => {
         const input = node.getBoundingClientRect()
-        return input.bottom <= innerHeight && input.left >= 0 && input.right <= innerWidth
+        const nav = document.querySelector('nav[aria-label="Navegación principal"]')!.getBoundingClientRect()
+        return input.bottom <= nav.top && input.left >= 0 && input.right <= innerWidth
       })
-      if (!usable) findings.push({ width, route: '/app/analytics', overflow: 0, elements: ['chat composer clipped in full-screen view'] })
-      await page.getByRole('button', { name: 'Volver a las estadísticas' }).click()
+      if (!usable) findings.push({ width, route: '/app/analytics', overflow: 0, elements: ['chat composer clipped in inline section'] })
     } else {
       await expect(page.getByRole('heading', { name: 'Análisis' })).toBeVisible()
-      const panel = page.locator('[aria-label="Asistente IA Cognova"]')
-      const panelBounds = await panel.boundingBox()
-      if (!panelBounds || panelBounds.width > 500 || panelBounds.x < 0 || panelBounds.x + panelBounds.width > width) {
-        findings.push({ width, route: '/app/analytics', overflow: 0, elements: ['chat drawer exceeds viewport'] })
-      }
-      if (width > 1200) {
-        await page.getByRole('button', { name: 'Expandir panel de IA Cognova' }).click()
-        await expect(page.getByRole('button', { name: 'Reducir panel de IA Cognova' })).toBeVisible()
-      }
-      await page.getByRole('button', { name: 'Volver a las estadísticas' }).click()
+      await expect(page.getByRole('dialog')).toHaveCount(0)
     }
     await expect(page.getByRole('heading', { name: 'Análisis' })).toBeVisible()
     await visit(`/app/activities/${activity.id}`)

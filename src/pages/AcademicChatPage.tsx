@@ -21,18 +21,8 @@ function dateLabel(value: string): string {
 
 export function AcademicChatPage({
   variant = 'page',
-  onClose,
-  expanded = false,
-  onToggleExpanded,
-  active = true,
-  isModal = false,
 }: {
-  variant?: 'page' | 'panel'
-  onClose?: () => void
-  expanded?: boolean
-  onToggleExpanded?: () => void
-  active?: boolean
-  isModal?: boolean
+  variant?: 'page' | 'embedded'
 } = {}) {
   const service = useAcademicChatService()
   const [conversations, setConversations] = useState<AcademicConversation[]>([])
@@ -45,8 +35,6 @@ export function AcademicChatPage({
   const [error, setError] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const embeddedRef = useRef<HTMLElement>(null)
-  const backButtonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -92,33 +80,6 @@ export function AcademicChatPage({
       })
     }
   }, [messages, sending])
-
-  useEffect(() => {
-    if (variant !== 'panel' || !active) return
-    if (isModal) backButtonRef.current?.focus()
-    const onKeyDown = (event: globalThis.KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose?.()
-        return
-      }
-      if (!isModal || event.key !== 'Tab') return
-      const controls = embeddedRef.current?.querySelectorAll<HTMLElement>(
-        'button:not(:disabled), textarea:not(:disabled), a[href], [tabindex]:not([tabindex="-1"])',
-      )
-      if (!controls?.length) return
-      const first = controls[0]
-      const last = controls[controls.length - 1]
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault()
-        last.focus()
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault()
-        first.focus()
-      }
-    }
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [active, isModal, onClose, variant])
 
   const refreshConversations = async () => {
     const rows = await service.listConversations()
@@ -214,39 +175,27 @@ export function AcademicChatPage({
   }
 
   const selected = conversations.find(item => item.id === selectedId)
-  const embedded = variant === 'panel'
+  const embedded = variant === 'embedded'
 
   return (
     <section
-      ref={embedded ? embeddedRef : undefined}
       className={`${styles.page} ${embedded ? styles.pageEmbedded : ''}`}
       aria-labelledby="chat-title"
-      role={embedded && isModal ? 'dialog' : undefined}
-      aria-modal={embedded && isModal ? true : undefined}
     >
       <header className={`${styles.heading} ${embedded ? styles.headingEmbedded : ''}`}>
-        {embedded ? <>
-          <button ref={backButtonRef} className={styles.backButton} type="button" onClick={onClose} aria-label="Volver a las estadísticas">
-            <span className={styles.desktopBackLabel}>Ocultar panel</span>
-            <span className={styles.mobileBackLabel}>← Estadísticas</span>
-          </button>
-          <div className={styles.embeddedTitle}>
+        {embedded ? (
+          <>
+            <div className={styles.embeddedTitle}>
             <p className="eyebrow">ACOMPAÑAMIENTO ACADÉMICO</p>
             <h2 id="chat-title">IA Cognova <span aria-hidden="true">✦</span></h2>
-          </div>
-          <div className={styles.panelActions}>
-            {onToggleExpanded && <button
-              className={styles.expandButton}
-              type="button"
-              onClick={onToggleExpanded}
-              aria-label={expanded ? 'Reducir panel de IA Cognova' : 'Expandir panel de IA Cognova'}
-              aria-pressed={expanded}
-            >{expanded ? '↔' : '⤢'}</button>}
+            <p className={styles.subtitle}>Tu acompañante académico, integrado en tu recorrido.</p>
+            </div>
             <button className={styles.newButton} type="button" onClick={() => void startConversation()} disabled={sending}>
               <Icon name="chat" size={18} /><span>Nueva conversación</span>
             </button>
-          </div>
-        </> : <>
+          </>
+        ) : (
+          <>
           <div>
             <p className="eyebrow">ACOMPAÑAMIENTO ACADÉMICO</p>
             <h1 id="chat-title">IA Cognova <span aria-hidden="true">✦</span></h1>
@@ -255,11 +204,12 @@ export function AcademicChatPage({
           <button className={styles.newButton} type="button" onClick={() => void startConversation()} disabled={sending}>
             <Icon name="chat" size={18} /><span>Nueva conversación</span>
           </button>
-        </>}
+          </>
+        )}
       </header>
 
       <div className={`${styles.layout} ${embedded ? styles.layoutEmbedded : ''}`}>
-        <aside className={`${styles.history} ${embedded ? styles.historyEmbedded : ''}`} aria-label="Historial de conversaciones">
+        <nav className={`${styles.history} ${embedded ? styles.historyEmbedded : ''}`} aria-label="Historial de conversaciones">
           <div className={styles.historyHeading}>
             <h2>Conversaciones</h2>
             <span>{conversations.length}/50</span>
@@ -286,7 +236,7 @@ export function AcademicChatPage({
                   </button>
                 </li>)}
               </ul>}
-        </aside>
+        </nav>
 
         <section className={`${styles.chat} ${embedded ? styles.chatEmbedded : ''}`} aria-label="Conversación académica">
           {selected && <div className={styles.chatBar}>

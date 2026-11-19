@@ -201,7 +201,8 @@ describe('authentication routes and forms', () => {
     document.cookie = 'cognova_csrf=csrf; Path=/'
     vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }))
     vi.stubGlobal('fetch', vi.fn().mockImplementation(async (url: string) => url.endsWith('/refresh')
-      ? jsonResponse({ access_token: makeToken(), token_type: 'bearer' }) : jsonResponse(user)))
+      ? jsonResponse({ access_token: makeToken(), token_type: 'bearer' })
+      : url.endsWith('/academic-chat/conversations') ? jsonResponse({ items: [] }) : jsonResponse(user)))
     mount('/dashboard')
 
     const navigation = await screen.findByRole('navigation', { name: 'Navegación principal' })

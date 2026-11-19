@@ -93,30 +93,21 @@ try {
     await page.goto(`${origin}/app/analytics`)
     await expect(page.getByRole('heading', { name: 'Análisis' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Tiempo de estudio' })).toBeVisible()
-    await page.getByRole('button', { name: 'Abrir IA Cognova' }).click()
     await expect(page.getByRole('heading', { name: /IA Cognova/ })).toBeVisible()
-    const panel = page.locator('[aria-label="Asistente IA Cognova"]')
-    const bounds = await panel.boundingBox()
-    if (!bounds || bounds.x < 0 || bounds.x + bounds.width > width + 1) {
-      throw new Error(`Assistant panel exceeds ${width}px viewport`)
+    const assistant = page.locator('[data-assistant-section]')
+    const flow = await assistant.evaluate(node => ({
+      position: getComputedStyle(node).position,
+      top: node.getBoundingClientRect().top,
+      overviewBottom: node.parentElement?.querySelector('[aria-labelledby="overview-title"]')?.getBoundingClientRect().bottom ?? -1,
+    }))
+    if (flow.position !== 'static' || flow.overviewBottom < 0 || flow.top < flow.overviewBottom) {
+      throw new Error(`Assistant is not integrated into document flow at ${width}px`)
     }
+    await assistant.scrollIntoViewIfNeeded()
     if (screenshotDir && [390, 768, 1440].includes(width)) {
-      await page.screenshot({ path: `${screenshotDir}/analytics-chat-${width}.png`, fullPage: width > 760 })
+      await page.screenshot({ path: `${screenshotDir}/analytics-chat-${width}.png`, fullPage: true })
     }
-    if (width <= 760) {
-      await expect(page.getByRole('dialog', { name: /IA Cognova/ })).toHaveAttribute('aria-modal', 'true')
-      await expect(page.getByRole('button', { name: 'Volver a las estadísticas' })).toBeFocused()
-    } else {
-      await expect(page.getByRole('heading', { name: 'Análisis' })).toBeVisible()
-      if (width > 1200) {
-        await page.getByRole('button', { name: 'Expandir panel de IA Cognova' }).click()
-        await expect(page.locator('[data-assistant-open="true"]')).toHaveAttribute('data-assistant-expanded', 'true')
-      } else {
-        await page.getByRole('button', { name: 'Expandir panel de IA Cognova' }).click()
-        const expanded = await panel.boundingBox()
-        if (!expanded || expanded.width <= bounds.width) throw new Error('Tablet panel did not expand')
-      }
-    }
+    await expect(page.getByRole('dialog')).toHaveCount(0)
 
     await expect(page.getByRole('button', { name: /Historial guardado/ })).toBeVisible()
     await page.getByRole('button', { name: /Historial guardado/ }).click()
@@ -132,17 +123,9 @@ try {
     await page.getByRole('button', { name: 'Nueva conversación' }).click()
     await expect(page.getByRole('heading', { name: 'Nueva conversación' })).toBeVisible()
 
-    if (width <= 760) {
-      await page.getByRole('button', { name: 'Volver a las estadísticas' }).click()
-    } else {
-      await page.getByRole('button', { name: 'Volver a las estadísticas' }).click()
-    }
     await expect(page.getByRole('heading', { name: 'Análisis' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Abrir IA Cognova' })).toBeFocused()
-    await page.getByRole('button', { name: 'Abrir IA Cognova' }).click()
     await expect(page.getByRole('heading', { name: 'Nueva conversación' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Tiempo de estudio' })).toBeVisible()
-    await page.getByRole('button', { name: 'Volver a las estadísticas' }).click()
 
     const dimensions = await page.evaluate(() => ({
       client: document.documentElement.clientWidth,
@@ -158,8 +141,8 @@ try {
   await expect(page).toHaveURL(/\/app\/analytics$/)
   await expect(page.getByRole('heading', { name: 'Análisis' })).toBeVisible()
   await expect(page.getByRole('heading', { name: /IA Cognova/ })).toBeVisible()
-  await page.getByRole('button', { name: 'Volver a las estadísticas' }).click()
-  console.log('Legacy chat route redirects to Analytics with assistant opened.')
+  await expect(page.locator('[data-assistant-section]')).toBeFocused()
+  console.log('Legacy chat route redirects to Analytics and focuses the inline assistant section.')
 } finally {
   await context.close()
   await browser.close()
