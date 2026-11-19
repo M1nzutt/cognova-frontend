@@ -18,7 +18,7 @@ const routes = [
   '/dashboard', '/app/calendar', '/app/subjects', '/app/subjects/new',
   '/app/activities', '/app/activities/new', '/app/sessions', '/app/sessions/new',
   '/app/study-plans', '/app/study-plans/new', '/app/behavior', '/app/analytics',
-  '/app/companion', '/app/profile',
+  '/app/profile',
 ]
 try {
   await mkdir('.local', { recursive: true })
@@ -87,18 +87,6 @@ try {
       await visit(route)
       await expect(page.getByRole('main')).toBeVisible()
       await page.waitForTimeout(250)
-      if (route === '/app/companion' && width < 900) {
-        const composer = page.getByLabel('Escribe tu consulta académica')
-        await composer.fill('Una consulta de prueba que no se enviará.')
-        await composer.click()
-        await page.waitForTimeout(100)
-        const usable = await composer.evaluate(node => {
-          const nav = document.querySelector('nav[aria-label="Navegación principal"]')!.getBoundingClientRect()
-          const input = node.getBoundingClientRect()
-          return input.bottom <= nav.top && input.left >= 0 && input.right <= innerWidth
-        })
-        if (!usable) findings.push({ width, route, overflow: 0, elements: ['chat composer covered by bottom navigation'] })
-      }
       const measurement = await page.evaluate(() => {
         const viewport = document.documentElement.clientWidth
         const elements = [...document.querySelectorAll<HTMLElement>('button, a, input, textarea, select')]
@@ -122,11 +110,46 @@ try {
         return { overflow: document.documentElement.scrollWidth - viewport, elements }
       })
       if (measurement.overflow > 2 || measurement.elements.length) findings.push({ width, route, ...measurement })
-      if (width === 320 && ['/app/companion', '/app/study-plans', '/app/analytics'].includes(route)) {
+      if (width === 320 && ['/app/study-plans', '/app/analytics'].includes(route)) {
         await page.screenshot({ path: `.local/responsive-${width}-${route.split('/').at(-1)}.png` })
       }
     }
     console.log('width findings', width, findings.filter(f => f.width === width))
+    await visit('/app/analytics')
+    const historyResponsePromise = page.waitForResponse(response =>
+      response.url().includes('/api/v1/academic-chat/conversations') &&
+      response.request().method() === 'GET',
+    )
+    await page.getByRole('button', { name: 'Abrir IA Cognova' }).click()
+    const historyResponse = await historyResponsePromise
+    if (!historyResponse.ok() || !Array.isArray((await historyResponse.json()).items)) {
+      throw new Error(`Authenticated conversation history read failed: HTTP ${historyResponse.status()}`)
+    }
+    await expect(page.getByRole('heading', { name: /IA Cognova/ })).toBeVisible()
+    const composer = page.getByLabel('Escribe tu consulta académica')
+    if (width <= 760) {
+      await expect(page.getByRole('dialog', { name: /IA Cognova/ })).toBeVisible()
+      await composer.fill('Una consulta de prueba que no se enviará.')
+      const usable = await composer.evaluate(node => {
+        const input = node.getBoundingClientRect()
+        return input.bottom <= innerHeight && input.left >= 0 && input.right <= innerWidth
+      })
+      if (!usable) findings.push({ width, route: '/app/analytics', overflow: 0, elements: ['chat composer clipped in full-screen view'] })
+      await page.getByRole('button', { name: 'Volver a las estadísticas' }).click()
+    } else {
+      await expect(page.getByRole('heading', { name: 'Análisis' })).toBeVisible()
+      const panel = page.locator('[aria-label="Asistente IA Cognova"]')
+      const panelBounds = await panel.boundingBox()
+      if (!panelBounds || panelBounds.width > 500 || panelBounds.x < 0 || panelBounds.x + panelBounds.width > width) {
+        findings.push({ width, route: '/app/analytics', overflow: 0, elements: ['chat drawer exceeds viewport'] })
+      }
+      if (width > 1200) {
+        await page.getByRole('button', { name: 'Expandir panel de IA Cognova' }).click()
+        await expect(page.getByRole('button', { name: 'Reducir panel de IA Cognova' })).toBeVisible()
+      }
+      await page.getByRole('button', { name: 'Volver a las estadísticas' }).click()
+    }
+    await expect(page.getByRole('heading', { name: 'Análisis' })).toBeVisible()
     await visit(`/app/activities/${activity.id}`)
     await expect(page.getByRole('button', { name: 'Editar actividad' })).toBeVisible()
     await page.getByRole('button', { name: 'Eliminar actividad' }).click()
@@ -139,18 +162,6 @@ try {
     await expect(page.getByRole('region', { name: 'Vista semanal' })).toBeVisible()
     await page.getByRole('button', { name: 'Mes', exact: true }).click()
     await expect(page.getByRole('region', { name: 'Vista mensual' })).toBeVisible()
-    if (width < 900) {
-      await visit('/app/companion')
-      await page.setViewportSize({ width, height: 450 })
-      const composer = page.getByLabel('Escribe tu consulta académica')
-      await composer.fill('Solo compruebo el teclado móvil.')
-      await composer.click()
-      await page.waitForTimeout(100)
-      const navTop = await page.getByRole('navigation', { name: 'Navegación principal' }).evaluate(node => node.getBoundingClientRect().top)
-      const composerBottom = await composer.evaluate(node => node.getBoundingClientRect().bottom)
-      if (composerBottom > navTop) findings.push({ width, route: '/app/companion', overflow: 0, elements: ['composer covered at short keyboard viewport'] })
-      await page.setViewportSize({ width, height: 700 })
-    }
     if (width < 900) {
       await visit('/dashboard')
       const more = page.getByRole('button', { name: 'Más secciones' })
