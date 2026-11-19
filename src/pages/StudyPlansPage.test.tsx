@@ -54,10 +54,27 @@ describe('study plans', () => {
     const gate = new Promise<void>(resolve => { release = resolve })
     studyPlanSetup({ plans: [], generateGate: gate })
     await userEvent.click(await screen.findByRole('button', { name: 'Proponer un plan con IA' }))
-    expect(screen.getByRole('button', { name: 'Preparando propuesta…' })).toBeDisabled()
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Gemini está preparando tu plan…' })).toBeDisabled()
+    expect(screen.getByRole('status')).toHaveTextContent('Gemini está preparando tu plan')
     release()
     expect(await screen.findByRole('heading', { name: 'Preparar examen' })).toBeVisible()
+  })
+
+  it('continues plan generation across navigation and links to its result without duplicating the request', async () => {
+    let release!: () => void
+    const gate = new Promise<void>(resolve => { release = resolve })
+    const { fetch } = studyPlanSetup({ plans: [], generateGate: gate })
+    await userEvent.click(await screen.findByRole('button', { name: 'Proponer un plan con IA' }))
+    expect(screen.getByRole('status')).toHaveTextContent('Gemini está preparando tu plan')
+    await userEvent.click(screen.getByRole('link', { name: 'Calendario' }))
+    expect(await screen.findByRole('heading', { name: /Calendario/ })).toBeVisible()
+    release()
+    const resultLink = await screen.findByRole('link', { name: 'Abrir resultado' })
+    expect(resultLink).toHaveAttribute('href', '/app/study-plans/10')
+    expect(screen.getByRole('heading', { name: /Calendario/ })).toBeVisible()
+    expect(fetch.mock.calls.filter(([url, request]) => String(url).endsWith('/study-plans/generate') && request?.method === 'POST')).toHaveLength(1)
+    await userEvent.click(screen.getByRole('link', { name: 'Planes' }))
+    expect(await screen.findByRole('link', { name: /Preparar examen/ })).toHaveAttribute('href', '/app/study-plans/10')
   })
 
   it('keeps the plan list visible when AI generation fails', async () => {
@@ -209,29 +226,41 @@ describe('study plans', () => {
 
   it.each([1, 4])('shows factual entries and questions with %i records, without calling them a pattern', async count => {
     studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: count })
-    expect(await screen.findByText(/Hay un registro con tiempo planificado|1 min frente a 10 min planificados/)).toBeVisible()
+    expect(await screen.findByText(/Hay un registro con tiempo planificado|4 de 4 sesiones/)).toBeVisible()
     expect(screen.getByText(/Los registros no indican por qué ocurrió/)).toBeVisible()
-    expect(screen.getByText(/Si fueron sesiones de estudio reales/)).toBeVisible()
+    expect(screen.getByText(/Podrías probar sesiones más breves/)).toBeVisible()
     expect(screen.getByText(/¿Qué contexto ayudaría a entender/)).toBeVisible()
     expect(screen.queryByText(/patrón de estudio/)).not.toBeInTheDocument()
   })
 
   it.each([5, 7])('shows factual observations with %i records, without Gemini pattern claims', async count => {
     studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: count })
-    expect(await screen.findByRole('heading', { name: /1 min frente a 10 min planificados/ })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: /4 de 5 sesiones, el tiempo registrado fue menor/ })).toBeVisible()
     expect(screen.getByText(/La diferencia puede ser relevante/)).toBeVisible()
     expect(screen.getByText(/Los registros no indican por qué ocurrió/)).toBeVisible()
     expect(screen.getByText(/Se basa en/)).toBeVisible()
   })
 
+  it('shows completed, partial and cancelled sessions as separate states', async () => {
+    studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: 5, behaviorCancelledCount: 1 })
+    await screen.findByRole('heading', { name: 'Observaciones de tus sesiones' })
+    expect(await screen.findByText('sesiones completadas')).toBeVisible()
+    expect(screen.getByText('4', { selector: 'strong' })).toBeVisible()
+    expect(screen.getByText(/1 sesión parcial · 1 sesión cancelada/)).toBeVisible()
+    expect(screen.getByRole('heading', { name: /4 de 5 sesiones/ })).toBeVisible()
+  })
+
   it('presents concise facts and expandable traceable evidence with named deduplicated links', async () => {
     studyPlanSetup({ path: '/app/behavior' })
-    expect(await screen.findByText(/5 de 5 registros se registró cerca de 1 min frente a 10 min planificados/)).toBeVisible()
+    expect(await screen.findByText(/4 de 5 sesiones, el tiempo registrado fue menor que el planificado/)).toBeVisible()
+    expect(screen.getByText('Interpretación basada en reglas locales')).toBeVisible()
+    expect(screen.getByText(/próximos registros para evaluar/)).toBeVisible()
     const evidence = screen.getByText('Ver los 5 registros que lo respaldan')
     expect(evidence.closest('details')).not.toHaveAttribute('open')
     await userEvent.click(evidence)
     expect(evidence.closest('details')).toHaveAttribute('open')
-    expect(screen.getAllByText(/10 min planificados; se registraron 1 min/)).toHaveLength(5)
+    expect(screen.getAllByText(/10 min planificados; se registraron 1 min/)).toHaveLength(4)
+    expect(screen.getByText(/Estado del registro: parcial/)).toBeVisible()
     expect(screen.getByRole('link', { name: 'Biología' })).toHaveAttribute('href', '/app/subjects/1')
     expect(screen.getByRole('link', { name: planFixture.activities[0].title })).toHaveAttribute('href', `/app/activities/${planFixture.activities[0].id}`)
     expect(screen.getAllByRole('link', { name: /Sesión/ })).toHaveLength(5)

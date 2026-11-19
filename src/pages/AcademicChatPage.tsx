@@ -4,6 +4,7 @@ import { ApiError } from '../api/ApiError'
 import { Icon } from '../components/Icon'
 import { useAcademicChatService } from '../hooks/useAcademicChatService'
 import type { AcademicConversation, AcademicMessage } from '../types/academicChat'
+import { useGlobalFeedback } from '../feedback/GlobalFeedback'
 import styles from './AcademicChatPage.module.css'
 
 const suggestions = [
@@ -25,16 +26,23 @@ export function AcademicChatPage({
   variant?: 'page' | 'sidebar'
 } = {}) {
   const service = useAcademicChatService()
+  const {
+    chatSelectedId: selectedId,
+    setChatSelectedId: setSelectedId,
+    chatDraft: draft,
+    setChatDraft: setDraft,
+    runningTasks,
+    runAcademicChatSend,
+  } = useGlobalFeedback()
   const [conversations, setConversations] = useState<AcademicConversation[]>([])
-  const [selectedId, setSelectedId] = useState<number | null>(null)
   const [messages, setMessages] = useState<AcademicMessage[]>([])
   const [nextBeforeId, setNextBeforeId] = useState<number | null>(null)
-  const [draft, setDraft] = useState('')
   const [loading, setLoading] = useState(true)
-  const [sending, setSending] = useState(false)
+  const sending = runningTasks.has('academic-chat-send')
   const [error, setError] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const startingRef = useRef(false)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -87,6 +95,8 @@ export function AcademicChatPage({
   }
 
   const startConversation = async () => {
+    if (startingRef.current || sending) return
+    startingRef.current = true
     setError(null)
     try {
       const conversation = await service.createConversation()
@@ -99,6 +109,8 @@ export function AcademicChatPage({
       textareaRef.current?.focus()
     } catch (reason) {
       setError(readError(reason))
+    } finally {
+      startingRef.current = false
     }
   }
 
@@ -117,46 +129,47 @@ export function AcademicChatPage({
     event?.preventDefault()
     const content = (suggested ?? draft).trim()
     if (!content || sending) return
-    setError(null)
-    setSending(true)
-    let conversationId = selectedId
-    let createdForMessage = false
-    try {
-      if (conversationId === null) {
-        const conversation = await service.createConversation()
-        conversationId = conversation.id
-        createdForMessage = true
-        setConversations(items => [conversation, ...items])
-        setMessages([])
-      }
-      const result = await service.send(conversationId, content)
-      setConversations(items => [
-        result.conversation,
-        ...items.filter(item => item.id !== result.conversation.id),
-      ])
-      if (createdForMessage) setSelectedId(conversationId)
-      else setMessages(items => [...items, result.user_message, result.assistant_message])
-      setDraft('')
-      await refreshConversations()
-    } catch (reason) {
-      setError(readError(reason))
-      if (conversationId !== null) {
-        try {
-          setSelectedId(conversationId)
-          const page = await service.messages(conversationId)
-          setMessages(page.items)
-          setNextBeforeId(page.next_before_id)
-          if (page.items.some(item => item.role === 'user' && item.content === content)) {
-            setDraft('')
-          }
-          await refreshConversations()
-        } catch {
-          // The original, safe API error remains visible.
+    await runAcademicChatSend(async () => {
+      setError(null)
+      let conversationId = selectedId
+      let createdForMessage = false
+      try {
+        if (conversationId === null) {
+          const conversation = await service.createConversation()
+          conversationId = conversation.id
+          createdForMessage = true
+          setConversations(items => [conversation, ...items])
+          setMessages([])
+          setSelectedId(conversation.id)
         }
+        const result = await service.send(conversationId, content)
+        setConversations(items => [
+          result.conversation,
+          ...items.filter(item => item.id !== result.conversation.id),
+        ])
+        setSelectedId(conversationId)
+        setMessages(items => createdForMessage ? [result.user_message, result.assistant_message] : [...items, result.user_message, result.assistant_message])
+        setDraft('')
+        await refreshConversations()
+      } catch (reason) {
+        setError(readError(reason))
+        if (conversationId !== null) {
+          try {
+            setSelectedId(conversationId)
+            const page = await service.messages(conversationId)
+            setMessages(page.items)
+            setNextBeforeId(page.next_before_id)
+            if (page.items.some(item => item.role === 'user' && item.content === content)) {
+              setDraft('')
+            }
+            await refreshConversations()
+          } catch {
+            // Keep the original API failure and preserve the unsent draft.
+          }
+        }
+        throw reason
       }
-    } finally {
-      setSending(false)
-    }
+    })
   }
 
   const onComposerKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {

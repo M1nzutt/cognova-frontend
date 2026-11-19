@@ -26,6 +26,7 @@
 .observation h2 { margin: .35rem 0; font-size: 1rem; line-height: 1.45; }
 .interpretation { margin: 0; color: var(--muted); font-size: .84rem; line-height: 1.55; }
 .interpretation strong { color: var(--text); }
+.provenance { width: fit-content; padding: .22rem .5rem; margin: .3rem 0 .4rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill); color: var(--muted); background: var(--color-surface-soft); font-size: .68rem; line-height: 1.35; }
 
 .evidence { margin-top: .65rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-soft); }
 .evidence summary { min-height: 42px; padding: .62rem .8rem; color: var(--color-plum-900); font-size: .8rem; font-weight: 700; cursor: pointer; }

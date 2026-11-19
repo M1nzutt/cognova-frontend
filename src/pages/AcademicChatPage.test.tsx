@@ -1,6 +1,8 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError } from '../api/ApiError'
+import { GlobalFeedbackProvider } from '../feedback/GlobalFeedback'
+import { Link, MemoryRouter, Route, Routes } from 'react-router-dom'
 import { AcademicChatPage } from './AcademicChatPage'
 
 const mocks = vi.hoisted(() => ({ service: undefined as unknown }))
@@ -43,6 +45,16 @@ function serviceMock() {
   }
 }
 
+function renderChat() {
+  return render(<MemoryRouter initialEntries={['/app/analytics']}><GlobalFeedbackProvider>
+    <nav><Link to="/app/analytics">Análisis</Link><Link to="/app/calendar">Calendario de prueba</Link></nav>
+    <Routes>
+      <Route path="/app/analytics" element={<AcademicChatPage />} />
+      <Route path="/app/calendar" element={<h1>Calendario</h1>} />
+    </Routes>
+  </GlobalFeedbackProvider></MemoryRouter>)
+}
+
 describe('AcademicChatPage', () => {
   beforeEach(() => {
     mocks.service = serviceMock()
@@ -69,7 +81,7 @@ describe('AcademicChatPage', () => {
       ],
       next_before_id: null,
     })
-    render(<AcademicChatPage />)
+    renderChat()
     expect(await screen.findByRole('heading', { name: /IA Cognova/ })).toBeVisible()
     fireEvent.click(screen.getByRole('button', { name: /actividad debería priorizar/i }))
 
@@ -99,7 +111,7 @@ describe('AcademicChatPage', () => {
       }],
       next_before_id: null,
     })
-    render(<AcademicChatPage />)
+    renderChat()
     fireEvent.change(await screen.findByLabelText('Escribe tu consulta académica'), {
       target: { value: '¿Cómo organizo mis materias?' },
     })
@@ -109,5 +121,15 @@ describe('AcademicChatPage', () => {
     await waitFor(() => expect(screen.getByText(
       '¿Cómo organizo mis materias?', { selector: 'p' },
     )).toBeVisible())
+  })
+
+  it('preserves an unsent draft when navigating away and back to Analytics', async () => {
+    renderChat()
+    const composer = await screen.findByLabelText('Escribe tu consulta académica')
+    fireEvent.change(composer, { target: { value: 'Quiero ajustar mis sesiones de estudio.' } })
+    fireEvent.click(screen.getByRole('link', { name: 'Calendario de prueba' }))
+    expect(await screen.findByRole('heading', { name: 'Calendario' })).toBeVisible()
+    fireEvent.click(screen.getByRole('link', { name: 'Análisis' }))
+    expect(await screen.findByLabelText('Escribe tu consulta académica')).toHaveValue('Quiero ajustar mis sesiones de estudio.')
   })
 })

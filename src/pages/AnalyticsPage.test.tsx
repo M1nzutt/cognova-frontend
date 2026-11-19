@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { AnalyticsCategory, AnalyticsOverview, AnalyticsStudyTime, AnalyticsTimelinePage } from '../types/analytics'
+import { GlobalFeedbackProvider } from '../feedback/GlobalFeedback'
 import { AnalyticsPage } from './AnalyticsPage'
 
 const mocks=vi.hoisted(()=>({overview:vi.fn(),studyTime:vi.fn(),timeline:vi.fn(),search:vi.fn(),listConversations:vi.fn(),createConversation:vi.fn(),messages:vi.fn(),send:vi.fn()}))
@@ -17,7 +18,7 @@ const event=(id:string,category:AnalyticsCategory,title:string)=>({
  details:category==='decision'?{action:'accepted'}:category==='challenge'?{plan_id:10}:{},
 })
 const timeline:AnalyticsTimelinePage={items:[event('1','activity','Entrega de ensayo'),event('2','study_session','Sesión de estudio')],next_cursor:'next'}
-function mount(initial='/app/analytics'){return render(<MemoryRouter initialEntries={[initial]}><AnalyticsPage/></MemoryRouter>)}
+function mount(initial='/app/analytics'){return render(<MemoryRouter initialEntries={[initial]}><GlobalFeedbackProvider><AnalyticsPage/></GlobalFeedbackProvider></MemoryRouter>)}
 
 describe('AnalyticsPage',()=>{
  beforeEach(()=>{

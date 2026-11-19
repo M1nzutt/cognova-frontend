@@ -28,18 +28,18 @@ export const aiProposalFixture: NonNullable<StudyPlan['ai_proposal_snapshot']> =
 }
 export const aiPlanFixture: StudyPlan = { ...planFixture, source: 'ai', ai_proposal_snapshot: aiProposalFixture }
 export const behaviorFixture = {
-  completed_session_count: 5, reviewed_session_count: 5, state: 'factual_summary',
+  completed_session_count: 4, partial_session_count: 1, cancelled_session_count: 0, reviewed_session_count: 5, state: 'factual_summary',
   insufficient_data_guidance: 'Aún faltan sesiones finalizadas con duración registrada.',
   observations: [{
-    conclusion: 'En 5 de 5 registros se registró cerca de 1 min frente a 10 min planificados.',
-    observation: 'En 5 de 5 registros se registró cerca de 1 min frente a 10 min planificados.',
+    conclusion: 'En 4 de 5 sesiones, el tiempo registrado fue menor que el planificado.',
+    observation: 'En 4 de 5 sesiones, el tiempo registrado fue menor que el planificado.',
     interpretation: 'La diferencia puede ser relevante para valorar el tamaño de los bloques previstos.',
     uncertainty: 'Los registros no indican por qué ocurrió ni bastan para concluir que sea un patrón estable.',
-    suggestion: 'Si fueron sesiones de estudio reales, podrías probar un bloque más breve.',
-    interpretation_source: 'factual_fallback',
+    suggestion: 'Podrías probar sesiones más breves y comparar los próximos registros para evaluar qué duración te resulta viable.',
+    interpretation_source: 'deterministic',
     evidence: Array.from({ length: 5 }, (_, index) => ({
-      session_id: sessionSummary.id + index, planned_minutes: 10, actual_seconds: '60.140789',
-      result: 'completed', summary: `Biología · Repaso ${index + 1}: 10 min planificados`,
+      session_id: sessionSummary.id + index, planned_minutes: 10, actual_seconds: index < 4 ? '60.140789' : '600',
+      result: index === 4 ? 'partial' : 'completed', summary: `Biología · Repaso ${index + 1}: 10 min planificados`,
     })),
     question: '¿Qué contexto ayudaría a entender la diferencia entre el tiempo previsto y el registrado?',
     confidence_basis: 'Se basa en 5 registros finalizados o parciales; las sesiones parciales se identifican por separado y no cuentan como completadas.',
@@ -61,7 +61,7 @@ export const challengeFixture: StudyChallenge = {
 }
 const response = (body: unknown, status = 200, extraHeaders: Record<string, string> = {}) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...extraHeaders } })
 
-export function studyPlanSetup(options: { path?: string; plans?: StudyPlan[]; challenges?: StudyChallenge[]; anonymous?: boolean; incomplete?: boolean; generateStatus?: number; generateGate?: Promise<void>; behaviorStatus?: number; behaviorCode?: string; behaviorSessionCount?: number; regenerateStatus?: number; transitionStatus?: number; challengeStatus?: number } = {}) {
+export function studyPlanSetup(options: { path?: string; plans?: StudyPlan[]; challenges?: StudyChallenge[]; anonymous?: boolean; incomplete?: boolean; generateStatus?: number; generateGate?: Promise<void>; behaviorStatus?: number; behaviorCode?: string; behaviorSessionCount?: number; behaviorCancelledCount?: number; regenerateStatus?: number; transitionStatus?: number; challengeStatus?: number } = {}) {
   let plans = structuredClone(options.plans ?? [planFixture])
   const challenges = structuredClone(options.challenges ?? [])
   if (!options.anonymous) document.cookie = 'cognova_csrf=test-csrf; Path=/'
@@ -80,19 +80,21 @@ export function studyPlanSetup(options: { path?: string; plans?: StudyPlan[]; ch
           ? { 'Retry-After': '30' }
           : {},
       )
-      const count = options.behaviorSessionCount ?? behaviorFixture.completed_session_count
+       const count = options.behaviorSessionCount ?? behaviorFixture.reviewed_session_count
       const evidenceCount = Math.min(count, 5)
       const observation = structuredClone(behaviorFixture.observations[0])
       observation.evidence = observation.evidence.slice(0, evidenceCount)
       observation.related_resources = observation.related_resources
         .filter(resource => resource.kind !== 'session' || resource.id < sessionSummary.id + evidenceCount)
-      observation.observation = count === 1
-        ? 'Hay un registro con tiempo planificado y tiempo real para comparar.'
-        : `En ${evidenceCount} de ${evidenceCount} registros se registró cerca de 1 min frente a 10 min planificados.${count > evidenceCount ? ` Se muestran los más recientes de ${count} registros.` : ''}`
+       observation.observation = count === 1
+         ? 'Hay un registro con tiempo planificado y tiempo real para comparar.'
+         : `En ${Math.min(evidenceCount, 4)} de ${evidenceCount} sesiones, el tiempo registrado fue menor que el planificado.${count > evidenceCount ? ` Se muestran los más recientes de ${count} registros.` : ''}`
       observation.conclusion = observation.observation
       observation.confidence_basis = `Se basa en ${evidenceCount} ${evidenceCount === 1 ? 'registro' : 'registros'} finalizados o parciales; las sesiones parciales se identifican por separado y no cuentan como completadas.`
       return response({
-        completed_session_count: count,
+         completed_session_count: Math.max(0, count - 1),
+         partial_session_count: count ? 1 : 0,
+         cancelled_session_count: options.behaviorCancelledCount ?? 0,
         reviewed_session_count: count,
         state: count ? 'factual_summary' : 'insufficient_data',
         insufficient_data_guidance: 'Aún faltan sesiones finalizadas con duración registrada.',

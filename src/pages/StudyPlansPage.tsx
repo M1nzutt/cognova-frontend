@@ -1,8 +1,9 @@
 import { useCallback } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useStudyPlanServices } from '../hooks/useStudyPlanServices'
 import { useStudyPlanResource } from '../hooks/useStudyPlanResource'
 import { useStudyPlanMutation } from '../hooks/useStudyPlanMutation'
+import { useGlobalFeedback } from '../feedback/GlobalFeedback'
 import { planStatuses } from '../types/studyPlan'
 import type { PlanStatus } from '../types/studyPlan'
 import { planStatusLabels, sourceLabels } from '../utils/studyPlanPresentation'
@@ -18,8 +19,8 @@ export function StudyPlansPage() {
   const load = useCallback((signal: AbortSignal) => services.plans.list(status, undefined, signal), [services, status])
   const resource = useStudyPlanResource(load)
   const more = useStudyPlanMutation()
-  const generate = useStudyPlanMutation()
-  const navigate = useNavigate()
+  const { runningTasks, runPlanGeneration } = useGlobalFeedback()
+  const generating = runningTasks.has('study-plan-generation')
   const page = resource.data
   const changeStatus = (value: PlanStatus | 'all') => setParams(value === 'all' ? {} : { status: value })
 
@@ -28,14 +29,13 @@ export function StudyPlansPage() {
       <div className={styles.heroCopy}><p className="eyebrow">OBJETIVO · RECURSOS · RITMO</p><h1>Planes de estudio</h1><p>Conecta lo que quieres lograr con las materias, actividades y sesiones que ya tienes.</p></div>
       <div className={styles.actions}>
         <Link className={styles.manualAction} to="/app/study-plans/new"><span aria-hidden="true">＋</span> Crear plan</Link>
-        <button className={styles.primary} type="button" disabled={generate.busy} aria-busy={generate.busy}
-          onClick={() => void generate.run(signal => services.plans.generate(signal), result => navigate(`/app/study-plans/${result.plan.id}`))}>
-          {generate.busy ? 'Preparando propuesta…' : 'Proponer un plan con IA'}
+        <button className={styles.primary} type="button" disabled={generating} aria-busy={generating}
+          onClick={() => runPlanGeneration(signal => services.plans.generate(signal))}>
+          {generating ? 'Gemini está preparando tu plan…' : 'Proponer un plan con IA'}
         </button>
       </div>
     </header>
     <p className={styles.aiNote}><span aria-hidden="true">✦</span> Las propuestas empiezan como borrador. Tú revisas y decides; también puedes planificar manualmente.</p>
-    {generate.error && <p role="alert" className={styles.error}>{generate.error}</p>}
     <div className={styles.filters}>
       <label htmlFor="plan-status">Ver planes</label>
       <select id="plan-status" value={status} onChange={event => changeStatus(event.target.value as PlanStatus | 'all')}>
@@ -59,6 +59,8 @@ export function StudyPlansPage() {
         {page.next_after_id !== null && <button className="button" type="button" disabled={more.busy} onClick={() => void more.run(
           signal => services.plans.list(status, page.next_after_id ?? undefined, signal),
           next => resource.setData(previous => previous ? { items: [...previous.items, ...next.items.filter(item => !previous.items.some(old => old.id === item.id))], next_after_id: next.next_after_id } : next),
+          undefined,
+          false,
         )}>{more.busy ? 'Cargando…' : 'Cargar más planes'}</button>}
         {more.error && <p role="alert">{more.error}</p>}
       </>)}

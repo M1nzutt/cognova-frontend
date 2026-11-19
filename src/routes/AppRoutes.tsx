@@ -30,6 +30,7 @@ import { QuestionnairePage } from '../pages/QuestionnairePage'
 import { ProtectedRoute } from './ProtectedRoute'
 import { GuestRoute } from './GuestRoute'
 import { PublicShell } from '../components/PublicShell'
+import { GlobalFeedbackProvider } from '../feedback/GlobalFeedback'
 
 export function AppRoutes() {
   return (
@@ -51,7 +52,7 @@ export function AppRoutes() {
           <Route path="questionnaire" element={<Navigate to="/onboarding/questionnaire" replace />} />
         </Route>
       </Route>
-      <Route element={<AppShell />}>
+      <Route element={<GlobalFeedbackProvider><AppShell /></GlobalFeedbackProvider>}>
         <Route element={<ProtectedRoute />}>
           <Route element={<CompletedRoute />}>
             <Route path="app/calendar" element={<CalendarPage />} />

@@ -10,6 +10,7 @@ import { useStudyPlanMutation } from '../hooks/useStudyPlanMutation'
 import { planStatusLabels } from '../utils/studyPlanPresentation'
 import styles from '../components/StudyPlans.module.css'
 import { LoadingStatus } from '../components/LoadingStatus'
+import { useGlobalFeedback } from '../feedback/GlobalFeedback'
 
 export function StudyPlanDetailPage() {
   const { planId } = useParams()
@@ -20,19 +21,36 @@ export function StudyPlanDetailPage() {
   const choicesLoad = useCallback((signal: AbortSignal) => services.loadChoices(signal), [services])
   const choices = useStudyPlanResource(choicesLoad)
   const mutation = useStudyPlanMutation()
+  const { runningTasks, runPlanRegeneration } = useGlobalFeedback()
+  const regenerating = runningTasks.has(`study-plan-regeneration-${id}`)
   const navigate = useNavigate()
   const [editing, setEditing] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const deleteTrigger = useRef<HTMLButtonElement>(null)
   const confirmButton = useRef<HTMLButtonElement>(null)
+  const mounted = useRef(false)
   const plan = resource.data
+  useEffect(() => {
+    mounted.current = true
+    return () => { mounted.current = false }
+  }, [])
   useEffect(() => { if (confirming) confirmButton.current?.focus() }, [confirming])
 
-  const transition = (action: 'activate' | 'complete' | 'abandon' | 'accept' | 'reject' | 'regenerate') => void mutation.run(
-    signal => services.plans.transition(id, action, signal),
-    next => resource.setData(next),
-    async () => { resource.retry() },
-  )
+  const transition = (action: 'activate' | 'complete' | 'abandon' | 'accept' | 'reject' | 'regenerate') => {
+    if (action === 'regenerate') {
+      runPlanRegeneration(
+        id,
+        signal => services.plans.transition(id, action, signal),
+        () => { if (mounted.current) resource.retry() },
+      )
+      return
+    }
+    void mutation.run(
+      signal => services.plans.transition(id, action, signal),
+      next => resource.setData(next),
+      async () => { resource.retry() },
+    )
+  }
   const canDelete = plan?.source === 'manual' && plan.status === 'draft' && !plan.subjects.length
     && !plan.activities.length && !plan.study_sessions.length && !plan.decisions.length && plan.challenge_count === 0
 
@@ -61,7 +79,7 @@ export function StudyPlanDetailPage() {
           {plan.status === 'draft' && plan.source === 'ai' && <>
             <button className={styles.primary} type="button" disabled={mutation.busy} onClick={() => transition('accept')}>Aceptar propuesta</button>
             <button className="button" type="button" disabled={mutation.busy} onClick={() => transition('reject')}>Rechazar propuesta</button>
-            <button className="button" type="button" disabled={mutation.busy} aria-busy={mutation.busy} onClick={() => transition('regenerate')}>{mutation.busy ? 'Preparando otra propuesta…' : 'Pedir otra propuesta'}</button>
+            <button className="button" type="button" disabled={mutation.busy || regenerating} aria-busy={regenerating} onClick={() => transition('regenerate')}>{regenerating ? 'Gemini está preparando otra propuesta…' : 'Pedir otra propuesta'}</button>
           </>}
           {plan.status === 'active' && <button className={styles.primary} type="button" disabled={mutation.busy} onClick={() => transition('complete')}>Completar plan</button>}
           {(plan.status === 'draft' || plan.status === 'active') && <button className="button" type="button" disabled={mutation.busy} onClick={() => transition('abandon')}>Abandonar plan</button>}

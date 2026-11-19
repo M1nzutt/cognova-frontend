@@ -23,7 +23,10 @@ export function BehaviorAnalysisPage() {
       <div className={styles.summary} role="status">
         <strong>{analysis.completed_session_count}</strong>
         <span>{analysis.completed_session_count === 1 ? 'sesión completada' : 'sesiones completadas'}</span>
-        <small>{analysis.reviewed_session_count} {analysis.reviewed_session_count === 1 ? 'registro completado o parcial revisado' : 'registros completados o parciales revisados'}. Los parciales no cuentan como sesiones completadas.</small>
+        <small>
+          {analysis.partial_session_count} {analysis.partial_session_count === 1 ? 'sesión parcial' : 'sesiones parciales'} · {analysis.cancelled_session_count} {analysis.cancelled_session_count === 1 ? 'sesión cancelada' : 'sesiones canceladas'}.
+          {' '}{analysis.reviewed_session_count} registros completados o parciales se comparan; las canceladas se mantienen aparte.
+        </small>
       </div>
       {analysis.state === 'insufficient_data' || !analysis.observations.length
         ? <div className={styles.empty}>
@@ -36,6 +39,13 @@ export function BehaviorAnalysisPage() {
             <span className={styles.eyebrow}>CONCLUSIÓN BASADA EN TUS REGISTROS</span>
             <h2>{item.conclusion}</h2>
             <p className={styles.interpretation}><strong>Interpretación:</strong> {item.interpretation}</p>
+            <p className={styles.provenance}>
+              {item.interpretation_source === 'gemini'
+                ? 'Interpretación generada por Gemini'
+                : item.interpretation_source === 'deterministic'
+                  ? 'Interpretación basada en reglas locales'
+                  : 'Interpretación de respaldo: Gemini no estuvo disponible o su respuesta no superó la validación'}
+            </p>
             <p className={styles.interpretation}><strong>Lo que aún no sabemos:</strong> {item.uncertainty}</p>
             <p className={styles.interpretation}><strong>Sugerencia:</strong> {item.suggestion}</p>
             <details className={styles.evidence}>
