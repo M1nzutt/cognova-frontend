@@ -28,13 +28,16 @@ export function StudyPlanOverview({ plan }: { plan: StudyPlan }) {
     <section className={styles.panel} aria-labelledby="plan-about">
       <h2 id="plan-about">Tu objetivo</h2>
       <p>{plan.objective}</p>
-      <dl className={styles.summary}>
+      <details className={styles.planMeta}>
+        <summary>Fechas y datos del plan</summary>
+        <dl className={styles.summary}>
         <dt>Estado</dt><dd>{planStatusLabels[plan.status]}</dd>
         <dt>Origen</dt><dd>{sourceLabels[plan.source]}</dd>
         <dt>Creado</dt><dd><time dateTime={plan.created_at}>{localDateTime(plan.created_at)}</time></dd>
         <dt>Inicio</dt><dd><time dateTime={plan.start_at}>{localDateTime(plan.start_at)}</time></dd>
         <dt>Fin</dt><dd><time dateTime={plan.end_at}>{localDateTime(plan.end_at)}</time></dd>
-      </dl>
+        </dl>
+      </details>
     </section>
     <section className={styles.panel} aria-labelledby="plan-map">
       <h2 id="plan-map">Cómo se conecta tu plan</h2>

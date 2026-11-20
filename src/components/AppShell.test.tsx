@@ -49,7 +49,7 @@ describe('mobile More navigation', () => {
     expect(within(nav).queryByRole('link', { name: 'IA Cognova' })).not.toBeInTheDocument()
     fireEvent.click(more)
     expect(more).toHaveAttribute('aria-expanded', 'true')
-    for (const label of ['Actividades', 'Sesiones', 'IA y reflexiones', 'Análisis']) {
+    for (const label of ['Actividades', 'Sesiones', 'Acompañamiento', 'Observaciones', 'Análisis']) {
       expect(within(nav).getByRole('link', { name: label })).toBeVisible()
     }
     fireEvent.keyDown(document, { key: 'Escape' })

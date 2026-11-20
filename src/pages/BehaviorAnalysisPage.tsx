@@ -13,9 +13,9 @@ export function BehaviorAnalysisPage() {
   const analysis = resource.data
   return <section className={styles.page} aria-labelledby="behavior-title">
     <div className={styles.heading}>
-      <div><p className="eyebrow">TUS REGISTROS</p><h1 id="behavior-title">Observaciones de tus sesiones</h1>
-        <p>Hechos de tus registros, sin convertirlos en conclusiones sobre tus hábitos.</p></div>
-      <button className="button" type="button" onClick={resource.retry} disabled={resource.loading}>{resource.loading ? 'Actualizando…' : 'Actualizar'}</button>
+      <div><p className="eyebrow">UN ESPACIO PARA PENSAR</p><h1 id="behavior-title">Una pausa para mirar tu estudio</h1>
+        <p>No es una evaluación. Es una invitación a poner tus registros en contexto y decidir qué te gustaría probar.</p></div>
+      <button className="button" type="button" onClick={resource.retry} disabled={resource.loading}>{resource.loading ? 'Revisando…' : 'Actualizar'}</button>
     </div>
     {resource.loading && <LoadingStatus label="Revisando tus sesiones registradas…" />}
     {resource.error && <div className={styles.error} role="alert"><div><h2>No pudimos cargar las observaciones</h2><p>{resource.error}</p></div><button className="button" type="button" onClick={resource.retry}>Intentar de nuevo</button></div>}
@@ -30,24 +30,34 @@ export function BehaviorAnalysisPage() {
       </div>
       {analysis.state === 'insufficient_data' || !analysis.observations.length
         ? <div className={styles.empty}>
-          <h2>Aún no hay registros para comparar</h2>
-          <p>{analysis.insufficient_data_guidance}</p>
+          <h2>Podemos empezar cuando tengas una sesión registrada</h2>
+          <p>Cuando cierres algunas sesiones, Cognova podrá ayudarte a comparar lo que planeaste con lo que alcanzaste a registrar. No hay una forma correcta o incorrecta de estudiar.</p>
           <Link className={styles.emptyAction} to="/app/sessions">Ver mis sesiones</Link>
         </div>
         : <ul className={styles.list} aria-label="Observaciones de tus sesiones">
           {analysis.observations.map(item => <li className={styles.observation} key={item.observation}>
-            <span className={styles.eyebrow}>CONCLUSIÓN BASADA EN TUS REGISTROS</span>
-            <h2>{item.conclusion}</h2>
-            <p className={styles.interpretation}><strong>Interpretación:</strong> {item.interpretation}</p>
-            <p className={styles.provenance}>
-              {item.interpretation_source === 'gemini'
-                ? 'Interpretación generada por Gemini'
-                : item.interpretation_source === 'deterministic'
-                  ? 'Interpretación basada en reglas locales'
-                  : 'Interpretación de respaldo: Gemini no estuvo disponible o su respuesta no superó la validación'}
-            </p>
-            <p className={styles.interpretation}><strong>Lo que aún no sabemos:</strong> {item.uncertainty}</p>
-            <p className={styles.interpretation}><strong>Sugerencia:</strong> {item.suggestion}</p>
+            <section className={styles.reflection}>
+              <span className={styles.eyebrow}>PARA PENSAR, SIN PRISA</span>
+              <h2>¿Qué te dice a ti esta comparación?</h2>
+              <p>{item.question}</p>
+            </section>
+            <div className={styles.observationBody}>
+              <span className={styles.eyebrow}>LO QUE APARECE EN TUS REGISTROS</span>
+              <h3>{item.conclusion}</h3>
+              {item.interpretation && <p className={styles.interpretation}><strong>Una posible lectura:</strong> {item.interpretation}</p>}
+              {item.suggestion && <p className={styles.interpretation}><strong>Si te sirve, podrías probar:</strong> {item.suggestion}</p>}
+              <details className={styles.evidence}>
+                <summary>Cómo se preparó esta observación</summary>
+                <p className={styles.provenance}>
+                  {item.interpretation_source === 'gemini'
+                    ? 'Cognova pidió a Gemini una interpretación breve a partir de estos registros.'
+                    : item.interpretation_source === 'deterministic'
+                      ? 'Esta lectura se preparó con reglas de Cognova; no se usó Gemini.'
+                      : 'Se muestra una lectura de respaldo porque Gemini no estuvo disponible o su respuesta no pasó la validación.'}
+                </p>
+                <p className={styles.scope}>{item.uncertainty} {item.confidence_basis}</p>
+              </details>
+            </div>
             <details className={styles.evidence}>
               <summary>Ver {item.evidence.length === 1 ? 'el registro' : `los ${item.evidence.length} registros`} que lo respaldan</summary>
               <ul>{item.evidence.map(entry => <li key={entry.session_id}>
@@ -59,10 +69,6 @@ export function BehaviorAnalysisPage() {
                 {item.related_resources.map(resource => <Link key={`${resource.kind}-${resource.id}`} to={resource.href}>{resource.label}</Link>)}
               </nav>}
             </details>
-            <section className={styles.reflection}>
-              <h3>Pregunta para ti</h3><p>{item.question}</p>
-            </section>
-            <p className={styles.scope}>{item.confidence_basis}</p>
           </li>)}
         </ul>}
     </>}

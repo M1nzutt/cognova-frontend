@@ -47,7 +47,18 @@ export function StudyPlansPage() {
     {resource.loading && <LoadingStatus label="Cargando planes…" />}
     {resource.error && <div role="alert"><p>{resource.error}</p><button className="button" type="button" onClick={resource.retry}>Reintentar planes</button></div>}
     {page && !resource.loading && !resource.error && (page.items.length === 0
-      ? <div className={styles.empty}><h2>{status === 'all' ? 'Tu primer plan empieza aquí' : 'No hay planes con este estado'}</h2><p>Organiza un objetivo y vincula tus recursos de estudio.</p><Link to="/app/study-plans/new">Crear plan manual</Link></div>
+      ? <div className={styles.empty}>
+        <h2>{status === 'all' ? 'Tu primer plan empieza aquí' : `No hay planes en “${planStatusLabels[status]}”`}</h2>
+        <p>{status === 'draft'
+          ? 'Los planes que todavía estás preparando aparecen aquí.'
+          : status === 'abandoned'
+            ? 'Los planes que decidiste dejar aparecen aquí; siguen disponibles para consultar.'
+            : status === 'all'
+              ? 'Organiza un objetivo y vincula los recursos que quieres usar.'
+              : 'Prueba otro estado o vuelve a ver todos tus planes.'}</p>
+        {status !== 'all' && <button className="button" type="button" onClick={() => changeStatus('all')}>Ver todos los planes</button>}
+        {' '}<Link to="/app/study-plans/new">Crear plan</Link>
+      </div>
       : <><p role="status">{page.items.length} planes mostrados{page.next_after_id ? '; hay más disponibles' : ''}.</p>
         <ul className={styles.list} aria-label="Planes de estudio">
           {page.items.map(plan => <li key={plan.id}><Link className={styles.card} to={`/app/study-plans/${plan.id}`}>

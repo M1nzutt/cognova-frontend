@@ -13,7 +13,7 @@ export function validQueryParameter(key:string,value:number|string):boolean {
  if(key==='prefix')return value.trim().length>0&&[...value.trim()].length<=64
  if(key==='cursor')return value.length>0&&value.length<=2048
  if(key==='from'||key==='to')return isoDateTime(value)
- if(key==='status')return ['active','archived','all','pending','in_progress','completed','partial','postponed','cancelled'].includes(value)
+ if(key==='status')return ['active','archived','all','draft','abandoned','pending','in_progress','completed','partial','postponed','cancelled'].includes(value)
  if(key==='execution_state')return ['planned','running','paused','finished'].includes(value)
  if(key==='priority')return ['low','medium','high','urgent'].includes(value)
  if(key==='confirm')return value==='true'

@@ -30,8 +30,27 @@ describe('study plans', () => {
     const { fetch } = studyPlanSetup()
     await screen.findByRole('link', { name: /Preparar examen/ })
     await userEvent.selectOptions(screen.getByLabelText('Ver planes'), 'active')
-    expect(await screen.findByText('No hay planes con este estado')).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'No hay planes en “Activo”' })).toBeVisible()
     expect(fetch.mock.calls.some(([url]) => String(url).includes('status=active'))).toBe(true)
+  })
+
+  it.each(['draft', 'abandoned'] as const)('loads the %s plans from the matching filter', async status => {
+    const matching = { ...structuredClone(planFixture), status }
+    const { fetch } = studyPlanSetup({ plans: [matching] })
+    await screen.findByRole('link', { name: /Preparar examen/ })
+    await userEvent.selectOptions(screen.getByLabelText('Ver planes'), status)
+    expect(await screen.findByRole('link', { name: /Preparar examen/ })).toBeVisible()
+    expect(screen.getByLabelText('Ver planes')).toHaveValue(status)
+    expect(fetch.mock.calls.some(([url]) => String(url).includes(`status=${status}`))).toBe(true)
+  })
+
+  it('offers a clear path back from an empty draft filter', async () => {
+    studyPlanSetup({ plans: [] })
+    await screen.findByText('Tu primer plan empieza aquí')
+    await userEvent.selectOptions(screen.getByLabelText('Ver planes'), 'draft')
+    expect(await screen.findByText('Los planes que todavía estás preparando aparecen aquí.')).toBeVisible()
+    await userEvent.click(screen.getByRole('button', { name: 'Ver todos los planes' }))
+    expect(await screen.findByText('Tu primer plan empieza aquí')).toBeVisible()
   })
 
   it('generates a persisted AI draft and opens it without activating it', async () => {
@@ -71,6 +90,7 @@ describe('study plans', () => {
 
     await userEvent.click(card)
     expect(await screen.findByRole('heading', { name: 'Tu objetivo' })).toBeVisible()
+    await userEvent.click(screen.getByText('Fechas y datos del plan'))
     const createdLabel = screen.getByText('Creado', { exact: true })
     expect(createdLabel.nextElementSibling?.querySelector(`time[datetime="${createdAt}"]`)).toBeInTheDocument()
   })
@@ -105,7 +125,7 @@ describe('study plans', () => {
   it('creates a manual plan and opens its direct detail route', async () => {
     const setup = studyPlanSetup({ plans: [] })
     expect(await screen.findByText('Tu primer plan empieza aquí')).toBeVisible()
-    await userEvent.click(screen.getByRole('link', { name: 'Crear plan' }))
+    await userEvent.click(document.querySelector('a[href="/app/study-plans/new"]')!)
     await screen.findByRole('heading', { name: 'Crear plan de estudio' })
     await userEvent.type(screen.getByLabelText('Nombre del plan'), 'Plan de lectura')
     await userEvent.type(screen.getByLabelText('¿Qué quieres lograr?'), 'Leer tres capítulos')
@@ -210,6 +230,7 @@ describe('study plans', () => {
   it('shows the persisted original proposal and suggested missions on a direct detail route', async () => {
     studyPlanSetup({ path: '/app/study-plans/4', plans: [aiPlanFixture] })
     expect(await screen.findByText(aiProposalFixture.explanation)).toBeVisible()
+    await userEvent.click(screen.getByText('Cómo se preparó esta propuesta'))
     expect(screen.getByText(aiProposalFixture.reasoning_summary)).toBeVisible()
     expect(screen.getByText(/SUGERENCIA 1/)).toBeVisible()
     expect(screen.getByText('En qué se basa')).toBeVisible()
@@ -231,17 +252,18 @@ describe('study plans', () => {
 
   it('shows no pattern claim with zero completed sessions', async () => {
     const { fetch } = studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: 0 })
-    expect(await screen.findByRole('heading', { name: 'Observaciones de tus sesiones' })).toBeVisible()
-    expect(await screen.findByText(/sesiones finalizadas con duración registrada/i)).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Una pausa para mirar tu estudio' })).toBeVisible()
+    expect(await screen.findByText(/Cuando cierres algunas sesiones/)).toBeVisible()
     expect(screen.getByText('0', { selector: 'strong' })).toBeVisible()
     expect(screen.getByText('sesiones completadas')).toBeVisible()
-    expect(screen.getByText('Aún no hay registros para comparar')).toBeVisible()
+    expect(screen.getByText('Podemos empezar cuando tengas una sesión registrada')).toBeVisible()
     expect(fetch.mock.calls.some(([url, request]) => String(url).endsWith('/analysis/behavior') && request?.method === 'POST')).toBe(true)
   })
 
   it.each([1, 4])('shows factual entries and questions with %i records, without calling them a pattern', async count => {
     studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: count })
     expect(await screen.findByText(/Hay un registro con tiempo planificado|4 de 4 sesiones/)).toBeVisible()
+    await userEvent.click(screen.getByText('Cómo se preparó esta observación'))
     expect(screen.getByText(/Los registros no indican por qué ocurrió/)).toBeVisible()
     expect(screen.getByText(/Podrías probar sesiones más breves/)).toBeVisible()
     expect(screen.getByText(/¿Qué contexto ayudaría a entender/)).toBeVisible()
@@ -252,13 +274,14 @@ describe('study plans', () => {
     studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: count })
     expect(await screen.findByRole('heading', { name: /4 de 5 sesiones, el tiempo registrado fue menor/ })).toBeVisible()
     expect(screen.getByText(/La diferencia puede ser relevante/)).toBeVisible()
+    await userEvent.click(screen.getByText('Cómo se preparó esta observación'))
     expect(screen.getByText(/Los registros no indican por qué ocurrió/)).toBeVisible()
     expect(screen.getByText(/Se basa en/)).toBeVisible()
   })
 
   it('shows completed, partial and cancelled sessions as separate states', async () => {
     studyPlanSetup({ path: '/app/behavior', behaviorSessionCount: 5, behaviorCancelledCount: 1 })
-    await screen.findByRole('heading', { name: 'Observaciones de tus sesiones' })
+    await screen.findByRole('heading', { name: 'Una pausa para mirar tu estudio' })
     expect(await screen.findByText('sesiones completadas')).toBeVisible()
     expect(screen.getByText('4', { selector: 'strong' })).toBeVisible()
     expect(screen.getByText(/1 sesión parcial · 1 sesión cancelada/)).toBeVisible()
@@ -268,7 +291,8 @@ describe('study plans', () => {
   it('presents concise facts and expandable traceable evidence with named deduplicated links', async () => {
     studyPlanSetup({ path: '/app/behavior' })
     expect(await screen.findByText(/4 de 5 sesiones, el tiempo registrado fue menor que el planificado/)).toBeVisible()
-    expect(screen.getByText('Interpretación basada en reglas locales')).toBeVisible()
+    await userEvent.click(screen.getByText('Cómo se preparó esta observación'))
+    expect(screen.getByText(/Esta lectura se preparó con reglas de Cognova/)).toBeVisible()
     expect(screen.getByText(/próximos registros para evaluar/)).toBeVisible()
     const evidence = screen.getByText('Ver los 5 registros que lo respaldan')
     expect(evidence.closest('details')).not.toHaveAttribute('open')

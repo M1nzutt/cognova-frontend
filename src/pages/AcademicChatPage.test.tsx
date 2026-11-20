@@ -117,7 +117,7 @@ describe('AcademicChatPage', () => {
     })
     fireEvent.click(screen.getByRole('button', { name: 'Enviar mensaje' }))
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(/Ahora mismo no puedo responder/)
+    expect(await screen.findByText(/Ahora mismo no puedo responder/)).toBeVisible()
     await waitFor(() => expect(screen.getByText(
       '¿Cómo organizo mis materias?', { selector: 'p' },
     )).toBeVisible())

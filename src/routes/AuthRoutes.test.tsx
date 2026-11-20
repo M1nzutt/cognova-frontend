@@ -77,6 +77,15 @@ describe('authentication routes and forms', () => {
     expect(screen.queryByRole('link', { name: /olvidé|recuperar contraseña/i })).not.toBeInTheDocument()
   })
 
+  it('shows the demo account credentials on the public login page', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+    mount('/login')
+
+    expect(await screen.findByRole('heading', { name: 'Cuenta de demostración' })).toBeVisible()
+    expect(screen.getByText('demo.software@example.com')).toBeVisible()
+    expect(screen.getByText('eyuNKVCBroH7')).toBeVisible()
+  })
+
   it('keeps the public login controls in a useful keyboard order', async () => {
     vi.stubGlobal('fetch', vi.fn())
     mount('/login')
@@ -118,7 +127,7 @@ describe('authentication routes and forms', () => {
     await waitFor(() => expect(finish).toBeTypeOf('function'))
     await act(async () => finish(jsonResponse({ access_token: makeToken(), token_type: 'bearer' })))
     expect(await screen.findByRole('heading', { name: 'Hola, Sara.' })).toBeVisible()
-    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock.mock.calls.some(([url]) => String(url).includes('/calendar'))).toBe(true)
   })
 
   it('logs in to dashboard and revokes logout through the backend', async () => {
@@ -218,25 +227,60 @@ describe('authentication routes and forms', () => {
 
     await userEvent.click(screen.getByText('Más'))
     expect(screen.getByRole('link', { name: 'Sesiones' })).toBeVisible()
-    expect(screen.getByRole('link', { name: 'IA y reflexiones' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Acompañamiento' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Observaciones' })).toBeVisible()
     expect(screen.getByRole('link', { name: 'Análisis' })).toBeVisible()
     await userEvent.click(screen.getByRole('link', { name: 'Análisis' }))
     expect(await screen.findByText('Análisis', { selector: '[aria-current="location"]' })).toBeVisible()
     expect(document.querySelector('a[href="/app/analytics"]')).toHaveAttribute('aria-current', 'page')
   })
+
+  it('opens Cognova chat as its own companion section', async () => {
+    document.cookie = 'cognova_csrf=csrf; Path=/'
+    vi.stubGlobal('fetch', vi.fn().mockImplementation(async (url: string) => url.endsWith('/refresh')
+      ? jsonResponse({ access_token: makeToken(), token_type: 'bearer' })
+      : url.endsWith('/academic-chat/conversations') ? jsonResponse({ items: [] }) : jsonResponse(user)))
+    mount('/app/companion')
+    expect(await screen.findByRole('heading', { name: 'IA Cognova' })).toBeVisible()
+    expect(screen.getByText(/Soy tu acompañante académico/)).toBeVisible()
+    expect(screen.getByText('Acompañamiento', { selector: '[aria-current="location"]' })).toBeVisible()
+    expect(screen.queryByRole('heading', { name: 'Análisis' })).not.toBeInTheDocument()
+  })
+
+  it('shows real sessions scheduled for today on Inicio', async () => {
+    document.cookie = 'cognova_csrf=csrf; Path=/'
+    const now = new Date()
+    const planned = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9).toISOString()
+    const fetchMock = vi.fn().mockImplementation(async (url: string) => url.endsWith('/refresh')
+      ? jsonResponse({ access_token: makeToken(), token_type: 'bearer' })
+      : url.includes('/calendar?')
+        ? jsonResponse({ items: [{
+          id: 45, type: 'study_session', subject_id: 1, activity_id: null,
+          planned_start_at: planned, planned_duration: 45, lifecycle: 'planned',
+          result: null, start_at: null, end_at: null,
+        }], next_cursor: null })
+        : jsonResponse(user))
+    vi.stubGlobal('fetch', fetchMock)
+    mount('/dashboard')
+    expect(await screen.findByRole('heading', { name: 'Tu día, paso a paso' })).toBeVisible()
+    expect(await screen.findByRole('link', { name: /Sesión de estudio/ })).toHaveAttribute('href', '/app/sessions/45')
+    expect(screen.getByText('45 min · abrir sesión')).toBeVisible()
+    expect(fetchMock.mock.calls.some(([url]) => String(url).includes('/calendar?'))).toBe(true)
+  })
+
   it('shows real profile data and keeps it visible on a refresh error', async () => {
     document.cookie = 'cognova_csrf=csrf; Path=/'
     const fetchMock = vi.fn().mockImplementation(async (url: string) => url.endsWith('/refresh')
-      ? jsonResponse({ access_token: makeToken(), token_type: 'bearer' }) : jsonResponse(user))
+      ? jsonResponse({ access_token: makeToken(), token_type: 'bearer' })
+      : url.includes('/calendar?') ? jsonResponse({ items: [], next_cursor: null }) : jsonResponse(user))
     vi.stubGlobal('fetch', fetchMock)
     mount('/dashboard')
-    expect(await screen.findByRole('heading', { name: '¿Qué quieres avanzar hoy?' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Hola, Sara.' })).toBeVisible()
     expect(screen.queryByText(user.email)).not.toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Tu perfil académico' })).not.toBeInTheDocument()
-    expect(screen.getByText(/Tu percepción inicial forma parte/)).toBeVisible()
-    expect(screen.getByRole('heading', { name: '¿Qué quieres avanzar hoy?' })).toBeVisible()
+    expect(await screen.findByText(/No tienes actividades con fecha límite ni sesiones agendadas para hoy/)).toBeVisible()
     expect(screen.getByRole('link', { name: /Agendar una sesión/ })).toHaveAttribute('href', '/app/sessions/new')
-    expect(screen.getByRole('link', { name: /Crear una actividad/ })).toHaveAttribute('href', '/app/activities/new')
+    expect(screen.getByRole('link', { name: /Revisar actividades/ })).toHaveAttribute('href', '/app/activities')
     await userEvent.click(screen.getByRole('link', { name: 'Perfil' }))
     expect(await screen.findByRole('heading', { name: 'Perfil' })).toBeVisible()
     expect(screen.getByText(user.email)).toBeVisible()

@@ -59,7 +59,7 @@ export function StudyPlanDetailPage() {
     {resource.loading && <LoadingStatus label="Cargando plan…" />}
     {resource.error && <div role="alert"><p>{resource.error}</p><button className="button" type="button" onClick={resource.retry}>Reintentar plan</button></div>}
     {plan && !resource.loading && !resource.error && <>
-      <div className={styles.heading}><div><p className="eyebrow">TU RECORRIDO</p><h1>{plan.name}</h1><p>{planStatusLabels[plan.status]}</p></div>
+      <div className={styles.heading}><div><p className="eyebrow">TU PLAN</p><h1>{plan.name}</h1><p>{planStatusLabels[plan.status]} · {plan.objective}</p></div>
         <button className="button" type="button" onClick={resource.retry}>Actualizar</button></div>
       {mutation.error && <p role="alert" className={styles.error}>{mutation.error}</p>}
       {editing ? <>

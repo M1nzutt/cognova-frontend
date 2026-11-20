@@ -11,6 +11,7 @@ describe('API query parameter allowlist',()=>{
   expect(validQueryParameter('timezone','America/Bogota')).toBe(true)
   expect(validQueryParameter('granularity','week')).toBe(true)
   expect(validQueryParameter('category','decision')).toBe(true)
+  for(const value of ['draft','active','completed','abandoned']) expect(validQueryParameter('status',value)).toBe(true)
   expect(validQueryParameter('prefix','Física')).toBe(true)
   expect(validQueryParameter('cursor','opaque:token')).toBe(true)
   for(const value of ['subject','activity','study_plan','study_challenge']) expect(validQueryParameter('type',value)).toBe(true)
