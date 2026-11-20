@@ -1,18 +1,24 @@
 # Cognova — Contrato API v1
 
-Backend productivo `d9fff7c36e6a1c1c98079e9be225c1d273e0e9d0`, schema
-`0007_study_plans_and_challenges`. `GET /calendar` devuelve Actividades y Sesiones
-como vista de solo lectura. La UI mixta vigente está publicada en Netlify desde
-`5baf625e14fbb543a9fd715dbfaaf3b43c2f8c6d`, deploy
-`6aec118ff6c3ff162f7334de`. Planes y Retos siguen el contrato
-[STUDY_PLANS_CONTRACT](STUDY_PLANS_CONTRACT.md). Otros contratos:
-[CALENDAR_CONTRACT](CALENDAR_CONTRACT.md) y
-[STUDY_SESSIONS_CONTRACT](STUDY_SESSIONS_CONTRACT.md).
+## Estado del contrato — corte 2026-11-20
 
-Fuente productiva vigente indicada arriba; ver [INTEGRATION_VALIDATION](INTEGRATION_VALIDATION.md).
-Procedencia histórica de auth/onboarding: backend `a277af2ba5f2e7227b5b329aa7d935e5e12b8f94`
-sobre 0003. Esa referencia no es el backend desplegado actual. Las secciones de
-otros módulos conservan planificación conceptual, no funcionalidades publicadas.
+El router Backend v1 implementa Auth/sesiones, onboarding y cuestionario, Materias,
+Actividades/historial de fechas, Sesiones/temporizador, Calendario mixto de solo
+lectura, Planes/Retos, generación y análisis de comportamiento IA, Analytics y
+Acompañamiento académico escrito. Las rutas y payloads siguientes describen código
+de API, no acreditan por sí solos un despliegue remoto.
+
+El checkout Backend exige Database 0010, pero su archivo
+`tools/database-ref.json` todavía fija el commit de Database 0009. El volumen local
+inspeccionado permanece en 0009; véase [estado de integración](PROJECT_STATE.md).
+Los encabezados y notas de releases antiguos que nombran 0007/0008 son evidencia
+histórica de aquellas versiones.
+
+Contratos detallados: [CALENDAR_CONTRACT](CALENDAR_CONTRACT.md),
+[STUDY_SESSIONS_CONTRACT](STUDY_SESSIONS_CONTRACT.md),
+[STUDY_PLANS_CONTRACT](STUDY_PLANS_CONTRACT.md),
+[AI_BEHAVIOR](AI_BEHAVIOR.md) y
+[Analytics académico](API_CONTRACT.md#analytics-académico).
 
 Base:
 

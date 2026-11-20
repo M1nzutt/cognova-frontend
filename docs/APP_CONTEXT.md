@@ -1,6 +1,24 @@
 # Cognova — Contexto Funcional y Conceptual de la Aplicación
 
-## Estado implementado — 2026-11-05
+## Estado final del frontend — 2026-11-20
+
+El frontend actual incluye autenticación y onboarding; Inicio con agenda real;
+Calendario de solo lectura; Materias, Actividades, Sesiones/temporizador,
+Planes/Retos; Acompañamiento académico escrito, Observaciones, Análisis y perfil.
+El estudiante conserva el control de decisiones de Planes. El chat responde con
+contexto académico real y sus conversaciones se guardan mediante el Backend.
+La cuenta demo visible en login usa datos ficticios; sus credenciales son públicas.
+
+No hay panel de administración, entrada por voz ni importación CSV/Excel. La UI no
+debe presentarlos como capacidades disponibles.
+
+La implementación de código está terminada para el alcance actual, pero esto no
+significa que todos los entornos estén sincronizados: el frontend local actualizado
+está en Docker; la base activa observada está en 0009 y el Backend fuente requiere
+0010, mientras su pin de Database sigue en 0009. Consultar el estado de integración
+en [PROJECT_STATE](PROJECT_STATE.md) y los contratos vigentes en [API_CONTRACT](API_CONTRACT.md).
+
+## Estado implementado — 2026-11-05 (histórico)
 
 Planes manuales y Retos anidados están publicados en Frontend
 `5baf625e14fbb543a9fd715dbfaaf3b43c2f8c6d`, Netlify
