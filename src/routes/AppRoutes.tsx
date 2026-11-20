@@ -14,7 +14,7 @@ import { StudyPlanDetailPage } from '../pages/StudyPlanDetailPage'
 import { StudyChallengeDetailPage } from '../pages/StudyChallengeDetailPage'
 import { BehaviorAnalysisPage } from '../pages/BehaviorAnalysisPage'
 import { AnalyticsPage } from '../pages/AnalyticsPage'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useSearchParams } from 'react-router-dom'
 import { AcademicProfilePage } from '../pages/AcademicProfilePage'
 import { OnboardingRoute } from './OnboardingRoute'
 import { CompletedRoute } from './CompletedRoute'
@@ -27,6 +27,7 @@ import { RegisterPage } from '../pages/RegisterPage'
 import { DashboardPendingPage } from '../pages/DashboardPendingPage'
 import { ProfilePage } from '../pages/ProfilePage'
 import { QuestionnairePage } from '../pages/QuestionnairePage'
+import { AcademicChatPage } from '../pages/AcademicChatPage'
 import { ProtectedRoute } from './ProtectedRoute'
 import { GuestRoute } from './GuestRoute'
 import { PublicShell } from '../components/PublicShell'
@@ -58,8 +59,8 @@ export function AppRoutes() {
             <Route path="app/calendar" element={<CalendarPage />} />
             <Route path="app/study-plans" element={<StudyPlansPage />} />
             <Route path="app/behavior" element={<BehaviorAnalysisPage />} />
-            <Route path="app/analytics" element={<AnalyticsPage />} />
-            <Route path="app/companion" element={<Navigate to="/app/analytics?assistant=open" replace />} />
+            <Route path="app/analytics" element={<AnalyticsRoute />} />
+            <Route path="app/companion" element={<AcademicChatPage />} />
             <Route path="app/study-plans/new" element={<StudyPlanCreatePage />} />
             <Route path="app/study-plans/:planId" element={<StudyPlanDetailPage />} />
             <Route path="app/study-plans/:planId/challenges/:challengeId" element={<StudyChallengeDetailPage />} />
@@ -81,4 +82,11 @@ export function AppRoutes() {
       </Route>
     </Routes>
   )
+}
+
+function AnalyticsRoute() {
+  const [params] = useSearchParams()
+  return params.get('assistant') === 'open'
+    ? <Navigate to="/app/companion" replace />
+    : <AnalyticsPage />
 }

@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ApiError } from '../api/ApiError'
-import { AcademicChatPage } from './AcademicChatPage'
 import { useAnalyticsService } from '../hooks/useAnalyticsService'
 import { analyticsCategories, type AnalyticsCategory, type AnalyticsOverview, type AnalyticsSearchItem, type AnalyticsStudyTime, type AnalyticsTimelineItem } from '../types/analytics'
 import { analyticsTimezone, buildAnalyticsRange, initialRangeDates, rangeDatesForPreset, type AnalyticsRangePreset } from '../utils/analyticsTime'
@@ -73,8 +72,6 @@ function searchHref(item:AnalyticsSearchItem):string|null {
 
 export function AnalyticsPage() {
  const service=useAnalyticsService()
- const [searchParams,setSearchParams]=useSearchParams()
- const assistantSectionRef=useRef<HTMLElement>(null)
  const [preset,setPreset]=useState<AnalyticsRangePreset>('week')
  const [granularity,setGranularity]=useState<'day'|'week'|'month'>('day')
  const [initialDates]=useState(()=>initialRangeDates('week'))
@@ -90,17 +87,6 @@ export function AnalyticsPage() {
  const [search,setSearch]=useState<{items:AnalyticsSearchItem[];cursor:string|null;loading:boolean;error:string;searched:boolean}>({items:[],cursor:null,loading:false,error:'',searched:false})
  const dates=rangeDatesForPreset(preset,fromDate,toDate)
  const range=buildAnalyticsRange(dates[0],dates[1],timezone)
-
- useEffect(()=>{
-  if(searchParams.get('assistant')!=='open')return
-  const next=new URLSearchParams(searchParams)
-  next.delete('assistant')
-  setSearchParams(next,{replace:true})
-  const section=assistantSectionRef.current
-  if(!section)return
-  if(typeof section.scrollIntoView==='function')section.scrollIntoView({behavior:'smooth',block:'start'})
-  section.focus({preventScroll:true})
- },[searchParams,setSearchParams])
 
  useEffect(()=>{
   const controller=new AbortController();setOverview(emptyState())
@@ -149,32 +135,36 @@ export function AnalyticsPage() {
  const maxBucket=Math.max(1,...(study.data?.buckets.map(x=>Number(x.seconds))||[]))
  const groups=useMemo(()=>search.items.reduce<Record<string,AnalyticsSearchItem[]>>((all,item)=>{const name=searchNames[item.type];(all[name]??=[]).push(item);return all},{}),[search.items])
 
- return <div className={styles.analysisLayout}>
-  <section className={`${styles.page} ${styles.statisticsTop}`} data-statistics-column>
-   <header className={styles.heading}><div><p className="eyebrow">TU RECORRIDO ACADÉMICO</p><h1>Análisis</h1><p>Consulta lo que has registrado y observa cómo se distribuye tu tiempo de estudio.</p></div><button className="button" onClick={()=>setRefresh(n=>n+1)}>Actualizar</button></header>
-  <section className={`${styles.section} ${styles.searchSection}`} aria-labelledby="search-title"><h2 id="search-title">Buscar en tu espacio académico</h2><label className={styles.searchField}>Buscar por nombre<input type="search" maxLength={64} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Materia, actividad, plan o reto"/></label>
-    {search.loading&&<LoadingStatus label="Buscando…" />}{search.error&&<p role="alert">{search.error}</p>}
-   {search.searched&&!search.loading&&!search.error&&!search.items.length&&<p>No encontramos recursos con ese prefijo.</p>}
-   <div className={styles.searchGroups}>{Object.entries(groups).map(([name,items])=><section key={name} aria-label={name}><h3>{name}</h3><ul>{items.map(item=>{const href=searchHref(item);return <li key={item.type+'-'+item.id}>{href?<Link to={href}>{item.title}</Link>:<span>{item.title}</span>}{item.status&&<small>Estado: {statusText(item.status)}</small>}</li>})}</ul></section>)}</div>
-   {search.cursor&&<button className="button" disabled={search.loading} onClick={()=>void loadMoreSearch()}>{search.loading?'Cargando…':'Ver más resultados'}</button>}
-  </section>
-   <section className={styles.section} aria-labelledby="overview-title"><div className={styles.sectionHeading}><div><h2 id="overview-title">Resumen general</h2><p>Una lectura de los registros disponibles en tu espacio.</p></div></div>
+  return <div className={styles.page}>
+   <header className={styles.heading}><div><p className="eyebrow">TU RECORRIDO ACADÉMICO</p><h1>Análisis</h1><p>Una mirada breve a cómo va tu estudio. Abre los detalles solo cuando los necesites.</p></div><button className="button" onClick={()=>setRefresh(n=>n+1)}>Actualizar</button></header>
+   <section className={`${styles.section} ${styles.snapshot}`} aria-labelledby="overview-title">
+    <div className={styles.sectionHeading}><div><h2 id="overview-title">Tu resumen</h2><p>Lo principal de tus registros.</p></div></div>
     {overview.loading&&<LoadingStatus label="Cargando resumen…" />}
-   {overview.error&&<div role="alert"><p>{overview.error}</p><button className="button" onClick={()=>setRefresh(n=>n+1)}>Intentar de nuevo</button></div>}
-     {overview.data&&<div className={styles.metricGroups}>{metricGroups.map(group=><section className={styles.metricGroup} key={group.title} aria-label={group.title}><h3>{group.title}</h3><dl className={styles.metrics}>{group.items.map(([key,label,isDuration])=><div className={styles.metric} key={key}><dt>{label}</dt><dd>{isDuration?duration(overview.data![key] as string):count(overview.data![key] as number)}</dd></div>)}</dl></section>)}</div>}
+    {overview.error&&<div role="alert"><p>{overview.error}</p><button className="button" onClick={()=>setRefresh(n=>n+1)}>Intentar de nuevo</button></div>}
+    {overview.data&&<dl className={`${styles.metrics} ${styles.spotlight}`}>
+     <div className={styles.metric}><dt>Tiempo estudiado</dt><dd>{duration(overview.data.total_studied_seconds)}</dd></div>
+     <div className={styles.metric}><dt>Actividades por atender</dt><dd>{count(overview.data.pending_activities)}</dd></div>
+     <div className={styles.metric}><dt>Planes en curso</dt><dd>{count(overview.data.active_plans)}</dd></div>
+    </dl>}
    </section>
-  </section>
-  <aside
-    ref={assistantSectionRef}
-    className={styles.assistantSidebar}
-    aria-labelledby="chat-title"
-    data-assistant-section
-    tabIndex={-1}
-   >
-    <AcademicChatPage variant="sidebar"/>
-  </aside>
-  <section className={`${styles.page} ${styles.statisticsBottom}`}>
-  <section className={styles.section} aria-labelledby="study-title"><div className={styles.sectionHeading}><div><h2 id="study-title">Tiempo de estudio</h2><p>Zona horaria local: {timezone}.</p></div><label>Periodo<select value={preset} onChange={e=>setPreset(e.target.value as AnalyticsRangePreset)}><option value="day">Día</option><option value="week">Semana</option><option value="month">Mes</option><option value="custom">Rango personalizado</option></select></label></div>
+   <details className={styles.fold}>
+    <summary>Buscar una materia, actividad o plan</summary>
+    <section className={`${styles.section} ${styles.searchSection}`} aria-labelledby="search-title"><h2 id="search-title">Buscar en tu espacio académico</h2><label className={styles.searchField}>Buscar por nombre<input type="search" maxLength={64} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Por ejemplo, Cálculo"/></label>
+     {search.loading&&<LoadingStatus label="Buscando…" />}{search.error&&<p role="alert">{search.error}</p>}
+     {search.searched&&!search.loading&&!search.error&&!search.items.length&&<p>No encontramos recursos con ese nombre.</p>}
+     <div className={styles.searchGroups}>{Object.entries(groups).map(([name,items])=><section key={name} aria-label={name}><h3>{name}</h3><ul>{items.map(item=>{const href=searchHref(item);return <li key={item.type+'-'+item.id}>{href?<Link to={href}>{item.title}</Link>:<span>{item.title}</span>}{item.status&&<small>Estado: {statusText(item.status)}</small>}</li>})}</ul></section>)}</div>
+     {search.cursor&&<button className="button" disabled={search.loading} onClick={()=>void loadMoreSearch()}>{search.loading?'Cargando…':'Ver más resultados'}</button>}
+    </section>
+   </details>
+   <details className={styles.fold}>
+    <summary>Ver todos los indicadores</summary>
+    <section className={styles.section} aria-label="Todos los indicadores">
+     {overview.data&&<div className={styles.metricGroups}>{metricGroups.map(group=><section className={styles.metricGroup} key={group.title} aria-label={group.title}><h2>{group.title}</h2><dl className={styles.metrics}>{group.items.map(([key,label,isDuration])=><div className={styles.metric} key={key}><dt>{label}</dt><dd>{isDuration?duration(overview.data![key] as string):count(overview.data![key] as number)}</dd></div>)}</dl></section>)}</div>}
+    </section>
+   </details>
+   <details className={styles.fold}>
+    <summary>Tiempo de estudio{study.data?` · ${duration(study.data.total_seconds)}`:''}</summary>
+    <section className={styles.section} aria-labelledby="study-title"><div className={styles.sectionHeading}><div><h2 id="study-title">Tiempo de estudio</h2><p>Zona horaria local: {timezone}.</p></div><label>Periodo<select value={preset} onChange={e=>setPreset(e.target.value as AnalyticsRangePreset)}><option value="day">Día</option><option value="week">Semana</option><option value="month">Mes</option><option value="custom">Rango personalizado</option></select></label></div>
    {preset==='custom'&&<div className={styles.rangeFields}><label>Desde (incluido)<input type="date" value={fromDate} onChange={e=>setFromDate(e.target.value)}/></label><label>Hasta (exclusivo)<input type="date" value={toDate} onChange={e=>setToDate(e.target.value)}/></label></div>}
    {range.error&&<p className={styles.notice} role="alert">{range.error}</p>}
    <label className={styles.granularity}>Agrupar por<select value={granularity} onChange={e=>setGranularity(e.target.value as typeof granularity)}><option value="day">Día</option><option value="week">Semana</option><option value="month">Mes</option></select></label>
@@ -184,14 +174,17 @@ export function AnalyticsPage() {
     <section aria-labelledby="bucket-title"><h3 id="bucket-title">Tiempo a lo largo del periodo</h3>{study.data.buckets.length===0?<p>No hay intervalos en este periodo.</p>:<ol className={styles.chartList}>{study.data.buckets.map((bucket,i)=><li key={bucket.from+'-'+i}><span>{localTime(bucket.from,false)}</span><progress aria-label={localTime(bucket.from,false)+': '+duration(bucket.seconds)} max={maxBucket} value={Number(bucket.seconds)}/><strong>{duration(bucket.seconds)}</strong></li>)}</ol>}</section>
     <section aria-labelledby="subject-title"><h3 id="subject-title">Distribución por materia</h3>{study.data.by_subject.length===0?<p>No hay materias con tiempo registrado en este periodo.</p>:<ol className={styles.chartList}>{study.data.by_subject.map(subject=><li key={subject.subject_id}><span>{subject.name}</span><progress aria-label={subject.name+': '+duration(subject.seconds)} max={maxSubject} value={Number(subject.seconds)}/><strong>{duration(subject.seconds)}</strong></li>)}</ol>}</section>
    </div></div>}
-  </section>
-  <section className={styles.section} aria-labelledby="timeline-title"><div className={styles.sectionHeading}><div><h2 id="timeline-title">Cronología académica</h2><p>Eventos presentados en el orden del servicio.</p></div><label>Tipo de evento<select value={category} onChange={e=>setCategory(e.target.value as AnalyticsCategory|'all')}><option value="all">Todos</option>{analyticsCategories.map(x=><option key={x} value={x}>{categories[x]}</option>)}</select></label></div>
+    </section>
+   </details>
+   <details className={styles.fold}>
+   <summary>Ver cronología{timeline.items.length?` · ${timeline.items.length} eventos`:''}</summary>
+   <section className={styles.section} aria-labelledby="timeline-title"><div className={styles.sectionHeading}><div><h2 id="timeline-title">Cronología</h2><p>Registros ordenados por fecha.</p></div><label>Tipo de evento<select value={category} onChange={e=>setCategory(e.target.value as AnalyticsCategory|'all')}><option value="all">Todos</option>{analyticsCategories.map(x=><option key={x} value={x}>{categories[x]}</option>)}</select></label></div>
     {timeline.loading&&<LoadingStatus label="Cargando cronología…" />}
    {timeline.error&&<div role="alert"><p>{timeline.error}</p><button className="button" onClick={()=>setRefresh(n=>n+1)}>Intentar de nuevo</button></div>}
    {!range.error&&!timeline.loading&&!timeline.error&&timeline.items.length===0&&<p>No hay eventos para este periodo.</p>}
    {timeline.items.length>0&&<ol className={styles.timeline} aria-label="Cronología académica">{timeline.items.map(item=>{const href=eventHref(item);return <li key={item.event_id}><time dateTime={item.occurred_at}>{localTime(item.occurred_at)}</time><span className={styles.kind}>{categories[item.category]}</span>{href?<Link to={href}>{item.title}</Link>:<strong>{item.title}</strong>}<p>{eventDescription(item)}{item.subject_name?' Materia: '+item.subject_name+'.':''}</p></li>})}</ol>}
    {timeline.cursor&&<button className="button" disabled={timelineMore} onClick={()=>void loadMoreTimeline()}>{timelineMore?'Cargando…':'Ver más eventos'}</button>}
-  </section>
-  </section>
- </div>
+   </section>
+   </details>
+  </div>
 }

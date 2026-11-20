@@ -63,10 +63,10 @@ export function GlobalFeedbackProvider({ children }: { children: ReactNode }) {
     setNotices(previous => previous.filter(item => item.id !== id))
   }, [])
   useEffect(() => {
-    if (runningTasks.has('academic-chat-send') && location.pathname !== '/app/analytics' && !chatNoticeRef.current) {
+    if (runningTasks.has('academic-chat-send') && location.pathname !== '/app/companion' && !chatNoticeRef.current) {
       chatNoticeRef.current = true
-      publish({ id: 'task-academic-chat-send', kind: 'progress', title: 'Gemini está preparando una respuesta', message: 'El envío sigue en curso; podrás volver a Análisis para consultar la conversación.' })
-    } else if (location.pathname === '/app/analytics' && chatNoticeRef.current) {
+      publish({ id: 'task-academic-chat-send', kind: 'progress', title: 'Cognova está preparando una respuesta', message: 'El envío sigue en curso; podrás volver a Acompañamiento para consultar la conversación.' })
+    } else if (location.pathname === '/app/companion' && chatNoticeRef.current) {
       chatNoticeRef.current = false
       dismiss('task-academic-chat-send')
     }
@@ -155,7 +155,7 @@ export function GlobalFeedbackProvider({ children }: { children: ReactNode }) {
           kind: 'success',
           title: 'La respuesta está lista',
           message: 'Tu mensaje ya está disponible en la conversación.',
-          href: '/app/analytics',
+          href: '/app/companion',
         })
       }
       return true
@@ -167,8 +167,8 @@ export function GlobalFeedbackProvider({ children }: { children: ReactNode }) {
         update('task-academic-chat-send', {
           kind: 'error',
           title: 'No se pudo completar tu respuesta',
-          message: `${message} Tu texto se conserva; vuelve a Análisis para reintentarlo.`,
-          href: '/app/analytics',
+          message: `${message} Tu texto se conserva; vuelve a Acompañamiento para reintentarlo.`,
+          href: '/app/companion',
           urgent: true,
         })
       }

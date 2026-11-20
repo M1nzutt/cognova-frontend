@@ -60,7 +60,7 @@ export function AiProposalPanel({ plan }: { plan: StudyPlan }) {
     <p className="eyebrow">BORRADOR PARA TU REVISIÓN</p>
     <h2 id="ai-proposal-heading">Propuesta original de Cognova</h2>
     <p>{snapshot.explanation}</p>
-    <details open>
+    <details>
       <summary>Cómo se preparó esta propuesta</summary>
       <p>{snapshot.reasoning_summary}</p>
     </details>

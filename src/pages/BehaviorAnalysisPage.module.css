@@ -22,8 +22,10 @@
 
 .list { display: grid; gap: .65rem; padding: 0; margin: 0; list-style: none; }
 .observation { min-width: 0; padding: clamp(.85rem, 2vw, 1.1rem); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-soft); }
+.observationBody { display: grid; gap: .45rem; padding: .8rem 0 .25rem; }
 .eyebrow { color: var(--color-orchid-600); font-size: .64rem; font-weight: 750; letter-spacing: .07em; }
 .observation h2 { margin: .35rem 0; font-size: 1rem; line-height: 1.45; }
+.observationBody h3 { margin: 0; color: var(--color-plum-950); font-size: .95rem; line-height: 1.5; }
 .interpretation { margin: 0; color: var(--muted); font-size: .84rem; line-height: 1.55; }
 .interpretation strong { color: var(--text); }
 .provenance { width: fit-content; padding: .22rem .5rem; margin: .3rem 0 .4rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill); color: var(--muted); background: var(--color-surface-soft); font-size: .68rem; line-height: 1.35; }
@@ -37,8 +39,9 @@
 .related strong { margin-right: .15rem; font-size: .74rem; }
 .related a { display: inline-flex; min-height: 36px; align-items: center; padding: .3rem .55rem; border: 1px solid var(--color-border-strong); border-radius: var(--radius-pill); color: var(--color-plum-900); background: var(--surface); font-size: .73rem; font-weight: 650; text-decoration: none; }
 .related a:hover { border-color: var(--color-orchid-500); background: var(--color-lilac-100); }
-.reflection { padding: .65rem .8rem; margin-top: .6rem; border-left: 3px solid var(--color-orchid-500); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; background: var(--color-lilac-100); }
-.reflection h3 { margin: 0 0 .2rem; color: var(--color-plum-900); font-size: .75rem; }
+.reflection { padding: .85rem 1rem; margin-bottom: .25rem; border: 1px solid var(--color-lilac-200); border-radius: var(--radius-md); background: linear-gradient(110deg, var(--color-lilac-100), var(--color-surface-soft)); }
+.reflection .eyebrow { display: block; margin-bottom: .25rem; }
+.reflection h2 { margin: 0 0 .3rem; color: var(--color-plum-900); font-size: .98rem; }
 .reflection p { margin: 0; color: var(--color-plum-950); font-size: .84rem; font-weight: 650; line-height: 1.5; }
 .scope { margin: .5rem 0 0; color: var(--muted); font-size: .73rem; line-height: 1.5; }
 

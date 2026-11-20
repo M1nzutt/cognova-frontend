@@ -35,6 +35,14 @@ export function LoginPage() {
     >
       {message && <p role="status" className={styles.feedback}>{message}</p>}
       {logoutFailed && <button className="button" type="button" onClick={() => void session.logout()}>Reintentar cierre de sesión</button>}
+      <section className={styles.demoCard} aria-labelledby="demo-account-title">
+        <h2 id="demo-account-title" className={styles.demoTitle}>Cuenta de demostración</h2>
+        <p>Usa estas credenciales para explorar Cognova:</p>
+        <dl className={styles.demoCredentials}>
+          <div><dt>Correo</dt><dd>demo.software@example.com</dd></div>
+          <div><dt>Contraseña</dt><dd>eyuNKVCBroH7</dd></div>
+        </dl>
+      </section>
       <form className={styles.form} onSubmit={onSubmit} aria-busy={loading}>
         <fieldset className={styles.fieldset} disabled={loading || logoutFailed}>
           <div className={styles.field}>

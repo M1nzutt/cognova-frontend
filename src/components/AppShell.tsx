@@ -21,7 +21,8 @@ const mainLinks: RouteLink[] = [
 const secondaryLinks: RouteLink[] = [
   { to: '/app/activities', label: 'Actividades', icon: 'activity' },
   { to: '/app/sessions', label: 'Sesiones', icon: 'timer' },
-  { to: '/app/behavior', label: 'IA y reflexiones', icon: 'sparkles' },
+  { to: '/app/companion', label: 'Acompañamiento', icon: 'chat' },
+  { to: '/app/behavior', label: 'Observaciones', icon: 'sparkles' },
   { to: '/app/analytics', label: 'Análisis', icon: 'chart' },
 ]
 
@@ -79,7 +80,8 @@ export function AppShell() {
       : pathname.startsWith('/app/sessions') ? 'Sesiones de estudio'
         : pathname.startsWith('/app/study-plans') ? 'Planes y retos'
           : pathname.startsWith('/app/calendar') ? 'Calendario'
-            : pathname.startsWith('/app/behavior') ? 'IA y reflexiones'
+      : pathname.startsWith('/app/behavior') ? 'Observaciones'
+      : pathname.startsWith('/app/companion') ? 'Acompañamiento'
       : pathname.startsWith('/app/analytics') ? 'Análisis'
               : pathname.startsWith('/app/profile') ? 'Perfil'
               : pathname.startsWith('/app/questionnaire') ? 'Tu percepción'

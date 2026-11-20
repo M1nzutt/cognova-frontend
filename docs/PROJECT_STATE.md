@@ -1,3 +1,27 @@
+## Estado final del producto y corte local — 2026-11-20
+
+El frontend cubre el flujo público, Inicio, Calendario, Materias, Actividades,
+Sesiones/temporizador, Planes/Retos, Acompañamiento, Observaciones, Análisis y
+perfil. El código no incluye panel ADMIN, voz ni importación CSV/Excel. La cuenta
+demo se muestra en login; las credenciales son públicas y la contraseña también
+debe configurarse en el servicio Backend.
+
+`npm run verify` pasó con lint, TypeScript, build y 413 pruebas en 54 archivos.
+La imagen frontend se reconstruyó y arrancó en Docker local; `/login` respondió
+HTTP 200, el bundle servido contenía las credenciales y el contenedor estaba
+healthy. No se modificó Backend/Database ni se hizo deploy remoto.
+
+**Integración pendiente de alinear:** el volumen PostgreSQL activo reportó
+`0009_academic_companion_chat`; el backend fuente actual exige `0010_nullable_password_hash`,
+mientras `cognova-backend/tools/database-ref.json` todavía fija Database 0009.
+La respuesta `/api/v1/ready` 200 corresponde a la imagen Backend ya activa, no
+demuestra que el checkout Backend actual esté desplegado. Actualizar el pin, aplicar
+0010 y reconstruir/verificar Backend requiere un cambio operativo separado.
+
+Los registros fechados a continuación documentan entregas y validaciones anteriores;
+sus frases de “pendiente” reflejan el estado de esas fechas, no el estado actual del
+frontend. La compatibilidad exacta de contratos se define en `API_CONTRACT.md`.
+
 ## Rediseño visual del calendario — bloque completado — 2026-11-15
 
 La vista mensual/semanal se adaptó a la referencia `REFERENCIAS/asa.jpeg`:

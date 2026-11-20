@@ -2,7 +2,24 @@
 .heading { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
 .heading h1 { max-width: 24ch; margin: .15rem 0 .45rem; font-size: clamp(2.25rem, 4vw, 3.25rem); }
 .heading p { max-width: 48ch; margin: .4rem 0 0; color: var(--muted); }
-.badge { padding: .42rem .85rem; border: 1px solid var(--color-border-strong); border-radius: var(--radius-pill); color: var(--color-plum-900); background: var(--color-lilac-100); font-size: .76rem; font-weight: 700; white-space: nowrap; }
+.date { color: var(--color-plum-800); font-size: .85rem; font-weight: 650; text-transform: capitalize; }
+.today { display: grid; gap: .9rem; padding: clamp(1.1rem, 2.8vw, 1.5rem); border: 1px solid var(--color-border-strong); border-radius: var(--radius-lg); background: linear-gradient(120deg, var(--color-lilac-100), var(--surface) 72%); }
+.todayHeading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+.todayHeading .eyebrow { margin-bottom: .3rem; }
+.todayHeading h2 { margin: 0; font-size: 1.2rem; }
+.todayHeading a, .todayEmpty a { color: var(--color-plum-800); font-size: .8rem; font-weight: 700; text-decoration: none; }
+.todayHeading a:hover, .todayEmpty a:hover { text-decoration: underline; }
+.todayList { display: grid; gap: .55rem; padding: 0; margin: 0; list-style: none; }
+.todayList li { display: grid; grid-template-columns: minmax(7.5rem, auto) 1.5rem minmax(0, 1fr); align-items: center; gap: .6rem; padding: .7rem .8rem; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }
+.itemTime { color: var(--muted); font-size: .78rem; font-variant-numeric: tabular-nums; }
+.itemMark { display: grid; width: 1.4rem; height: 1.4rem; place-items: center; border-radius: 50%; color: var(--color-plum-800); background: var(--color-lilac-100); }
+.todayList a { display: grid; min-width: 0; gap: .1rem; color: var(--color-plum-950); text-decoration: none; }
+.todayList a:hover strong { text-decoration: underline; }
+.todayList strong { overflow-wrap: anywhere; font-size: .85rem; }
+.todayList small { color: var(--muted); font-size: .73rem; }
+.todayEmpty { display: flex; align-items: center; flex-wrap: wrap; gap: .35rem 1rem; padding: .85rem 1rem; border: 1px dashed var(--color-border-strong); border-radius: var(--radius-md); background: var(--surface); }
+.todayEmpty p { margin: 0; color: var(--muted); font-size: .83rem; }
+.todayEmpty a { flex: 0 0 auto; }
 .perception { display: flex; align-items: center; justify-content: space-between; gap: 1.4rem; padding: 1.15rem 1.3rem; border: 1px solid var(--color-lilac-200); border-radius: var(--radius-lg); background: linear-gradient(110deg, var(--color-lilac-100), var(--surface)); }
 .perception > div { max-width: 62ch; }
 .perception .eyebrow { margin-bottom: .35rem; }
@@ -25,6 +42,6 @@
 .featuredAction small { color: rgb(255 255 255 / .82); }
 .featuredAction:hover { border-color: var(--color-plum-950); background: var(--color-plum-950); }
 .arrow { flex: 0 0 auto; font-size: 1.05rem; }
-@media (max-width: 650px) { .perception { align-items: flex-start; flex-direction: column; } .heading { align-items: flex-start; } .nextHeading { align-items: flex-start; flex-direction: column; } }
-@media (max-width: 520px) { .heading h1 { font-size: 2.25rem; } .perception { padding: 1rem; } .quickActions { grid-template-columns: minmax(0, 1fr); } .quickAction { min-height: 68px; } }
+@media (max-width: 650px) { .perception { align-items: flex-start; flex-direction: column; } .heading { align-items: flex-start; } .nextHeading, .todayHeading { align-items: flex-start; flex-direction: column; } }
+@media (max-width: 520px) { .heading h1 { font-size: 2.25rem; } .perception, .today { padding: 1rem; } .quickActions { grid-template-columns: minmax(0, 1fr); } .quickAction { min-height: 68px; } .todayList li { grid-template-columns: 1fr auto; gap: .35rem .6rem; } .itemMark { grid-column: 2; grid-row: 1 / span 2; } .todayList a { grid-column: 1; grid-row: 2; } .itemTime { grid-column: 1; } }
 @media (prefers-reduced-motion: reduce) { .quickAction { transition: none; } }
